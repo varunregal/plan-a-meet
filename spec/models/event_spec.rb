@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe Event, type: :model do
   describe "validations" do
     it "is valid with all attributes" do
-      event = Event.new(name: 'Event 2', url: 'abc123')
+      event = build(:event)
       expect(event).to be_valid
     end
 
@@ -18,14 +18,14 @@ RSpec.describe Event, type: :model do
     end
 
     it "check if the url is unique" do
-      event1 = Event.create!(name: 'Event 1', url: 'abc123')
-      event2 = Event.new(name: 'Event 2', url: 'abc123')
+      event1 = create(:event)
+      event2 = build(:event)
       expect(event2).to be_invalid
     end
 
     it "enforce uniqueness of the url at database level" do
-      Event.create!(name: 'Event 1', url: 'abc123')
-      event2 = Event.new(name: 'Event 2', url: 'abc123')
+      create(:event)
+      event2 = build(:event)
       expect {
         event2.save(validate: false)
       }.to raise_error(ActiveRecord::RecordNotUnique)
