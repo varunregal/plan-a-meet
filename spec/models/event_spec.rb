@@ -18,9 +18,9 @@ RSpec.describe Event, type: :model do
     end
 
     it "check if the url is unique" do
-      event1 = create(:event)
-      event2 = build(:event)
-      expect(event2).to be_invalid
+      create(:event)
+      event = build(:event)
+      expect(event).to be_invalid
     end
 
     it "enforce uniqueness of the url at database level" do

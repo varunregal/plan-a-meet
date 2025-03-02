@@ -1,8 +1,8 @@
 class TimeSlot < ApplicationRecord
   belongs_to :event
 
-  validates_presence_of :start_time
-  validates_presence_of :end_time
+  validates :start_time, presence: true
+  validates :end_time, presence: true
 
   validate :start_time_is_less_than_end_time
 

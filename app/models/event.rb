@@ -1,6 +1,6 @@
 class Event < ApplicationRecord
-  has_many :time_slots
-  
-  validates_presence_of :name
+  has_many :time_slots, dependent: :destroy
+
+  validates :name, presence: true
   validates :url, presence: true, uniqueness: true
 end
