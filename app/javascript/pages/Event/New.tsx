@@ -9,34 +9,31 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
+
 import { zodResolver } from "@hookform/resolvers/zod";
-import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
-import { useState } from "react";
+
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import SelectTime from "./components/SelectTime";
 
 const formSchema = z.object({
   name: z.string().min(2, "Event name should be at least two characters"),
+  day: z.date(),
+  start_time: z.string(),
+  end_time: z.string(),
 });
 
+export type formSchemaType = z.infer<typeof formSchema>;
+
 function New() {
-  const [selected, setSelected] = useState<Date[] | undefined>();
-  console.log(selected);
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<formSchemaType>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(values: formSchemaType) {
     console.log(values);
   }
   return (
@@ -64,22 +61,41 @@ function New() {
           )}
         />
         <div className="flex justify-between">
-          <div>
-            <div className="font-medium text-sm mb-5">
-              What dates might work for you?
-            </div>
+          <FormField
+            control={form.control}
+            name="day"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>What dates might work for you?</FormLabel>
+                <FormControl>
+                  <Calendar
+                    mode="single"
+                    selected={field.value}
+                    onSelect={field.onChange}
+                    initialFocus
+                    fromDate={new Date()}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <div className="flex flex-col space-y-10">
+            <div className="text-sm">What times work for you?</div>
+            <SelectTime
+              form={form}
+              name={"start_time"}
+              placeholder="Select start time"
+            />
 
-            <Calendar
-              mode="multiple"
-              selected={selected}
-              onSelect={setSelected}
-              initialFocus
+            <SelectTime
+              form={form}
+              name={"end_time"}
+              placeholder="Select end time"
             />
           </div>
-          <div className="font-medium text-sm mb-5">
-            What time might work for you?
-          </div>
         </div>
+        <Button type="submit">Submit</Button>
       </form>
     </Form>
   );
