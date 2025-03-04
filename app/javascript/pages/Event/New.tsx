@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
 import {
   Form,
   FormControl,
@@ -9,14 +8,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-
 import { zodResolver } from "@hookform/resolvers/zod";
-
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import SelectTime from "./components/SelectTime";
 import SelectDates from "./components/SelectDates";
 import { addDays } from "date-fns";
+import { api } from "@/lib/api";
 
 const formSchema = z.object({
   name: z.string().min(2, "Event name should be at least two characters"),
@@ -44,8 +42,23 @@ function New() {
     },
   });
 
-  const onSubmit = (values: formSchemaType) => {
-    console.log(values);
+  const onSubmit = async (values: formSchemaType) => {
+    console.log(
+      values.day.from.toLocaleString("en-US", {
+        year: "numeric",
+        month: "numeric",
+        day: "numeric",
+      })
+    );
+    console.log(values.day.from);
+    const response = await api.post("/events", {
+      name: values.name,
+      start_date: values.day.from,
+      end_date: values.day.to,
+      start_time: values.start_time,
+      end_time: values.end_time,
+    });
+    console.log({ response });
   };
   return (
     <Form {...form}>
@@ -90,7 +103,7 @@ function New() {
             />
           </div>
         </div>
-        <Button type="submit">Submit</Button>
+        <Button type="submit">Create Event</Button>
       </form>
     </Form>
   );
