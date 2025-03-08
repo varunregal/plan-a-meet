@@ -4,12 +4,14 @@ class EventsController < ApplicationController
     render inertia: "Event/New"
   end
   def create
-    render json: { message: "Success" }, status: :ok
+    response = Event::Create.new(create_event_params).create_time_slots_and_event
+
+    render json: response
   end
 
 
   private
-  def event_params
-    params.expect(event: [ :name, time_slots_attributes: [ :start_time, :end_time ] ])
+  def create_event_params
+    params.expect(event: [ :name, :start_date, :end_date, :start_time, :end_time ])
   end
 end

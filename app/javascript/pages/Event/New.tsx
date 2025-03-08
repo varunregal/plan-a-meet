@@ -43,20 +43,16 @@ function New() {
   });
 
   const onSubmit = async (values: formSchemaType) => {
-    console.log(
-      values.day.from.toLocaleString("en-US", {
-        year: "numeric",
-        month: "numeric",
-        day: "numeric",
-      })
-    );
+    console.log(new Date(values.day.from));
     console.log(values.day.from);
     const response = await api.post("/events", {
-      name: values.name,
-      start_date: values.day.from,
-      end_date: values.day.to,
-      start_time: values.start_time,
-      end_time: values.end_time,
+      event: {
+        name: values.name,
+        start_date: values.day.from,
+        end_date: values.day.to,
+        start_time: values.start_time,
+        end_time: values.end_time,
+      },
     });
     console.log({ response });
   };
