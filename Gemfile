@@ -69,6 +69,6 @@ group :development do
 end
 
 
-gem "inertia_rails", "~> 3.6"
+gem "inertia_rails", "~> 3.7"
 
 gem "vite_rails", "~> 3.0"
