@@ -17,10 +17,14 @@ import { addDays } from "date-fns";
 import { api } from "@/lib/api";
 
 const formSchema = z.object({
-  name: z.string().min(2, "Event name should be at least two characters"),
+  name: z.string().min(5, "Event name should be at least 5 characters"),
   day: z.object({
-    from: z.date(),
-    to: z.date(),
+    from: z.date({
+      required_error: "Please select from date",
+    }),
+    to: z.date({
+      required_error: "Please select to date",
+    }),
   }),
   start_time: z.string(),
   end_time: z.string(),
@@ -35,7 +39,7 @@ function New() {
       name: "",
       day: {
         from: new Date(),
-        to: addDays(new Date(), 2),
+        to: new Date(),
       },
       start_time: "9",
       end_time: "17",
@@ -43,8 +47,6 @@ function New() {
   });
 
   const onSubmit = async (values: formSchemaType) => {
-    console.log(new Date(values.day.from));
-    console.log(values.day.from);
     const response = await api.post("/events", {
       event: {
         name: values.name,
@@ -57,51 +59,62 @@ function New() {
     console.log({ response });
   };
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <div className="font-bold text-lg mb-1">Create a New Meeting</div>
-        <div className="text-muted-foreground text-sm">
-          Schedule meetings with other efficiently
-        </div>
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Event name</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Eg. Team Lunch"
-                  {...field}
-                  className="w-[300px]"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <div className="flex justify-between">
-          <SelectDates form={form} name="day" />
-          <div className="flex flex-col space-y-10">
-            <div className="text-sm">What times work for you?</div>
-            <SelectTime
-              form={form}
-              name={"start_time"}
-              placeholder="Select start time"
-              label="No earlier than"
+    <div>
+      <div className="text-center flex flex-col gap-1 mb-10">
+        <h2 className="font-bold text-lg">Create a New Meeting</h2>
+        <p className="text-muted-foreground text-sm">
+          Schedule meeting with others efficiently
+        </p>
+      </div>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Event name</FormLabel>
+                <FormControl>
+                  <Input
+                    autoComplete="off"
+                    placeholder="Eg. Team Lunch"
+                    {...field}
+                    className="w-[300px]"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <div className="flex justify-between">
+            <FormField
+              control={form.control}
+              name="day"
+              render={({ field }) => <SelectDates field={field} />}
             />
+            <div className="flex flex-col space-y-10">
+              <div className="text-sm font-medium">
+                What times work for you?
+              </div>
+              <SelectTime
+                form={form}
+                name={"start_time"}
+                placeholder="Select start time"
+                label="No earlier than"
+              />
 
-            <SelectTime
-              form={form}
-              name={"end_time"}
-              placeholder="Select end time"
-              label="No later than"
-            />
+              <SelectTime
+                form={form}
+                name={"end_time"}
+                placeholder="Select end time"
+                label="No later than"
+              />
+            </div>
           </div>
-        </div>
-        <Button type="submit">Create Event</Button>
-      </form>
-    </Form>
+          <Button type="submit">Create Event</Button>
+        </form>
+      </Form>
+    </div>
   );
 }
 

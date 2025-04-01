@@ -9,8 +9,7 @@ export interface SelectTimeProps {
 }
 
 export interface SelectDateProps {
-  name: "day";
-  form: UseFormReturn<formSchemaType>;
+  field: any;
 }
 
 export const TIMES: string[] = [

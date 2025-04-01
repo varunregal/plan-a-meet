@@ -1,6 +1,6 @@
 require "time"
 require "ostruct"
-class Event::Create
+class Events::Create
   def initialize(params)
     @name = params.fetch(:name)
     @start_date = params.fetch(:start_date)

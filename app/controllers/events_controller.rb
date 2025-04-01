@@ -4,7 +4,7 @@ class EventsController < ApplicationController
     render inertia: "Event/New"
   end
   def create
-    response = Event::Create.new(create_event_params).create_time_slots_and_event
+    response = Events::Create.new(create_event_params).create_time_slots_and_event
 
     render json: response
   end
