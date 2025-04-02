@@ -10,16 +10,17 @@ import {
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import SelectTime from "./components/SelectTime";
 import SelectDates from "./components/SelectDates";
 import { createEvent } from "@/api/event";
 import { EventResponseProps } from "./event.types";
 import { eventFormSchema, eventFormSchemaType } from "@/lib/schema";
-
-
+import { toast } from "sonner";
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
 
 function New() {
+  const [isLoading, setIsLoading] = useState(false);
   const form = useForm<eventFormSchemaType>({
     resolver: zodResolver(eventFormSchema),
     defaultValues: {
@@ -34,6 +35,7 @@ function New() {
   });
 
   const onSubmit = async (values: eventFormSchemaType) => {
+    setIsLoading(true);
     const event = {
       name: values.name,
       start_date: values.day.from,
@@ -41,11 +43,13 @@ function New() {
       start_time: values.start_time,
       end_time: values.end_time,
     };
+
     const response: EventResponseProps = await createEvent(event);
+    setIsLoading(false);
     if (response.success) {
       console.log(response);
     } else {
-      console.log("Failed", response);
+      toast.error(response.message);
     }
   };
   return (
@@ -101,7 +105,10 @@ function New() {
               />
             </div>
           </div>
-          <Button type="submit">Create Event</Button>
+          <Button type="submit" disabled={isLoading}>
+            {isLoading && <Loader2 className="animate-spin"/>}
+            Create Event
+          </Button>
         </form>
       </Form>
     </div>
