@@ -18,6 +18,7 @@ import { eventFormSchema, eventFormSchemaType } from "@/lib/schema";
 import { toast } from "sonner";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
+import { router } from "@inertiajs/react";
 
 function New() {
   const [isLoading, setIsLoading] = useState(false);
@@ -47,7 +48,10 @@ function New() {
     const response: EventResponseProps = await createEvent(event);
     setIsLoading(false);
     if (response.success) {
-      console.log(response);
+      if (response.data)
+        router.visit(`/events/${response.data.url}`, {
+          method: "get",
+        });
     } else {
       toast.error(response.message);
     }
@@ -106,7 +110,7 @@ function New() {
             </div>
           </div>
           <Button type="submit" disabled={isLoading}>
-            {isLoading && <Loader2 className="animate-spin"/>}
+            {isLoading && <Loader2 className="animate-spin" />}
             Create Event
           </Button>
         </form>

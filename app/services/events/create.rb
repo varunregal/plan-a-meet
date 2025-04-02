@@ -11,8 +11,7 @@ class Events::Create
 
   def create_time_slots_and_event
     ActiveRecord::Base.transaction do
-      # event = Event.new(name: @name, url: SecureRandom.base64(8))
-      event = Event.find(100)
+      event = Event.new(name: @name, url: SecureRandom.base64(8).gsub("/", "_").gsub(/=+$/, ""))
       create_time_slots_for_event(event)
       event.save!
       Result.success(event)
