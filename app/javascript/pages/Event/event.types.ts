@@ -1,6 +1,9 @@
 import { UseFormReturn } from "react-hook-form";
 import { formSchemaType } from "./New";
 
+// export type EventProps = {
+//   name: string,
+// }
 export interface SelectTimeProps {
   name: "start_time" | "end_time";
   form: UseFormReturn<formSchemaType>;
@@ -38,3 +41,16 @@ export const TIMES: string[] = [
   "10:00 PM",
   "11:00 PM",
 ];
+
+export type EventProps = {
+  id: number
+  name: string
+  url: string
+}
+
+export type EventResponseProps = {
+  success: boolean,
+  data?: EventProps,
+  message?: string,
+  status?: string
+}

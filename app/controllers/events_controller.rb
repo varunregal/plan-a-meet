@@ -5,8 +5,11 @@ class EventsController < ApplicationController
   end
   def create
     response = Events::Create.new(create_event_params).create_time_slots_and_event
-
-    render json: response
+    if response.success?
+      render json: response.data
+    else
+      handle_error(response.error)
+    end
   end
 
 

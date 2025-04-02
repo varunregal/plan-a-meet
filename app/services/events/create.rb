@@ -11,12 +11,13 @@ class Events::Create
 
   def create_time_slots_and_event
     ActiveRecord::Base.transaction do
-      event = Event.new(name: @name, url: SecureRandom.base64(8))
+      # event = Event.new(name: @name, url: SecureRandom.base64(8))
+      event = Event.find(100)
       create_time_slots_for_event(event)
       event.save!
-      OpenStruct.new(success: true, event: event, error: nil)
-    rescue ActiveRecord::RecordInvalid => e
-      OpenStruct.new(success: false, data: nil, error: e)
+      Result.success(event)
+    rescue => e
+      Result.failure(e)
     end
   end
 

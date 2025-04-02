@@ -15,6 +15,8 @@ import SelectTime from "./components/SelectTime";
 import SelectDates from "./components/SelectDates";
 import { addDays } from "date-fns";
 import { api } from "@/lib/api";
+import { createEvent } from "@/api/event";
+import { EventResponseProps } from "./event.types";
 
 const formSchema = z.object({
   name: z.string().min(5, "Event name should be at least 5 characters"),
@@ -47,16 +49,19 @@ function New() {
   });
 
   const onSubmit = async (values: formSchemaType) => {
-    const response = await api.post("/events", {
-      event: {
-        name: values.name,
-        start_date: values.day.from,
-        end_date: values.day.to,
-        start_time: values.start_time,
-        end_time: values.end_time,
-      },
-    });
-    console.log({ response });
+    const event = {
+      name: values.name,
+      start_date: values.day.from,
+      end_date: values.day.to,
+      start_time: values.start_time,
+      end_time: values.end_time
+    }
+    const response: EventResponseProps = await createEvent(event)
+    if(response.success){
+      console.log(response)
+    }else{
+      console.log('Failed', response)
+    }
   };
   return (
     <div>
