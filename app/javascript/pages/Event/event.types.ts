@@ -1,12 +1,9 @@
+import { eventFormSchemaType } from "@/lib/schema";
 import { UseFormReturn } from "react-hook-form";
-import { formSchemaType } from "./New";
 
-// export type EventProps = {
-//   name: string,
-// }
 export interface SelectTimeProps {
   name: "start_time" | "end_time";
-  form: UseFormReturn<formSchemaType>;
+  form: UseFormReturn<eventFormSchemaType>;
   placeholder: string;
   label: string;
 }
@@ -43,14 +40,14 @@ export const TIMES: string[] = [
 ];
 
 export type EventProps = {
-  id: number
-  name: string
-  url: string
-}
+  id: number;
+  name: string;
+  url: string;
+};
 
 export type EventResponseProps = {
-  success: boolean,
-  data?: EventProps,
-  message?: string,
-  status?: string
-}
+  success: boolean;
+  data?: EventProps;
+  message?: string;
+  status?: string;
+};

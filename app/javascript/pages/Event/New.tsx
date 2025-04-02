@@ -13,30 +13,15 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import SelectTime from "./components/SelectTime";
 import SelectDates from "./components/SelectDates";
-import { addDays } from "date-fns";
-import { api } from "@/lib/api";
 import { createEvent } from "@/api/event";
 import { EventResponseProps } from "./event.types";
+import { eventFormSchema, eventFormSchemaType } from "@/lib/schema";
 
-const formSchema = z.object({
-  name: z.string().min(5, "Event name should be at least 5 characters"),
-  day: z.object({
-    from: z.date({
-      required_error: "Please select from date",
-    }),
-    to: z.date({
-      required_error: "Please select to date",
-    }),
-  }),
-  start_time: z.string(),
-  end_time: z.string(),
-});
 
-export type formSchemaType = z.infer<typeof formSchema>;
 
 function New() {
-  const form = useForm<formSchemaType>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<eventFormSchemaType>({
+    resolver: zodResolver(eventFormSchema),
     defaultValues: {
       name: "",
       day: {
@@ -48,19 +33,19 @@ function New() {
     },
   });
 
-  const onSubmit = async (values: formSchemaType) => {
+  const onSubmit = async (values: eventFormSchemaType) => {
     const event = {
       name: values.name,
       start_date: values.day.from,
       end_date: values.day.to,
       start_time: values.start_time,
-      end_time: values.end_time
-    }
-    const response: EventResponseProps = await createEvent(event)
-    if(response.success){
-      console.log(response)
-    }else{
-      console.log('Failed', response)
+      end_time: values.end_time,
+    };
+    const response: EventResponseProps = await createEvent(event);
+    if (response.success) {
+      console.log(response);
+    } else {
+      console.log("Failed", response);
     }
   };
   return (
