@@ -1,7 +1,6 @@
 class EventsController < ApplicationController
   def show
     event = Event.find_by(url: params[:url])
-    puts event
     render inertia: "Event/Show", props: {
       name: event.name
     }

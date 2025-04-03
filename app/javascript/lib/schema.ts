@@ -15,3 +15,10 @@ export const eventFormSchema = z.object({
 });
 
 export type eventFormSchemaType = z.infer<typeof eventFormSchema>;
+
+export const userFormSchema = z.object({
+  name: z.string().min(2, "Name should be at least 2 characters"),
+  password: z.string().min(8, "Password should be at least 8 characters")
+})
+
+export type userFormSchemaType = z.infer<typeof userFormSchema>
