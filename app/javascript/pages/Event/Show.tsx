@@ -18,6 +18,7 @@ function Show({ name }: { name: string }) {
     resolver: zodResolver(userFormSchema),
     defaultValues: {
       name: "",
+      password: "",
     },
   });
 

@@ -12,5 +12,6 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   resources :events, param: :url
+  resources :users
   root "events#new"
 end

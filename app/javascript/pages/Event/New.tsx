@@ -90,7 +90,7 @@ function New() {
               name="day"
               render={({ field }) => <SelectDates field={field} />}
             />
-            <div className="flex flex-col space-y-10">
+            <div className="flex flex-col space-y-5">
               <div className="text-sm font-medium">
                 What times work for you?
               </div>
