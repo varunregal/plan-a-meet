@@ -2,7 +2,8 @@ class EventsController < ApplicationController
   def show
     event = Event.find_by(url: params[:url])
     render inertia: "Event/Show", props: {
-      name: event.name
+      name: event.name,
+      url: event.url
     }
   end
   # Before creating an event, I need to create timeslots and associate it with the event

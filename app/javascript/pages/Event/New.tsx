@@ -19,6 +19,7 @@ import { toast } from "sonner";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { router } from "@inertiajs/react";
+import ButtonWithLoader from "./components/ButtonWithLoader";
 
 function New() {
   const [isLoading, setIsLoading] = useState(false);
@@ -109,10 +110,9 @@ function New() {
               />
             </div>
           </div>
-          <Button type="submit" disabled={isLoading}>
-            {isLoading && <Loader2 className="animate-spin" />}
+          <ButtonWithLoader isLoading={isLoading}>
             Create Event
-          </Button>
+          </ButtonWithLoader>
         </form>
       </Form>
     </div>

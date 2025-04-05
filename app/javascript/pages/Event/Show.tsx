@@ -1,19 +1,17 @@
 import { useForm } from "react-hook-form";
-import { EventProps } from "./event.types";
 import { userFormSchema, userFormSchemaType } from "@/lib/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Form } from "@/components/ui/form";
+import { useState } from "react";
+import { createUser } from "@/api/user";
+import { toast } from "sonner";
+import UserLoginForm from "./components/UserLoginForm";
+import UserAvailability from "./components/UserAvailability";
+import GroupAvailability from "./components/GroupAvailability";
 
-function Show({ name }: { name: string }) {
+function Show({ name, url }: { name: string; url: string }) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [user, setUser] = useState("");
   const form = useForm<userFormSchemaType>({
     resolver: zodResolver(userFormSchema),
     defaultValues: {
@@ -22,54 +20,37 @@ function Show({ name }: { name: string }) {
     },
   });
 
-  const onSubmit = (values: any) => {
-    console.log({ values });
+  const onSubmit = async (values: any) => {
+    setIsLoading(true);
+    const user = {
+      name: values.name,
+      password: values.password,
+      url,
+    };
+    const response = await createUser(user);
+    setIsLoading(false);
+    if (response.success) {
+      toast.success("User created successfully!");
+      setUser(response.data);
+    } else {
+      toast.error(response.message);
+    }
   };
   return (
-    <div className="space-y-12">
-      <div className="font-bold">Let's plan for {name}</div>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Your Name</FormLabel>
-                <FormControl>
-                  <Input
-                    autoComplete="off"
-                    placeholder="Enter your name"
-                    {...field}
-                    className="w-[300px]"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Password (optional)</FormLabel>
-                <FormControl>
-                  <Input
-                    type="password"
-                    autoComplete="off"
-                    placeholder="Enter your password"
-                    {...field}
-                    className="w-[300px]"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <Button type="submit">Submit</Button>
-        </form>
-      </Form>
+    <div className="grid grid-cols-2 gap-4">
+      {!user ? (
+        <div className="space-y-12">
+          <div className="font-bold">Let's plan for {name}</div>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+              <UserLoginForm form={form} isLoading={isLoading} />
+            </form>
+          </Form>
+        </div>
+      ) : (
+        <UserAvailability />
+      )}
+      <GroupAvailability />
     </div>
   );
 }
