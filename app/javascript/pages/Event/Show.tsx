@@ -2,14 +2,23 @@ import { useForm } from "react-hook-form";
 import { userFormSchema, userFormSchemaType } from "@/lib/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/ui/form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createUser } from "@/api/user";
 import { toast } from "sonner";
 import UserLoginForm from "./components/UserLoginForm";
 import UserAvailability from "./components/UserAvailability";
 import GroupAvailability from "./components/GroupAvailability";
+import prepareTimeSlots from "@/lib/prepareTimeSlots";
 
-function Show({ name, url }: { name: string; url: string }) {
+function Show({
+  name,
+  url,
+  timeSlots,
+}: {
+  name: string;
+  url: string;
+  timeSlots: any;
+}) {
   const [isLoading, setIsLoading] = useState(false);
   const [user, setUser] = useState("");
   const form = useForm<userFormSchemaType>({
@@ -19,6 +28,10 @@ function Show({ name, url }: { name: string; url: string }) {
       password: "",
     },
   });
+
+  useEffect(() => {
+    prepareTimeSlots(timeSlots);
+  }, [timeSlots]);
 
   const onSubmit = async (values: any) => {
     setIsLoading(true);
@@ -50,7 +63,7 @@ function Show({ name, url }: { name: string; url: string }) {
       ) : (
         <UserAvailability />
       )}
-      <GroupAvailability />
+      <GroupAvailability timeSlots={timeSlots} />
     </div>
   );
 }
