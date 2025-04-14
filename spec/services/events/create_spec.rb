@@ -44,5 +44,22 @@ RSpec.describe Events::Create do
       service = described_class.new(modified_params)
       expect { @result = service.create_time_slots_and_event }.not_to change(Event, :count)
     end
+
+    it "check if the urls are different" do
+      first_service = described_class.new(params)
+      second_service= described_class.new(params.merge(name: "Team Lunch"))
+      first_event = first_service.create_time_slots_and_event
+      second_event = second_service.create_time_slots_and_event
+      expect(first_event.data.url).not_to eq(second_event.data.url)
+      expect(first_event.data.url).to match(/^[A-Za-z0-9_]+$/)
+      expect(Event.count).to eq(2)
+    end
+
+    it "two different dates at the midnight" do
+      modified_params = params.merge(start_date: "2025-04-08", end_date: "2025-04-09", start_time: "23", end_time: "1")
+      service = described_class.new(modified_params)
+      event = service.create_time_slots_and_event
+      expect(event.data.time_slots.count).to eq(4)
+    end
   end
 end

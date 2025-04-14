@@ -17,7 +17,6 @@ class EventsController < ApplicationController
     if response.success?
       render json: response.data
     else
-      binding.pry
       handle_error(response.error)
     end
   end

@@ -11,7 +11,7 @@ class Events::Create
 
   def create_time_slots_and_event
     ActiveRecord::Base.transaction do
-      event = Event.new(name: @name, url: SecureRandom.base64(8).gsub("/", "_").gsub(/=+$/, ""))
+      event = Event.new(name: @name, url: generate_unique_event_url)
       create_time_slots(event)
       event.save!
       Result.success(event)
@@ -20,6 +20,7 @@ class Events::Create
     Result.failure(e)
   end
 
+  private
   def create_time_slots(event)
     time_slots = generate_time_slots
     time_slots.each do |slot|
@@ -44,5 +45,12 @@ class Events::Create
 
   def parse_and_combine_date_time(date, time)
     Time.zone.parse(date).change(hour: time.to_i)
+  end
+
+  def generate_unique_event_url
+    loop do
+      url = SecureRandom.base64(8).gsub("/", "_").gsub(/=+$/, "")
+      return url unless Event.exists?(url: url)
+    end
   end
 end
