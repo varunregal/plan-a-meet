@@ -9,6 +9,7 @@ import UserLoginForm from "./components/UserLoginForm";
 import UserAvailability from "./components/UserAvailability";
 import GroupAvailability from "./components/GroupAvailability";
 import prepareTimeSlots from "@/lib/prepareTimeSlots";
+import { TimeSlotProps } from "./event.types";
 
 function Show({
   name,
@@ -17,7 +18,7 @@ function Show({
 }: {
   name: string;
   url: string;
-  timeSlots: any;
+  timeSlots: TimeSlotProps[];
 }) {
   const [isLoading, setIsLoading] = useState(false);
   const [user, setUser] = useState("");
@@ -28,10 +29,6 @@ function Show({
       password: "",
     },
   });
-
-  useEffect(() => {
-    prepareTimeSlots(timeSlots);
-  }, [timeSlots]);
 
   const onSubmit = async (values: any) => {
     setIsLoading(true);

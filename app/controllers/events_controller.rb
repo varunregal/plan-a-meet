@@ -1,3 +1,4 @@
+require "pry"
 class EventsController < ApplicationController
   def show
     event = Event.find_by(url: params[:url])
@@ -16,6 +17,7 @@ class EventsController < ApplicationController
     if response.success?
       render json: response.data
     else
+      binding.pry
       handle_error(response.error)
     end
   end

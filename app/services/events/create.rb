@@ -1,5 +1,5 @@
 require "time"
-require "ostruct"
+require "pry"
 class Events::Create
   def initialize(params)
     @name = params.fetch(:name)
@@ -12,35 +12,37 @@ class Events::Create
   def create_time_slots_and_event
     ActiveRecord::Base.transaction do
       event = Event.new(name: @name, url: SecureRandom.base64(8).gsub("/", "_").gsub(/=+$/, ""))
-      create_time_slots_for_event(event)
+      create_time_slots(event)
       event.save!
       Result.success(event)
-    rescue => e
-      Result.failure(e)
+    end
+  rescue => e
+    Result.failure(e)
+  end
+
+  def create_time_slots(event)
+    time_slots = generate_time_slots
+    time_slots.each do |slot|
+      event.time_slots.build(start_time: slot[:start_date_time], end_time: slot[:end_date_time])
     end
   end
 
-  private
   def generate_time_slots
-    start_date_time = parse_date_and_combine_with_time(@start_date, @start_time)
-    end_date_time = parse_date_and_combine_with_time(@end_date, @end_time)
-
-    start_date_time.step(end_date_time, (1.to_f/24/2)).map do |dt|
-      { start_date_time: dt, end_date_time: dt + (1.to_f/24/2) }
+    start_date_time = parse_and_combine_date_time(@start_date, @start_time)
+    end_date_time = parse_and_combine_date_time(@end_date, @end_time)
+    if start_date_time > end_date_time
+      raise ArgumentError, "Start time cannot be after end time"
     end
+    result = []
+    current_time = start_date_time
+    while current_time < end_date_time
+      result << { start_date_time: current_time, end_date_time: current_time+30.minutes }
+      current_time += 30.minutes
+    end
+    result
   end
 
-  def create_time_slots_for_event(event)
-    generate_time_slots.each do |time_slot|
-      TimeSlot.create!(
-        start_time: time_slot[:start_date_time],
-        end_time: time_slot[:end_date_time],
-        event: event
-        )
-    end
-  end
-
-  def parse_date_and_combine_with_time(date, time)
-    DateTime.parse("#{Date.parse(date)} #{Time.zone.parse(time.to_s + ':00')}")
+  def parse_and_combine_date_time(date, time)
+    Time.zone.parse(date).change(hour: time.to_i)
   end
 end

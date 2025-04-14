@@ -40,22 +40,24 @@ function New() {
     setIsLoading(true);
     const event = {
       name: values.name,
-      start_date: values.day.from,
-      end_date: values.day.to,
+      start_date: values.day.from.toISOString(),
+      end_date: values.day.to.toISOString(),
       start_time: values.start_time,
       end_time: values.end_time,
     };
 
-    const response: EventResponseProps = await createEvent(event);
-    setIsLoading(false);
-    if (response.success) {
-      if (response.data)
-        router.visit(`/events/${response.data.url}`, {
-          method: "get",
-        });
-    } else {
-      toast.error(response.message);
-    }
+    console.log(values)
+
+    // const response: EventResponseProps = await createEvent(event);
+    // setIsLoading(false);
+    // if (response.success) {
+    //   if (response.data)
+    //     router.visit(`/events/${response.data.url}`, {
+    //       method: "get",
+    //     });
+    // } else {
+    //   toast.error(response.message);
+    // }
   };
   return (
     <div>

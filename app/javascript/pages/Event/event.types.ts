@@ -51,3 +51,10 @@ export type EventResponseProps = {
   message?: string;
   status?: string;
 };
+
+export type TimeSlotProps = {
+  start_time: string;
+  end_time: string;
+  event_id: number;
+  id: number
+}
