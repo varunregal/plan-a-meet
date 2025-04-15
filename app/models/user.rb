@@ -1,5 +1,5 @@
 class User < ApplicationRecord
+  has_many :user_availabilities, dependent: :destroy
   has_secure_password validations: false
-  belongs_to :event
-  validates :name, presence: true, uniqueness: { scope: :event_id }
+  validates :name, presence: true
 end

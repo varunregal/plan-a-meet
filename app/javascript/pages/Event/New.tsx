@@ -46,18 +46,16 @@ function New() {
       end_time: values.end_time,
     };
 
-    console.log(values)
-
-    // const response: EventResponseProps = await createEvent(event);
-    // setIsLoading(false);
-    // if (response.success) {
-    //   if (response.data)
-    //     router.visit(`/events/${response.data.url}`, {
-    //       method: "get",
-    //     });
-    // } else {
-    //   toast.error(response.message);
-    // }
+    const response: EventResponseProps = await createEvent(event);
+    setIsLoading(false);
+    if (response.success) {
+      if (response.data)
+        router.visit(`/events/${response.data.url}`, {
+          method: "get",
+        });
+    } else {
+      toast.error(response.message);
+    }
   };
   return (
     <div>

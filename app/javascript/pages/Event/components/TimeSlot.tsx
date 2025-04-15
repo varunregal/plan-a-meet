@@ -1,3 +1,4 @@
+import { format } from "date-fns";
 import { TimeSlotProps } from "../event.types";
 import {
   Tooltip,
@@ -7,18 +8,30 @@ import {
 } from "@/components/ui/tooltip";
 
 function TimeSlot({ slot }: { slot: TimeSlotProps }) {
+  const isHour =
+    (new Date(slot.start_time).getHours() * 60 +
+      new Date(slot.start_time).getMinutes()) %
+      60 ===
+    0;
+
   return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <div className={`w-15 h-3 bg-gray-300 border-gray-300`}></div>
-        </TooltipTrigger>
-        <TooltipContent>
-          <p>{slot.start_time}</p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <div className="relative">
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div className={`w-20 h-7 bg-gray-300 border-gray-300`}></div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{slot.start_time}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+      {isHour && (
+        <div className="absolute -left-7 -top-1 text-sm font-medium">
+          {format(slot.start_time, "H")}
+        </div>
+      )}
+    </div>
   );
-  // return <div className={`w-15 h-3 bg-gray-300 border-gray-300`}></div>;
 }
 export default TimeSlot;
