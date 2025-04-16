@@ -15,7 +15,7 @@ function GroupAvailability({ timeSlots }: { timeSlots: TimeSlotProps[] }) {
     <div className="flex flex-col gap-10">
       <div className="font-bold text-md">Group Availability</div>
       <div className="flex gap-2">
-        {Object.entries(tsMap).map(([date, slots]) => {
+        {Object.entries(tsMap).map(([date, slots], index) => {
           return (
             <div className="flex flex-col gap-[1px]" key={date}>
               <div className="flex flex-col items-center text-sm font-medium">
@@ -23,7 +23,7 @@ function GroupAvailability({ timeSlots }: { timeSlots: TimeSlotProps[] }) {
                 <div>{format(date, "iii")}</div>
               </div>
               {slots.map((slot: TimeSlotProps) => {
-                return <TimeSlot slot={slot} key={slot.id} />;
+                return <TimeSlot slot={slot} key={slot.id} column={index} />;
               })}
             </div>
           );

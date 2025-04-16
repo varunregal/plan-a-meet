@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/tooltip";
 
 // here the timezone in which the user is -- time will be displayed accordingly
-function TimeSlot({ slot }: { slot: TimeSlotProps }) {
+function TimeSlot({ slot, column }: { slot: TimeSlotProps; column: number }) {
   const isHour =
     (new Date(slot.start_time).getHours() * 60 +
       new Date(slot.start_time).getMinutes()) %
@@ -27,7 +27,7 @@ function TimeSlot({ slot }: { slot: TimeSlotProps }) {
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
-      {isHour && (
+      {isHour && column === 0 && (
         <div className="absolute -left-7 -top-1 text-sm font-medium">
           {format(parseISO(slot.start_time), "H")}
         </div>

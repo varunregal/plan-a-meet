@@ -5,10 +5,10 @@ RSpec.describe Events::Create do
     let (:params) do
       {
         name: "Bar Hopping",
-        start_date: "2025-04-08T21:53:04.295Z",
-        end_date: "2025-04-08T21:53:04.295Z",
-        start_time: "9",
-        end_time: "10",
+        start_date: "2025-04-19T21:53:04.295Z",
+        end_date: "2025-04-21T21:53:04.295Z",
+        start_time: "7",
+        end_time: "9",
         time_zone: "America/New_York"
       }
     end
@@ -21,11 +21,11 @@ RSpec.describe Events::Create do
       expect(result.success?).to be true
       expect(result.data).to be_a(Event)
       expect(result.data.name).to eq("Bar Hopping")
-      expect(result.data.time_slots.count).to eq(2)
+      expect(result.data.time_slots.count).to eq(12)
 
       first_slot = result.data.time_slots.first
-      expect(first_slot.start_time.hour).to eq(13) # UTC time
-      expect(first_slot.end_time.hour).to eq(13)
+      expect(first_slot.start_time.hour).to eq(11) # UTC time
+      expect(first_slot.end_time.hour).to eq(11)
       expect(first_slot.end_time.min).to eq(30)
     end
 
@@ -41,7 +41,7 @@ RSpec.describe Events::Create do
     end
 
     it "end_time is before start_time" do
-      modified_params = params.merge(end_time: "8")
+      modified_params = params.merge(end_date: "2025-04-19", end_time: "6")
       service = described_class.new(modified_params)
       expect { @result = service.create_time_slots_and_event }.not_to change(Event, :count)
     end
