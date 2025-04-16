@@ -4,9 +4,6 @@ import prepareTimeSlots from "@/lib/prepareTimeSlots";
 import { TimeSlotProps } from "../event.types";
 import { format } from "date-fns";
 
-// prepare this timeslots into map, so the date is the key and the timeslots are values
-//
-
 function GroupAvailability({ timeSlots }: { timeSlots: TimeSlotProps[] }) {
   const [tsMap, setTsMap] = useState<Record<string, TimeSlotProps[]>>({});
 
@@ -15,17 +12,18 @@ function GroupAvailability({ timeSlots }: { timeSlots: TimeSlotProps[] }) {
   }, [timeSlots]);
 
   return (
-    <div>
+    <div className="flex flex-col gap-10">
+      <div className="font-bold text-md">Group Availability</div>
       <div className="flex gap-2">
         {Object.entries(tsMap).map(([date, slots]) => {
           return (
-            <div className="flex flex-col gap-[1px]">
-              <div className="flex flex-col items-center">
+            <div className="flex flex-col gap-[1px]" key={date}>
+              <div className="flex flex-col items-center text-sm font-medium">
                 <div>{format(date, "MMM d")}</div>
                 <div>{format(date, "iii")}</div>
               </div>
               {slots.map((slot: TimeSlotProps) => {
-                return <TimeSlot slot={slot} />;
+                return <TimeSlot slot={slot} key={slot.id} />;
               })}
             </div>
           );

@@ -47,7 +47,7 @@ function Show({
     }
   };
   return (
-    <div className="grid grid-cols-2 gap-4">
+    <div className="grid grid-cols-2 gap-50">
       {!user ? (
         <div className="space-y-12">
           <div className="font-bold">Let's plan for {name}</div>

@@ -8,7 +8,8 @@ RSpec.describe Events::Create do
         start_date: "2025-04-08T21:53:04.295Z",
         end_date: "2025-04-08T21:53:04.295Z",
         start_time: "9",
-        end_time: "10"
+        end_time: "10",
+        time_zone: "America/New_York"
       }
     end
 
@@ -23,8 +24,8 @@ RSpec.describe Events::Create do
       expect(result.data.time_slots.count).to eq(2)
 
       first_slot = result.data.time_slots.first
-      expect(first_slot.start_time.hour).to eq(9)
-      expect(first_slot.end_time.hour).to eq(9)
+      expect(first_slot.start_time.hour).to eq(13) # UTC time
+      expect(first_slot.end_time.hour).to eq(13)
       expect(first_slot.end_time.min).to eq(30)
     end
 

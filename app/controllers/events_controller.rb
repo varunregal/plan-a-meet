@@ -8,7 +8,7 @@ class EventsController < ApplicationController
       timeSlots: event.time_slots
     }
   end
-  # Before creating an event, I need to create timeslots and associate it with the event
+
   def new
     render inertia: "Event/New"
   end
@@ -25,6 +25,6 @@ class EventsController < ApplicationController
 
   private
   def create_event_params
-    params.expect(event: [ :name, :start_date, :end_date, :start_time, :end_time ])
+    params.expect(event: [ :name, :start_date, :end_date, :start_time, :end_time, :time_zone ])
   end
 end

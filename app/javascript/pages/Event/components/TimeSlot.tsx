@@ -1,4 +1,4 @@
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
 import { TimeSlotProps } from "../event.types";
 import {
   Tooltip,
@@ -7,6 +7,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
+// here the timezone in which the user is -- time will be displayed accordingly
 function TimeSlot({ slot }: { slot: TimeSlotProps }) {
   const isHour =
     (new Date(slot.start_time).getHours() * 60 +
@@ -28,7 +29,7 @@ function TimeSlot({ slot }: { slot: TimeSlotProps }) {
       </TooltipProvider>
       {isHour && (
         <div className="absolute -left-7 -top-1 text-sm font-medium">
-          {format(slot.start_time, "H")}
+          {format(parseISO(slot.start_time), "H")}
         </div>
       )}
     </div>

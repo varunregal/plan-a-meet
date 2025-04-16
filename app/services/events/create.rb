@@ -7,6 +7,7 @@ class Events::Create
     @end_date = params.fetch(:end_date)
     @start_time = params.fetch(:start_time)
     @end_time = params.fetch(:end_time)
+    @time_zone = params.fetch(:time_zone)
   end
 
   def create_time_slots_and_event
@@ -44,7 +45,9 @@ class Events::Create
   end
 
   def parse_and_combine_date_time(date, time)
-    Time.zone.parse(date).change(hour: time.to_i)
+    Time.use_zone(@time_zone) do
+      Time.zone.parse(date).change(hour: time.to_i)
+    end
   end
 
   def generate_unique_event_url

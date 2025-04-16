@@ -9,6 +9,7 @@ class Users::Create
     ActiveRecord::Base.transaction do
       event = find_event
       user = find_and_create_user(event)
+      # availability = UserAvailability.create(user: user, event: event)
       Result.success(user)
     rescue => e
       Result.failure(e)
@@ -23,7 +24,7 @@ class Users::Create
   def find_and_create_user(event)
     user = User.find_by(name: @name)
     if !user
-      User.create(name: @name, password: @password || nil, event: event)
+      User.create(name: @name, password: @password || nil)
     else
       user
     end

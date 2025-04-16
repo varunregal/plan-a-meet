@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -17,7 +16,6 @@ import { EventResponseProps } from "./event.types";
 import { eventFormSchema, eventFormSchemaType } from "@/lib/schema";
 import { toast } from "sonner";
 import { useState } from "react";
-import { Loader2 } from "lucide-react";
 import { router } from "@inertiajs/react";
 import ButtonWithLoader from "./components/ButtonWithLoader";
 
@@ -38,12 +36,15 @@ function New() {
 
   const onSubmit = async (values: eventFormSchemaType) => {
     setIsLoading(true);
+    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
     const event = {
       name: values.name,
       start_date: values.day.from.toISOString(),
       end_date: values.day.to.toISOString(),
       start_time: values.start_time,
       end_time: values.end_time,
+      time_zone: timeZone,
     };
 
     const response: EventResponseProps = await createEvent(event);
