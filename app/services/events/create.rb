@@ -30,16 +30,17 @@ class Events::Create
   end
 
   def generate_time_slots
-    start_date_time = parse_and_combine_date_time(@start_date, @start_time)
-    end_date_time = parse_and_combine_date_time(@end_date, @end_time)
-    if start_date_time > end_date_time
-      raise ArgumentError, "Start time cannot be after end time"
-    end
     result = []
-    current_time = start_date_time
-    while current_time < end_date_time
-      result << { start_date_time: current_time, end_date_time: current_time+30.minutes }
-      current_time += 30.minutes
+    (Date.parse(@start_date)..Date.parse(@end_date)).each do |d|
+      start_date_time = parse_and_combine_date_time(d.to_s, @start_time)
+      end_date_time = parse_and_combine_date_time(d.to_s, @end_time)
+      if end_date_time < start_date_time
+        raise ArgumentError, "Start Date cannot be before End Date"
+      end
+      while start_date_time < end_date_time do
+        result << { start_date_time: start_date_time, end_date_time: start_date_time + 30.minutes }
+        start_date_time = start_date_time + 30.minutes
+      end
     end
     result
   end

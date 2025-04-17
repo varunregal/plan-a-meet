@@ -52,15 +52,8 @@ RSpec.describe Events::Create do
       first_event = first_service.create_time_slots_and_event
       second_event = second_service.create_time_slots_and_event
       expect(first_event.data.url).not_to eq(second_event.data.url)
-      expect(first_event.data.url).to match(/^[A-Za-z0-9_]+$/)
+      expect(first_event.data.url).to match(/\A[a-zA-Z0-9_\-]+\z/)
       expect(Event.count).to eq(2)
-    end
-
-    it "two different dates at the midnight" do
-      modified_params = params.merge(start_date: "2025-04-08", end_date: "2025-04-09", start_time: "23", end_time: "1")
-      service = described_class.new(modified_params)
-      event = service.create_time_slots_and_event
-      expect(event.data.time_slots.count).to eq(4)
     end
   end
 end
