@@ -34,12 +34,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_15_231813) do
   create_table "user_availabilities", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "event_id", null: false
-    t.bigint "time_slot_id", null: false
+    t.bigint "time_slot_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["event_id"], name: "index_user_availabilities_on_event_id"
     t.index ["time_slot_id"], name: "index_user_availabilities_on_time_slot_id"
-    t.index ["user_id", "event_id", "time_slot_id"], name: "index_user_availabilities_on_user_event_slot", unique: true
+    t.index ["user_id", "event_id"], name: "index_user_availabilities_on_user_event", unique: true
     t.index ["user_id"], name: "index_user_availabilities_on_user_id"
   end
 

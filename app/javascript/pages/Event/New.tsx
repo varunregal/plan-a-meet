@@ -47,16 +47,16 @@ function New() {
       time_zone: timeZone,
     };
     console.log(event);
-    // const response: EventResponseProps = await createEvent(event);
-    // setIsLoading(false);
-    // if (response.success) {
-    //   if (response.data)
-    //     router.visit(`/events/${response.data.url}`, {
-    //       method: "get",
-    //     });
-    // } else {
-    //   toast.error(response.message);
-    // }
+    const response: EventResponseProps = await createEvent(event);
+    setIsLoading(false);
+    if (response.success) {
+      if (response.data)
+        router.visit(`/events/${response.data.url}`, {
+          method: "get",
+        });
+    } else {
+      toast.error(response.message);
+    }
   };
   return (
     <div>
@@ -100,14 +100,14 @@ function New() {
                 form={form}
                 name={"start_time"}
                 placeholder="Select start time"
-                label="No earlier than"
+                label="Start time"
               />
 
               <SelectTime
                 form={form}
                 name={"end_time"}
                 placeholder="Select end time"
-                label="No later than"
+                label="End time"
               />
             </div>
           </div>

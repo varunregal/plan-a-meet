@@ -12,13 +12,18 @@ export const eventFormSchema = z.object({
   }),
   start_time: z.string(),
   end_time: z.string(),
+}).refine((data) => {
+  return parseInt(data.end_time) > parseInt(data.start_time)
+}, {
+  message: "End time must be later than Start time",
+  path: ["end_time"]
 });
 
 export type eventFormSchemaType = z.infer<typeof eventFormSchema>;
 
 export const userFormSchema = z.object({
   name: z.string().min(2, "Name should be at least 2 characters"),
-  password: z.string().min(8, "Password should be at least 8 characters")
+  password: z.string().optional()
 })
 
 export type userFormSchemaType = z.infer<typeof userFormSchema>

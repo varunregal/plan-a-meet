@@ -21,7 +21,7 @@ function Show({
   timeSlots: TimeSlotProps[];
 }) {
   const [isLoading, setIsLoading] = useState(false);
-  const [user, setUser] = useState("");
+  const [userData, setUserData] = useState("");
   const form = useForm<userFormSchemaType>({
     resolver: zodResolver(userFormSchema),
     defaultValues: {
@@ -41,14 +41,14 @@ function Show({
     setIsLoading(false);
     if (response.success) {
       toast.success("User created successfully!");
-      setUser(response.data);
+      setUserData(response.data);
     } else {
       toast.error(response.message);
     }
   };
   return (
-    <div className="grid grid-cols-2 gap-50">
-      {!user ? (
+    <div className="grid grid-cols-2 gap-30">
+      {!userData ? (
         <div className="space-y-12">
           <div className="font-bold">Let's plan for {name}</div>
           <Form {...form}>
@@ -58,7 +58,7 @@ function Show({
           </Form>
         </div>
       ) : (
-        <UserAvailability />
+        <UserAvailability timeSlots={timeSlots} />
       )}
       <GroupAvailability timeSlots={timeSlots} />
     </div>
