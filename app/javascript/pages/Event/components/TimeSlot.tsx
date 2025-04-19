@@ -8,7 +8,15 @@ import {
 } from "@/components/ui/tooltip";
 
 // here the timezone in which the user is -- time will be displayed accordingly
-function TimeSlot({ slot, column }: { slot: TimeSlotProps; column: number }) {
+function TimeSlot({
+  slot,
+  column,
+  onClick,
+}: {
+  slot: TimeSlotProps;
+  column: number;
+  onClick: any;
+}) {
   const isHour =
     (new Date(slot.start_time).getHours() * 60 +
       new Date(slot.start_time).getMinutes()) %
@@ -20,7 +28,10 @@ function TimeSlot({ slot, column }: { slot: TimeSlotProps; column: number }) {
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-            <div className={`w-20 h-7 bg-gray-300 border-gray-300`}></div>
+            <div
+              className={`w-20 h-7 bg-gray-300 border-gray-300`}
+              onClick={() => onClick(slot.id)}
+            ></div>
           </TooltipTrigger>
           <TooltipContent>
             <p>{slot.start_time}</p>

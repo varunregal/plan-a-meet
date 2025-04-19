@@ -23,7 +23,14 @@ function GroupAvailability({ timeSlots }: { timeSlots: TimeSlotProps[] }) {
                 <div>{format(date, "iii")}</div>
               </div>
               {slots.map((slot: TimeSlotProps) => {
-                return <TimeSlot slot={slot} key={slot.id} column={index} />;
+                return (
+                  <TimeSlot
+                    slot={slot}
+                    key={slot.id}
+                    column={index}
+                    onClick={() => {}}
+                  />
+                );
               })}
             </div>
           );

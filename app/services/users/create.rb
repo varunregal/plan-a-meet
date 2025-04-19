@@ -1,6 +1,5 @@
 class Users::Create
   def initialize(params)
-    puts params, "params", params[:url], "name", params[:name]
     @url = params[:url]
     @name = params[:name]
     @password = params[:password]
@@ -11,7 +10,7 @@ class Users::Create
       event = find_event
       user = find_and_create_user(event)
       availability = find_and_create_user_availability(event, user)
-      Result.success({ availability: availability, event: event, user: user })
+      Result.success({ availability:, user: })
     rescue => e
       Result.failure(e)
     end
@@ -32,7 +31,7 @@ class Users::Create
   end
 
   def find_and_create_user_availability(event, user)
-    availability = UserAvailability.find_by(event: event, user: user)
+    availability = UserAvailability.where(event: event, user: user)
     if !availability
       UserAvailability.create(event: event, user: user)
     else

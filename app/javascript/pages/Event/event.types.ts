@@ -58,3 +58,8 @@ export type TimeSlotProps = {
   event_id: number;
   id: number
 }
+
+export type UserProps = {
+  id: number,
+  name: string
+}

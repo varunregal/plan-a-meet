@@ -2,14 +2,13 @@ import { useForm } from "react-hook-form";
 import { userFormSchema, userFormSchemaType } from "@/lib/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/ui/form";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { createUser } from "@/api/user";
 import { toast } from "sonner";
 import UserLoginForm from "./components/UserLoginForm";
 import UserAvailability from "./components/UserAvailability";
 import GroupAvailability from "./components/GroupAvailability";
-import prepareTimeSlots from "@/lib/prepareTimeSlots";
-import { TimeSlotProps } from "./event.types";
+import { TimeSlotProps, UserProps } from "./event.types";
 
 function Show({
   name,
@@ -21,7 +20,7 @@ function Show({
   timeSlots: TimeSlotProps[];
 }) {
   const [isLoading, setIsLoading] = useState(false);
-  const [userData, setUserData] = useState("");
+  const [userData, setUserData] = useState<any>({});
   const form = useForm<userFormSchemaType>({
     resolver: zodResolver(userFormSchema),
     defaultValues: {
@@ -46,9 +45,10 @@ function Show({
       toast.error(response.message);
     }
   };
+  console.log(userData);
   return (
     <div className="grid grid-cols-2 gap-30">
-      {!userData ? (
+      {Object.keys(userData).length === 0 ? (
         <div className="space-y-12">
           <div className="font-bold">Let's plan for {name}</div>
           <Form {...form}>
@@ -58,7 +58,11 @@ function Show({
           </Form>
         </div>
       ) : (
-        <UserAvailability timeSlots={timeSlots} />
+        <UserAvailability
+          timeSlots={timeSlots}
+          url={url}
+          userId={userData.id}
+        />
       )}
       <GroupAvailability timeSlots={timeSlots} />
     </div>

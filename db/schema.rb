@@ -39,7 +39,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_15_231813) do
     t.datetime "updated_at", null: false
     t.index ["event_id"], name: "index_user_availabilities_on_event_id"
     t.index ["time_slot_id"], name: "index_user_availabilities_on_time_slot_id"
-    t.index ["user_id", "event_id"], name: "index_user_availabilities_on_user_event", unique: true
     t.index ["user_id"], name: "index_user_availabilities_on_user_id"
   end
 
