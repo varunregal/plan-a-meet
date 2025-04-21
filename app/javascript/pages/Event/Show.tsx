@@ -60,8 +60,9 @@ function Show({
       ) : (
         <UserAvailability
           timeSlots={timeSlots}
+          userSelectedSlots = {userData?.availability.map((item: any) => item.time_slot_id)}
           url={url}
-          userId={userData.id}
+          userId={userData?.user?.id}
         />
       )}
       <GroupAvailability timeSlots={timeSlots} />

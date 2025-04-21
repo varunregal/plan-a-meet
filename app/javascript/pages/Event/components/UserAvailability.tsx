@@ -9,13 +9,15 @@ function UserAvailability({
   timeSlots,
   url,
   userId,
+  userSelectedSlots
 }: {
   timeSlots: TimeSlotProps[];
   url: string;
   userId: number;
+  userSelectedSlots: any
 }) {
   const [tsMap, setTsMap] = useState<Record<string, TimeSlotProps[]>>({});
-
+console.log({timeSlots})
   useEffect(() => {
     setTsMap(prepareTimeSlots(timeSlots));
   }, [timeSlots]);
@@ -46,6 +48,7 @@ function UserAvailability({
                 return (
                   <TimeSlot
                     slot={slot}
+                    isUserSelected={userSelectedSlots.includes(slot.id)}
                     key={slot.id}
                     column={index}
                     onClick={handleTimeSlotClick}
