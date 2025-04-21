@@ -17,7 +17,8 @@ function UserAvailability({
   userSelectedSlots: any
 }) {
   const [tsMap, setTsMap] = useState<Record<string, TimeSlotProps[]>>({});
-console.log({timeSlots})
+  const [userTimeSlots, setUserTimeSlots] = useState(userSelectedSlots)
+
   useEffect(() => {
     setTsMap(prepareTimeSlots(timeSlots));
   }, [timeSlots]);
@@ -25,14 +26,14 @@ console.log({timeSlots})
   const handleTimeSlotClick = async (slot: number) => {
     console.log("inside handle click");
     const availability = {
-      url,
       user_id: userId,
       time_slots: [slot],
     };
-    console.log({ availability });
-    const response = await createUserAvailability(availability);
-    console.log(response);
+    const response = await createUserAvailability(url, availability);
+    if(response.success)
+      setUserTimeSlots((prev: number[]) => ([...prev, ...response.data.availabilities]))
   };
+  console.log(userTimeSlots)
   return (
     <div className="flex flex-col gap-10">
       <div className="font-bold text-md">Please select your availability</div>
@@ -48,7 +49,7 @@ console.log({timeSlots})
                 return (
                   <TimeSlot
                     slot={slot}
-                    isUserSelected={userSelectedSlots.includes(slot.id)}
+                    isUserSelected={userTimeSlots.includes(slot.id)}
                     key={slot.id}
                     column={index}
                     onClick={handleTimeSlotClick}

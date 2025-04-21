@@ -1,15 +1,43 @@
 import { useEffect, useMemo, useState } from "react";
 import TimeSlot from "./TimeSlot";
 import prepareTimeSlots from "@/lib/prepareTimeSlots";
-import { TimeSlotProps } from "../event.types";
+import { AvailabilityProps, TimeSlotProps } from "../event.types";
 import { format } from "date-fns";
+import { getUserEventAvailabilities } from "@/api/availability";
 
-function GroupAvailability({ timeSlots }: { timeSlots: TimeSlotProps[] }) {
+function GroupAvailability({
+  timeSlots,
+  url,
+}: {
+  timeSlots: TimeSlotProps[];
+  url: string;
+}) {
   const [tsMap, setTsMap] = useState<Record<string, TimeSlotProps[]>>({});
-
+  const [availabilities, setAvailabilities] = useState([])
+  useEffect(() => {
+    const getAvailabilities = async () => {
+      const response = await getUserEventAvailabilities(url);
+      
+      if (response.success){
+        const availabilitiesObj = response.data.reduce((acc: Record<number, number[]>, current: AvailabilityProps) => {
+          acc[current.user_id] = acc[current.user_id] || [];
+          if(current.time_slot_id)
+            acc[current.user_id].push(current.time_slot_id)
+          return acc;
+        }, {})
+        setAvailabilities(availabilitiesObj)
+      }
+        
+      else console.warn(response.message);
+    };
+    getAvailabilities();
+  }, []);
+  
   useEffect(() => {
     setTsMap(prepareTimeSlots(timeSlots));
   }, [timeSlots]);
+
+  console.log(availabilities)
 
   return (
     <div className="flex flex-col gap-10">

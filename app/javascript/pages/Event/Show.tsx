@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import UserLoginForm from "./components/UserLoginForm";
 import UserAvailability from "./components/UserAvailability";
 import GroupAvailability from "./components/GroupAvailability";
-import { TimeSlotProps, UserProps } from "./event.types";
+import { AvailabilityProps, TimeSlotProps, UserProps } from "./event.types";
 
 function Show({
   name,
@@ -45,7 +45,14 @@ function Show({
       toast.error(response.message);
     }
   };
-  console.log(userData);
+  function groupAvailabilitySlots(availabilities: AvailabilityProps[]) {
+    console.log(availabilities)
+    availabilities.reduce((acc: any, current: any) => {
+      acc[current.user_id] = acc[current.user_id] || [];
+      acc[current.user_id].push(current.time_slot_id);
+      return acc;
+    }, {});
+  }
   return (
     <div className="grid grid-cols-2 gap-30">
       {Object.keys(userData).length === 0 ? (
@@ -60,12 +67,14 @@ function Show({
       ) : (
         <UserAvailability
           timeSlots={timeSlots}
-          userSelectedSlots = {userData?.availability.map((item: any) => item.time_slot_id)}
+          userSelectedSlots={userData?.availability.map(
+            (item: AvailabilityProps) => item.time_slot_id
+          )}
           url={url}
           userId={userData?.user?.id}
         />
       )}
-      <GroupAvailability timeSlots={timeSlots} />
+      <GroupAvailability timeSlots={timeSlots} url={url}/>
     </div>
   );
 }
