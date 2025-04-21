@@ -12,26 +12,29 @@ function TimeSlot({
   slot,
   column,
   onClick,
-  isUserSelected
+  color
+  // isUserSelected
 }: {
   slot: TimeSlotProps;
   column: number;
   onClick: any;
-  isUserSelected: boolean
+  color: string
+  // isUserSelected: boolean
 }) {
   const isHour =
     (new Date(slot.start_time).getHours() * 60 +
       new Date(slot.start_time).getMinutes()) %
       60 ===
     0;
-
+  // console.log(color, slot)
   return (
     <div className="relative">
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
             <div
-              className={`w-20 h-7 ${isUserSelected ? 'bg-purple-200 border-purple-200' : 'bg-gray-300 border-purple-300'}`}
+              className={`w-20 h-7`}
+              style={{backgroundColor: color}}
               onClick={() => onClick(slot.id)}
             ></div>
           </TooltipTrigger>
