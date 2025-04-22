@@ -19,6 +19,6 @@ class UserAvailabilitiesController < ApplicationController
     @event = Event.find_by(url: params[:event_url])
   end
   def user_availabilities_params
-    params.expect(user_availabilities: [ :user_id, time_slots: [] ])
+    params.expect(user_availabilities: [ :user_id, :time_slot ])
   end
 end

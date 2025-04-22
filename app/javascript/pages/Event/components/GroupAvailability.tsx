@@ -27,34 +27,35 @@ function prepareGroupTimeSlots(
   );
 }
 
-function GroupAvailability() {
-  const { eventTimeSlots, eventUrl, userTimeSlots } = useAvailabilityContext();
+function GroupAvailability({
+  url,
+  eventTimeSlots,
+}: {
+  url: string;
+  eventTimeSlots: TimeSlotProps[];
+}) {
+  const { groupTimeSlots, dispatch } = useAvailabilityContext();
   const [tsMap, setTsMap] = useState<Record<string, TimeSlotProps[]>>({});
-  const [availabilities, setAvailabilities] = useState<
-    Record<number, number[]>
-  >({});
+
   const numOfUsers = useRef(0);
   useEffect(() => {
     const getAvailabilities = async () => {
-      const response = await getUserGroupAvailabilities(eventUrl);
+      const response = await getUserGroupAvailabilities(url);
       if (response.success) {
         const availabilitiesObj = prepareGroupTimeSlots(
           response.data,
           numOfUsers
         );
-        setAvailabilities(availabilitiesObj);
+        dispatch({ type: "SET_GROUP_TIME_SLOTS", payload: availabilitiesObj });
       } else console.warn(response.message);
     };
     getAvailabilities();
   }, []);
 
-  useEffect(() => {}, [userTimeSlots]);
-
   useEffect(() => {
     setTsMap(prepareTimeSlots(eventTimeSlots));
   }, [eventTimeSlots]);
-
-  console.log({ userTimeSlots });
+  console.log({ groupTimeSlots });
   return (
     <div className="flex flex-col gap-10">
       <div className="font-bold text-md">Group Availability</div>
@@ -73,7 +74,7 @@ function GroupAvailability() {
                     key={slot.id}
                     column={index}
                     color={getColor(
-                      (availabilities[slot.id] || []).length,
+                      (groupTimeSlots[slot.id] || []).length,
                       numOfUsers.current
                     )}
                     onClick={() => {}}

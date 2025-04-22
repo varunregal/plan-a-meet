@@ -7,11 +7,15 @@ import { createUserAvailability } from "@/api/availability";
 import { getColor } from "@/lib/getColor";
 import { useAvailabilityContext } from "@/pages/Availability/context/AvailabilityContext";
 
-function UserAvailability() {
-  const { eventTimeSlots, eventUrl, userId, userTimeSlots, setUserTimeSlots } =
-    useAvailabilityContext();
+function UserAvailability({
+  url,
+  eventTimeSlots,
+}: {
+  url: string;
+  eventTimeSlots: TimeSlotProps[];
+}) {
   const [tsMap, setTsMap] = useState<Record<string, TimeSlotProps[]>>({});
-  // const [userTimeSlots, setUserTimeSlots] = useState(userSelectedSlots);
+  const { userId, userTimeSlots, dispatch } = useAvailabilityContext();
 
   useEffect(() => {
     setTsMap(prepareTimeSlots(eventTimeSlots));
@@ -20,15 +24,20 @@ function UserAvailability() {
   const handleTimeSlotClick = async (slot: number) => {
     const availability = {
       user_id: userId,
-      time_slots: [slot],
+      time_slot: slot,
     };
-    const response = await createUserAvailability(eventUrl, availability);
-    if (response.success)
-      setUserTimeSlots((prev: number[]) => [
-        ...prev,
-        ...response.data.availabilities,
-      ]);
-    else {
+    const response = await createUserAvailability(url, availability);
+    console.log({ response });
+    if (response.success && userId) {
+      dispatch({
+        type: "ADD_USER_SLOT",
+        // payload: response.data.availability.time_slot_id,
+        payload: {
+          userId,
+          time_slot_id: response.data.availability.time_slot_id,
+        },
+      });
+    } else {
       console.warn("unable to create a time slot");
     }
   };

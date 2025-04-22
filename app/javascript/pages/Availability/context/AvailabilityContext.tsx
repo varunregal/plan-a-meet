@@ -1,0 +1,106 @@
+// userTimeSlots
+// groupTimeSlots
+// addUserTimeSlot
+// deleteUserTimeSlot
+// eventURL
+// userId
+
+import {
+  createContext,
+  Dispatch,
+  ReactNode,
+  useContext,
+  useReducer,
+} from "react";
+
+type State = {
+  userId: number | null;
+  eventURL: string | null;
+  userTimeSlots: number[];
+  groupTimeSlots: Record<number, number[]>;
+};
+
+type Action =
+  | { type: "SET_USER"; payload: number }
+  | { type: "SET_EVENT"; payload: string }
+  | {
+      type: "ADD_USER_SLOT";
+      payload: { userId: number | null; time_slot_id: number };
+    }
+  | {
+      type: "DELETE_USER_SLOT";
+      payload: { userId: number; time_slot_id: number };
+    }
+  | { type: "SET_USER_TIME_SLOTS"; payload: number[] }
+  | { type: "SET_GROUP_TIME_SLOTS"; payload: Record<number, number[]> };
+
+const AvailabilityReducer = (state: State, action: Action): State => {
+  switch (action.type) {
+    case "SET_USER":
+      return { ...state, userId: action.payload };
+    case "SET_EVENT":
+      return { ...state, eventURL: action.payload };
+    case "ADD_USER_SLOT":
+      if (!action.payload.userId) return { ...state };
+      const key = action.payload.time_slot_id;
+      const value = state.groupTimeSlots[key] || [];
+
+      return {
+        ...state,
+        userTimeSlots: [...state.userTimeSlots, action.payload.time_slot_id],
+        groupTimeSlots: {
+          ...state.groupTimeSlots,
+          [key]: [...value, action.payload.userId],
+        },
+      };
+    case "DELETE_USER_SLOT":
+      return {
+        ...state,
+        userTimeSlots: state.userTimeSlots.filter(
+          (item: number) => item !== action.payload.time_slot_id
+        ),
+      };
+    case "SET_USER_TIME_SLOTS":
+      return {
+        ...state,
+        userTimeSlots: action.payload,
+      };
+    case "SET_GROUP_TIME_SLOTS":
+      return {
+        ...state,
+        groupTimeSlots: action.payload,
+      };
+    default:
+      return state;
+  }
+};
+
+const initialState: State = {
+  userId: null,
+  eventURL: null,
+  userTimeSlots: [],
+  groupTimeSlots: [],
+};
+
+const AvailabilityContext = createContext<
+  (State & { dispatch: Dispatch<Action> }) | undefined
+>(undefined);
+
+export const AvailabilityProvider = ({ children }: { children: ReactNode }) => {
+  const [state, dispatch] = useReducer(AvailabilityReducer, initialState);
+  return (
+    <AvailabilityContext.Provider value={{ ...state, dispatch }}>
+      {children}
+    </AvailabilityContext.Provider>
+  );
+};
+
+export const useAvailabilityContext = () => {
+  const context = useContext(AvailabilityContext);
+  if (!context) {
+    throw new Error(
+      "useAvailabilityContext should be used inside AvailabilityProvider"
+    );
+  }
+  return context;
+};
