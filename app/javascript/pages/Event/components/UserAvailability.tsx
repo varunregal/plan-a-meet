@@ -5,31 +5,24 @@ import { format } from "date-fns";
 import TimeSlot from "./TimeSlot";
 import { createUserAvailability } from "@/api/availability";
 import { getColor } from "@/lib/getColor";
+import { useAvailabilityContext } from "@/pages/Availability/context/AvailabilityContext";
 
-function UserAvailability({
-  timeSlots,
-  url,
-  userId,
-  userSelectedSlots,
-}: {
-  timeSlots: TimeSlotProps[];
-  url: string;
-  userId: number;
-  userSelectedSlots: any;
-}) {
+function UserAvailability() {
+  const { eventTimeSlots, eventUrl, userId, userTimeSlots, setUserTimeSlots } =
+    useAvailabilityContext();
   const [tsMap, setTsMap] = useState<Record<string, TimeSlotProps[]>>({});
-  const [userTimeSlots, setUserTimeSlots] = useState(userSelectedSlots);
+  // const [userTimeSlots, setUserTimeSlots] = useState(userSelectedSlots);
 
   useEffect(() => {
-    setTsMap(prepareTimeSlots(timeSlots));
-  }, [timeSlots]);
+    setTsMap(prepareTimeSlots(eventTimeSlots));
+  }, [eventTimeSlots]);
 
   const handleTimeSlotClick = async (slot: number) => {
     const availability = {
       user_id: userId,
       time_slots: [slot],
     };
-    const response = await createUserAvailability(url, availability);
+    const response = await createUserAvailability(eventUrl, availability);
     if (response.success)
       setUserTimeSlots((prev: number[]) => [
         ...prev,
@@ -39,6 +32,7 @@ function UserAvailability({
       console.warn("unable to create a time slot");
     }
   };
+
   return (
     <div className="flex flex-col gap-10">
       <div className="font-bold text-md">Please select your availability</div>

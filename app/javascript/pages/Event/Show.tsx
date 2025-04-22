@@ -9,6 +9,7 @@ import UserLoginForm from "./components/UserLoginForm";
 import UserAvailability from "./components/UserAvailability";
 import GroupAvailability from "./components/GroupAvailability";
 import { AvailabilityProps, TimeSlotProps, UserProps } from "./event.types";
+import { AvailabilityContext } from "../Availability/context/AvailabilityContext";
 
 function Show({
   name,
@@ -21,6 +22,8 @@ function Show({
 }) {
   const [isLoading, setIsLoading] = useState(false);
   const [userData, setUserData] = useState<any>({});
+  const [userTimeSlots, setUserTimeSlots] = useState<number[]>([]);
+
   const form = useForm<userFormSchemaType>({
     resolver: zodResolver(userFormSchema),
     defaultValues: {
@@ -39,43 +42,47 @@ function Show({
     const response = await createUser(user);
     setIsLoading(false);
     if (response.success) {
-      toast.success("User created successfully!");
+      toast.success("User signed in successfully!");
       setUserData(response.data);
+      setUserTimeSlots(
+        response.data.availability.map(
+          (item: AvailabilityProps) => item.time_slot_id
+        )
+      );
     } else {
       toast.error(response.message);
     }
   };
-  function groupAvailabilitySlots(availabilities: AvailabilityProps[]) {
-    console.log(availabilities)
-    availabilities.reduce((acc: any, current: any) => {
-      acc[current.user_id] = acc[current.user_id] || [];
-      acc[current.user_id].push(current.time_slot_id);
-      return acc;
-    }, {});
-  }
+
   return (
-    <div className="grid grid-cols-2 gap-30">
-      {Object.keys(userData).length === 0 ? (
-        <div className="space-y-12">
-          <div className="font-bold">Let's plan for {name}</div>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-              <UserLoginForm form={form} isLoading={isLoading} />
-            </form>
-          </Form>
-        </div>
-      ) : (
-        <UserAvailability
-          timeSlots={timeSlots}
-          userSelectedSlots={userData?.availability.map(
-            (item: AvailabilityProps) => item.time_slot_id
-          )}
-          url={url}
-          userId={userData?.user?.id}
-        />
-      )}
-      <GroupAvailability timeSlots={timeSlots} url={url}/>
-    </div>
+    <AvailabilityContext.Provider
+      value={{
+        eventTimeSlots: timeSlots,
+        eventUrl: url,
+        userId: userData?.user?.id,
+        userTimeSlots,
+        setUserTimeSlots,
+      }}
+    >
+      <div className="grid grid-cols-2 gap-30">
+        {Object.keys(userData).length === 0 ? (
+          <div className="space-y-12">
+            <div className="font-bold">Let's plan for {name}</div>
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-5"
+              >
+                <UserLoginForm form={form} isLoading={isLoading} />
+              </form>
+            </Form>
+          </div>
+        ) : (
+          <UserAvailability />
+        )}
+        <GroupAvailability />
+      </div>
+    </AvailabilityContext.Provider>
   );
 }
 

@@ -25,7 +25,7 @@ export const createUserAvailability = async (
   }
 };
 
-export const getUserEventAvailabilities = async (url: string) => {
+export const getUserGroupAvailabilities = async (url: string) => {
   try {
     const response = await api.get(`/events/${url}/user_availabilities`);
     return { success: true, data: response.data };

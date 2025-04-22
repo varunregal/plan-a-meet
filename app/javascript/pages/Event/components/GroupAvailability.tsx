@@ -3,44 +3,44 @@ import TimeSlot from "./TimeSlot";
 import prepareTimeSlots from "@/lib/prepareTimeSlots";
 import { AvailabilityProps, TimeSlotProps } from "../event.types";
 import { format } from "date-fns";
-import { getUserEventAvailabilities } from "@/api/availability";
+import { getUserGroupAvailabilities } from "@/api/availability";
 import { getColor } from "@/lib/getColor";
+import { useAvailabilityContext } from "@/pages/Availability/context/AvailabilityContext";
 
-/**
- * Display the time slots based on the frequency, we can also track which users have that particular time slot
- * time_slot: [user_id1, user_id2]
- *
- */
+function prepareGroupTimeSlots(
+  availabilities: any,
+  numOfUsers: { current: number }
+) {
+  return availabilities.reduce(
+    (acc: Record<number, number[]>, current: AvailabilityProps) => {
+      if (current.time_slot_id) {
+        acc[current.time_slot_id] = acc[current.time_slot_id] || [];
+        acc[current.time_slot_id].push(current.user_id);
+        numOfUsers.current = Math.max(
+          numOfUsers.current,
+          acc[current.time_slot_id].length
+        );
+      }
+      return acc;
+    },
+    {}
+  );
+}
 
-
-
-function GroupAvailability({
-  timeSlots,
-  url,
-}: {
-  timeSlots: TimeSlotProps[];
-  url: string;
-}) {
+function GroupAvailability() {
+  const { eventTimeSlots, eventUrl, userTimeSlots } = useAvailabilityContext();
   const [tsMap, setTsMap] = useState<Record<string, TimeSlotProps[]>>({});
-  const [availabilities, setAvailabilities] = useState<Record<number, number[]>>({});
+  const [availabilities, setAvailabilities] = useState<
+    Record<number, number[]>
+  >({});
   const numOfUsers = useRef(0);
   useEffect(() => {
     const getAvailabilities = async () => {
-      const response = await getUserEventAvailabilities(url);
+      const response = await getUserGroupAvailabilities(eventUrl);
       if (response.success) {
-        const availabilitiesObj = response.data.reduce(
-          (acc: Record<number, number[]>, current: AvailabilityProps) => {
-            if (current.time_slot_id) {
-              acc[current.time_slot_id] = acc[current.time_slot_id] || [];
-              acc[current.time_slot_id].push(current.user_id);
-              numOfUsers.current = Math.max(
-                numOfUsers.current,
-                acc[current.time_slot_id].length
-              );
-            }
-            return acc;
-          },
-          {}
+        const availabilitiesObj = prepareGroupTimeSlots(
+          response.data,
+          numOfUsers
         );
         setAvailabilities(availabilitiesObj);
       } else console.warn(response.message);
@@ -48,12 +48,13 @@ function GroupAvailability({
     getAvailabilities();
   }, []);
 
+  useEffect(() => {}, [userTimeSlots]);
+
   useEffect(() => {
-    setTsMap(prepareTimeSlots(timeSlots));
-  }, [timeSlots]);
+    setTsMap(prepareTimeSlots(eventTimeSlots));
+  }, [eventTimeSlots]);
 
-  console.log(availabilities);
-
+  console.log({ userTimeSlots });
   return (
     <div className="flex flex-col gap-10">
       <div className="font-bold text-md">Group Availability</div>
