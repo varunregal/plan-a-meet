@@ -1,10 +1,3 @@
-// userTimeSlots
-// groupTimeSlots
-// addUserTimeSlot
-// deleteUserTimeSlot
-// eventURL
-// userId
-
 import {
   createContext,
   Dispatch,
@@ -15,14 +8,12 @@ import {
 
 type State = {
   userId: number | null;
-  eventURL: string | null;
   userTimeSlots: number[];
   groupTimeSlots: Record<number, number[]>;
 };
 
 type Action =
   | { type: "SET_USER"; payload: number }
-  | { type: "SET_EVENT"; payload: string }
   | {
       type: "ADD_USER_SLOT";
       payload: { userId: number | null; time_slot_id: number };
@@ -38,8 +29,6 @@ const AvailabilityReducer = (state: State, action: Action): State => {
   switch (action.type) {
     case "SET_USER":
       return { ...state, userId: action.payload };
-    case "SET_EVENT":
-      return { ...state, eventURL: action.payload };
     case "ADD_USER_SLOT":
       if (!action.payload.userId) return { ...state };
       const key = action.payload.time_slot_id;
@@ -77,7 +66,6 @@ const AvailabilityReducer = (state: State, action: Action): State => {
 
 const initialState: State = {
   userId: null,
-  eventURL: null,
   userTimeSlots: [],
   groupTimeSlots: [],
 };

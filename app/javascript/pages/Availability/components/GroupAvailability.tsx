@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import TimeSlot from "./TimeSlot";
 import prepareTimeSlots from "@/lib/prepareTimeSlots";
-import { AvailabilityProps, TimeSlotProps } from "../event.types";
+import { AvailabilityProps, TimeSlotProps } from "../../Event/event.types";
 import { format } from "date-fns";
 import { getUserGroupAvailabilities } from "@/api/availability";
 import { getColor } from "@/lib/getColor";

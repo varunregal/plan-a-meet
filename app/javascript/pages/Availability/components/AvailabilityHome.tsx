@@ -8,8 +8,8 @@ import { toast } from "sonner";
 import { AvailabilityProps, TimeSlotProps } from "@/pages/Event/event.types";
 import { useAvailabilityContext } from "../context/AvailabilityContext";
 import UserLoginForm from "@/pages/Event/components/UserLoginForm";
-import UserAvailability from "@/pages/Event/components/UserAvailability";
-import GroupAvailability from "@/pages/Event/components/GroupAvailability";
+import UserAvailability from "@/pages/Availability/components/UserAvailability";
+import GroupAvailability from "@/pages/Availability/components/GroupAvailability";
 
 function AvailabilityHome({
   name,

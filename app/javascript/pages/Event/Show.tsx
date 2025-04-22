@@ -6,8 +6,8 @@ import { useState } from "react";
 import { createUser } from "@/api/user";
 import { toast } from "sonner";
 import UserLoginForm from "./components/UserLoginForm";
-import UserAvailability from "./components/UserAvailability";
-import GroupAvailability from "./components/GroupAvailability";
+import UserAvailability from "../Availability/components/UserAvailability";
+import GroupAvailability from "../Availability/components/GroupAvailability";
 import { AvailabilityProps, TimeSlotProps, UserProps } from "./event.types";
 import {
   AvailabilityProvider,

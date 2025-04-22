@@ -1,5 +1,5 @@
 import { format, parseISO } from "date-fns";
-import { TimeSlotProps } from "../event.types";
+import { TimeSlotProps } from "../../Event/event.types";
 import {
   Tooltip,
   TooltipContent,
@@ -12,13 +12,13 @@ function TimeSlot({
   slot,
   column,
   onClick,
-  color
-  // isUserSelected
-}: {
+  color,
+}: // isUserSelected
+{
   slot: TimeSlotProps;
   column: number;
   onClick: any;
-  color: string
+  color: string;
   // isUserSelected: boolean
 }) {
   const isHour =
@@ -29,20 +29,20 @@ function TimeSlot({
   // console.log(color, slot)
   return (
     <div className="relative">
-      <TooltipProvider>
+      {/* <TooltipProvider>
         <Tooltip>
-          <TooltipTrigger asChild>
-            <div
-              className={`w-20 h-7`}
-              style={{backgroundColor: color}}
-              onClick={() => onClick(slot.id)}
-            ></div>
-          </TooltipTrigger>
+          <TooltipTrigger asChild> */}
+      <div
+        className={`w-20 h-7`}
+        style={{ backgroundColor: color }}
+        onClick={() => onClick(slot.id)}
+      ></div>
+      {/* </TooltipTrigger>
           <TooltipContent>
             <p>{slot.start_time}</p>
           </TooltipContent>
         </Tooltip>
-      </TooltipProvider>
+      </TooltipProvider> */}
       {isHour && column === 0 && (
         <div className="absolute -left-7 -top-1 text-sm font-medium">
           {format(parseISO(slot.start_time), "H")}
