@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { userFormSchema, userFormSchemaType } from "@/lib/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/ui/form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createUser } from "@/api/user";
 import { toast } from "sonner";
 import { AvailabilityProps, TimeSlotProps } from "@/pages/Event/event.types";
@@ -15,14 +15,18 @@ function AvailabilityHome({
   name,
   url,
   timeSlots,
+  eventUsers,
 }: {
   name: string;
   url: string;
   timeSlots: TimeSlotProps[];
+  eventUsers: number;
 }) {
   const [isLoading, setIsLoading] = useState(false);
-  const { userId, dispatch } = useAvailabilityContext();
-
+  const { userId, dispatch, numberOfEventUsers } = useAvailabilityContext();
+  useEffect(() => {
+    dispatch({ type: "SET_NUM_OF_USERS", payload: eventUsers });
+  }, []);
   const form = useForm<userFormSchemaType>({
     resolver: zodResolver(userFormSchema),
     defaultValues: {
@@ -43,15 +47,21 @@ function AvailabilityHome({
     if (response.success) {
       toast.success("User signed in successfully!");
       dispatch({ type: "SET_USER", payload: response.data.user.id });
-      const userTimeSlots = response.data.availability.map(
-        (item: AvailabilityProps) => item.time_slot_id
-      );
-      dispatch({ type: "SET_USER_TIME_SLOTS", payload: userTimeSlots });
+      dispatch({
+        type: "SET_NUM_OF_USERS",
+        payload: response.data.number_of_event_users,
+      });
+      if (Array.isArray(response.data.availability)) {
+        const userTimeSlots = response.data.availability.map(
+          (item: AvailabilityProps) => item.time_slot_id
+        );
+        dispatch({ type: "SET_USER_TIME_SLOTS", payload: userTimeSlots });
+      }
     } else {
       toast.error(response.message);
     }
   };
-  console.log({ userId });
+  console.log({ numberOfEventUsers });
   return (
     <div className="grid grid-cols-2 gap-30">
       {!userId ? (

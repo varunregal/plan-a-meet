@@ -10,7 +10,9 @@ class Users::Create
       event = find_event
       user = find_and_create_user(event)
       availability = find_and_create_user_availability(event, user)
-      Result.success({ availability:, user: })
+      puts availability, "availability"
+      number_of_event_users = event.users.reload.uniq.count
+      Result.success({ availability:, user:, number_of_event_users:  })
     rescue => e
       Result.failure(e)
     end
@@ -24,7 +26,7 @@ class Users::Create
   def find_and_create_user(event)
     user = User.find_by(name: @name)
     if !user
-      User.create(name: @name, password: @password || nil)
+      User.create!(name: @name, password: @password || nil)
     else
       user
     end
@@ -32,8 +34,8 @@ class Users::Create
 
   def find_and_create_user_availability(event, user)
     availability = UserAvailability.where(event: event, user: user)
-    if !availability
-      UserAvailability.create(event: event, user: user)
+    if availability.count == 0
+      UserAvailability.create!(event: event, user: user)
     else
       availability
     end
