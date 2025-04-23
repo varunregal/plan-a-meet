@@ -5,8 +5,7 @@ class EventsController < ApplicationController
     render inertia: "Event/Show", props: {
       name: event.name,
       url: event.url,
-      timeSlots: event.time_slots,
-      numberOfEventUsers: event.users.uniq.count
+      timeSlots: event.time_slots
     }
   end
 

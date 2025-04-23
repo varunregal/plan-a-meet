@@ -11,6 +11,7 @@ type State = {
   userTimeSlots: number[];
   groupTimeSlots: Record<number, number[]>;
   numberOfEventUsers: number;
+  users: any;
 };
 
 type Action =
@@ -25,7 +26,8 @@ type Action =
     }
   | { type: "SET_USER_TIME_SLOTS"; payload: number[] }
   | { type: "SET_GROUP_TIME_SLOTS"; payload: Record<number, number[]> }
-  | { type: "SET_NUM_OF_USERS"; payload: number };
+  | { type: "SET_NUM_OF_USERS"; payload: number }
+  | { type: "SET_USERS"; payload: number };
 
 const AvailabilityReducer = (state: State, action: Action): State => {
   switch (action.type) {
@@ -66,6 +68,11 @@ const AvailabilityReducer = (state: State, action: Action): State => {
         ...state,
         numberOfEventUsers: action.payload,
       };
+    case "SET_USERS":
+      return {
+        ...state,
+        users: action.payload,
+      };
     default:
       return state;
   }
@@ -76,6 +83,7 @@ const initialState: State = {
   userTimeSlots: [],
   groupTimeSlots: [],
   numberOfEventUsers: 0,
+  users: [],
 };
 
 const AvailabilityContext = createContext<

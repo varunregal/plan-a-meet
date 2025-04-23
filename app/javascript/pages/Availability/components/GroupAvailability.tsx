@@ -27,16 +27,19 @@ function GroupAvailability({
   url: string;
   eventTimeSlots: TimeSlotProps[];
 }) {
-  const { groupTimeSlots, numberOfEventUsers, dispatch } =
-    useAvailabilityContext();
+  const { groupTimeSlots, dispatch, users } = useAvailabilityContext();
   const [tsMap, setTsMap] = useState<Record<string, TimeSlotProps[]>>({});
 
   useEffect(() => {
     const getAvailabilities = async () => {
       const response = await getUserGroupAvailabilities(url);
       if (response.success) {
-        const availabilitiesObj = prepareGroupTimeSlots(response.data);
+        console.log(response.data);
+        const availabilitiesObj = prepareGroupTimeSlots(
+          response.data.availabilities
+        );
         dispatch({ type: "SET_GROUP_TIME_SLOTS", payload: availabilitiesObj });
+        dispatch({ type: "SET_USERS", payload: response.data.users });
       } else console.warn(response.message);
     };
     getAvailabilities();
@@ -49,7 +52,7 @@ function GroupAvailability({
   return (
     <div className="flex flex-col gap-10">
       <div className="font-bold text-md">Group Availability</div>
-      <div className="flex gap-2 w-[340px] overflow-scroll">
+      <div className="flex gap-2 max-w-[340px] overflow-scroll">
         {Object.entries(tsMap).map(([date, slots], index) => {
           return (
             <div className="flex flex-col gap-[1px]" key={date}>
@@ -65,7 +68,7 @@ function GroupAvailability({
                     column={index}
                     color={getColor(
                       (groupTimeSlots[slot.id] || []).length,
-                      numberOfEventUsers
+                      users.length
                     )}
                     onClick={() => {}}
                   />
@@ -74,6 +77,10 @@ function GroupAvailability({
             </div>
           );
         })}
+      </div>
+      <div className="grid grid-cols-2 gap-10">
+        <div className="text-sm font-medium underline">Available</div>
+        <div className="text-sm font-medium underline">Unavailable</div>
       </div>
     </div>
   );

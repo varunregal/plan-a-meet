@@ -10,7 +10,6 @@ class Users::Create
       event = find_event
       user = find_and_create_user(event)
       availability = find_and_create_user_availability(event, user)
-      puts availability, "availability"
       number_of_event_users = event.users.reload.uniq.count
       Result.success({ availability:, user:, number_of_event_users:  })
     rescue => e

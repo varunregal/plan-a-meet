@@ -6,21 +6,14 @@ function Show({
   name,
   url,
   timeSlots,
-  numberOfEventUsers,
 }: {
   name: string;
   url: string;
   timeSlots: TimeSlotProps[];
-  numberOfEventUsers: number;
 }) {
   return (
     <AvailabilityProvider>
-      <AvailabilityHome
-        name={name}
-        url={url}
-        timeSlots={timeSlots}
-        eventUsers={numberOfEventUsers}
-      />
+      <AvailabilityHome name={name} url={url} timeSlots={timeSlots} />
     </AvailabilityProvider>
   );
 }

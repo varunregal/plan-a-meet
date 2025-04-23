@@ -45,7 +45,7 @@ function UserAvailability({
   return (
     <div className="flex flex-col gap-10">
       <div className="font-bold text-md">Please select your availability</div>
-      <div className="flex gap-2 w-[340px] overflow-scroll">
+      <div className="flex gap-2 max-w-[340px] overflow-scroll">
         {Object.entries(tsMap).map(([date, slots], index) => {
           return (
             <div className="flex flex-col gap-[1px]" key={date}>
