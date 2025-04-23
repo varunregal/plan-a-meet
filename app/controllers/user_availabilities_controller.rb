@@ -1,7 +1,7 @@
 class UserAvailabilitiesController < ApplicationController
   before_action :find_event
   def index
-    availabilities = UserAvailability.includes(:user, :event, :time_slot).where(event: @event).where.not(time_slot_id: nil)
+    availabilities = UserAvailability.includes(:user, :event, :time_slot).where(event: @event)
     users = @event.users.distinct
     render json: { availabilities: ActiveModelSerializers::SerializableResource.new(availabilities), users: ActiveModelSerializers::SerializableResource.new(users) }
   end

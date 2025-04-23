@@ -2,10 +2,14 @@ import { useForm } from "react-hook-form";
 import { userFormSchema, userFormSchemaType } from "@/lib/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/ui/form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createUser } from "@/api/user";
 import { toast } from "sonner";
-import { AvailabilityProps, TimeSlotProps } from "@/pages/Event/event.types";
+import {
+  AvailabilityProps,
+  TimeSlotProps,
+  UserProps,
+} from "@/pages/Event/event.types";
 import { useAvailabilityContext } from "../context/AvailabilityContext";
 import UserLoginForm from "@/pages/Event/components/UserLoginForm";
 import UserAvailability from "@/pages/Availability/components/UserAvailability";
@@ -14,14 +18,14 @@ import GroupAvailability from "@/pages/Availability/components/GroupAvailability
 function AvailabilityHome({
   name,
   url,
-  timeSlots,
+  eventTimeSlots,
 }: {
   name: string;
   url: string;
-  timeSlots: TimeSlotProps[];
+  eventTimeSlots: TimeSlotProps[];
 }) {
   const [isLoading, setIsLoading] = useState(false);
-  const { userId, dispatch } = useAvailabilityContext();
+  const { user, dispatch } = useAvailabilityContext();
   const form = useForm<userFormSchemaType>({
     resolver: zodResolver(userFormSchema),
     defaultValues: {
@@ -41,7 +45,8 @@ function AvailabilityHome({
     setIsLoading(false);
     if (response.success) {
       toast.success("User signed in successfully!");
-      dispatch({ type: "SET_USER", payload: response.data.user.id });
+      dispatch({ type: "SET_USER", payload: response.data.user });
+      dispatch({ type: "SET_USERS", payload: response.data.users });
       if (Array.isArray(response.data.availability)) {
         const userTimeSlots = response.data.availability.map(
           (item: AvailabilityProps) => item.time_slot_id
@@ -55,7 +60,7 @@ function AvailabilityHome({
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-20">
-      {!userId ? (
+      {!user?.id ? (
         <div className="space-y-12">
           <div className="font-bold">Let's plan for {name}</div>
           <Form {...form}>
@@ -65,9 +70,9 @@ function AvailabilityHome({
           </Form>
         </div>
       ) : (
-        <UserAvailability url={url} eventTimeSlots={timeSlots} />
+        <UserAvailability url={url} eventTimeSlots={eventTimeSlots} />
       )}
-      <GroupAvailability url={url} eventTimeSlots={timeSlots} />
+      <GroupAvailability url={url} eventTimeSlots={eventTimeSlots} />
     </div>
   );
 }

@@ -1,19 +1,13 @@
-import { TimeSlotProps } from "./event.types";
 import { AvailabilityProvider } from "../Availability/context/AvailabilityContext";
 import AvailabilityHome from "../Availability/components/AvailabilityHome";
+import { EventProps } from "./event.types";
 
-function Show({
-  name,
-  url,
-  timeSlots,
-}: {
-  name: string;
-  url: string;
-  timeSlots: TimeSlotProps[];
-}) {
+function Show({ event }: { event: EventProps }) {
+  const { name, url, time_slots } = event;
+
   return (
     <AvailabilityProvider>
-      <AvailabilityHome name={name} url={url} timeSlots={timeSlots} />
+      <AvailabilityHome name={name} url={url} eventTimeSlots={time_slots} />
     </AvailabilityProvider>
   );
 }

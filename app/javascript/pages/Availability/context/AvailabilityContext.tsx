@@ -8,7 +8,7 @@ import {
 } from "react";
 
 type State = {
-  userId: number | null;
+  user: UserProps | null;
   userTimeSlots: number[];
   groupTimeSlots: Record<number, UserProps[]>;
   numberOfEventUsers: number;
@@ -16,7 +16,7 @@ type State = {
 };
 
 type Action =
-  | { type: "SET_USER"; payload: number }
+  | { type: "SET_USER"; payload: UserProps }
   | {
       type: "ADD_USER_SLOT";
       payload: { user: UserProps | null; time_slot_id: number };
@@ -28,12 +28,12 @@ type Action =
   | { type: "SET_USER_TIME_SLOTS"; payload: number[] }
   | { type: "SET_GROUP_TIME_SLOTS"; payload: Record<number, UserProps[]> }
   | { type: "SET_NUM_OF_USERS"; payload: number }
-  | { type: "SET_USERS"; payload: number };
+  | { type: "SET_USERS"; payload: UserProps[] };
 
 const AvailabilityReducer = (state: State, action: Action): State => {
   switch (action.type) {
     case "SET_USER":
-      return { ...state, userId: action.payload };
+      return { ...state, user: action.payload };
     case "ADD_USER_SLOT":
       if (!action.payload.user?.id) return { ...state };
       const key = action.payload.time_slot_id;
@@ -80,7 +80,7 @@ const AvailabilityReducer = (state: State, action: Action): State => {
 };
 
 const initialState: State = {
-  userId: null,
+  user: null,
   userTimeSlots: [],
   groupTimeSlots: [],
   numberOfEventUsers: 0,

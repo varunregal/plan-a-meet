@@ -2,11 +2,7 @@ require "pry"
 class EventsController < ApplicationController
   def show
     event = Event.find_by(url: params[:url])
-    render inertia: "Event/Show", props: {
-      name: event.name,
-      url: event.url,
-      timeSlots: event.time_slots
-    }
+    render inertia: "Event/Show", props: { event: EventSerializer.new(event) }
   end
 
   def new

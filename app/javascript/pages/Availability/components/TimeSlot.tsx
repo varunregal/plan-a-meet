@@ -19,6 +19,7 @@ function TimeSlot({
       new Date(slot.start_time).getMinutes()) %
       60 ===
     0;
+
   return (
     <div className="relative">
       <div

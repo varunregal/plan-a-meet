@@ -36,7 +36,6 @@ function GroupAvailability({
     return getColor((groupTimeSlots[id] || []).length, users.length);
   };
 
-  console.log(hoveredTimeSlot);
   return (
     <div className="flex flex-col gap-10">
       <div className="font-bold text-md">Group Availability</div>
