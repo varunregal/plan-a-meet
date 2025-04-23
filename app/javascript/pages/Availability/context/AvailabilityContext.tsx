@@ -1,3 +1,4 @@
+import { UserProps } from "@/pages/Event/event.types";
 import {
   createContext,
   Dispatch,
@@ -9,7 +10,7 @@ import {
 type State = {
   userId: number | null;
   userTimeSlots: number[];
-  groupTimeSlots: Record<number, number[]>;
+  groupTimeSlots: Record<number, UserProps[]>;
   numberOfEventUsers: number;
   users: any;
 };
@@ -18,14 +19,14 @@ type Action =
   | { type: "SET_USER"; payload: number }
   | {
       type: "ADD_USER_SLOT";
-      payload: { userId: number | null; time_slot_id: number };
+      payload: { user: UserProps | null; time_slot_id: number };
     }
   | {
       type: "DELETE_USER_SLOT";
       payload: { userId: number; time_slot_id: number };
     }
   | { type: "SET_USER_TIME_SLOTS"; payload: number[] }
-  | { type: "SET_GROUP_TIME_SLOTS"; payload: Record<number, number[]> }
+  | { type: "SET_GROUP_TIME_SLOTS"; payload: Record<number, UserProps[]> }
   | { type: "SET_NUM_OF_USERS"; payload: number }
   | { type: "SET_USERS"; payload: number };
 
@@ -34,7 +35,7 @@ const AvailabilityReducer = (state: State, action: Action): State => {
     case "SET_USER":
       return { ...state, userId: action.payload };
     case "ADD_USER_SLOT":
-      if (!action.payload.userId) return { ...state };
+      if (!action.payload.user?.id) return { ...state };
       const key = action.payload.time_slot_id;
       const value = state.groupTimeSlots[key] || [];
 
@@ -43,7 +44,7 @@ const AvailabilityReducer = (state: State, action: Action): State => {
         userTimeSlots: [...state.userTimeSlots, action.payload.time_slot_id],
         groupTimeSlots: {
           ...state.groupTimeSlots,
-          [key]: [...value, action.payload.userId],
+          [key]: [...value, action.payload.user],
         },
       };
     case "DELETE_USER_SLOT":

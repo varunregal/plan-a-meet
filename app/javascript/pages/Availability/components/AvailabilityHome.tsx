@@ -54,7 +54,7 @@ function AvailabilityHome({
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-30">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-20">
       {!userId ? (
         <div className="space-y-12">
           <div className="font-bold">Let's plan for {name}</div>

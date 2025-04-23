@@ -1,24 +1,14 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import TimeSlot from "./TimeSlot";
 import prepareTimeSlots from "@/lib/prepareTimeSlots";
-import { AvailabilityProps, TimeSlotProps } from "../../Event/event.types";
+import { TimeSlotProps } from "../../Event/event.types";
 import { format } from "date-fns";
 import { getUserGroupAvailabilities } from "@/api/availability";
 import { getColor } from "@/lib/getColor";
 import { useAvailabilityContext } from "@/pages/Availability/context/AvailabilityContext";
-
-function prepareGroupTimeSlots(availabilities: any) {
-  return availabilities.reduce(
-    (acc: Record<number, number[]>, current: AvailabilityProps) => {
-      if (current.time_slot_id) {
-        acc[current.time_slot_id] = acc[current.time_slot_id] || [];
-        acc[current.time_slot_id].push(current.user_id);
-      }
-      return acc;
-    },
-    {}
-  );
-}
+import AvailableUsers from "@/pages/User/components/AvailableUsers";
+import UnavailableUsers from "@/pages/User/components/UnavailableUsers";
+import { prepareGroupTimeSlots } from "@/lib/prepareGroupTimeSlots";
 
 function GroupAvailability({
   url,
@@ -29,12 +19,12 @@ function GroupAvailability({
 }) {
   const { groupTimeSlots, dispatch, users } = useAvailabilityContext();
   const [tsMap, setTsMap] = useState<Record<string, TimeSlotProps[]>>({});
+  const [hoveredTimeSlot, setHoveredTimeSlot] = useState<number | null>(null);
 
   useEffect(() => {
     const getAvailabilities = async () => {
       const response = await getUserGroupAvailabilities(url);
       if (response.success) {
-        console.log(response.data);
         const availabilitiesObj = prepareGroupTimeSlots(
           response.data.availabilities
         );
@@ -49,10 +39,11 @@ function GroupAvailability({
     setTsMap(prepareTimeSlots(eventTimeSlots));
   }, [eventTimeSlots]);
 
+  console.log(hoveredTimeSlot);
   return (
     <div className="flex flex-col gap-10">
       <div className="font-bold text-md">Group Availability</div>
-      <div className="flex gap-2 max-w-[340px] overflow-scroll">
+      <div className="flex gap-2 overflow-scroll pl-20">
         {Object.entries(tsMap).map(([date, slots], index) => {
           return (
             <div className="flex flex-col gap-[1px]" key={date}>
@@ -66,6 +57,7 @@ function GroupAvailability({
                     slot={slot}
                     key={slot.id}
                     column={index}
+                    setHoveredTimeSlot={(id: number) => setHoveredTimeSlot(id)}
                     color={getColor(
                       (groupTimeSlots[slot.id] || []).length,
                       users.length
@@ -78,9 +70,10 @@ function GroupAvailability({
           );
         })}
       </div>
-      <div className="grid grid-cols-2 gap-10">
-        <div className="text-sm font-medium underline">Available</div>
-        <div className="text-sm font-medium underline">Unavailable</div>
+
+      <div className="grid grid-cols-2 gap-5">
+        <AvailableUsers hoveredTimeSlot={hoveredTimeSlot} />
+        <UnavailableUsers hoveredTimeSlot={hoveredTimeSlot} />
       </div>
     </div>
   );

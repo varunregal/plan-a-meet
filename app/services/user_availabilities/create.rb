@@ -8,7 +8,7 @@ class UserAvailabilities::Create
   def perform
     user = find_user
     availability = create_availabilities(user)
-    Result.success({ availability: })
+    Result.success({ availability: ActiveModelSerializers::SerializableResource.new(availability) })
   rescue => e
     Result.failure(e)
   end
