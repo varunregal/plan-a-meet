@@ -23,7 +23,7 @@ function TimeSlot({
   return (
     <div className="relative">
       <div
-        className={`w-20 h-7`}
+        className={`w-20 h-7 hover:border-2 hover:border-purple-500`}
         style={{ backgroundColor: color }}
         onClick={() => onClick(slot.id)}
         onMouseEnter={

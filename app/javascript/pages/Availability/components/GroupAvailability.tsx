@@ -38,7 +38,7 @@ function GroupAvailability({
 
   return (
     <div className="flex flex-col gap-10">
-      <div className="font-bold text-md">Group Availability</div>
+      <div className="font-bold text-md text-center">Group Availability</div>
       <AvailabilityGrid
         eventTimeSlots={eventTimeSlots}
         color={(id: number) => getTimeSlotColor(id)}
@@ -46,6 +46,10 @@ function GroupAvailability({
         setHoveredTimeSlot={setHoveredTimeSlot}
       />
 
+      <div className="p-4 border-l-4 border-blue-500 bg-blue-50 text-blue-900 text-sm rounded">
+        💡 <strong>Note:</strong> Hover over the time slots to view
+        availabilities.
+      </div>
       <div className="grid grid-cols-2 gap-5">
         <AvailableUsers hoveredTimeSlot={hoveredTimeSlot} />
         <UnavailableUsers hoveredTimeSlot={hoveredTimeSlot} />

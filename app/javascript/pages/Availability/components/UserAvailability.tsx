@@ -37,7 +37,9 @@ function UserAvailability({
   };
   return (
     <div className="flex flex-col gap-10">
-      <div className="font-bold text-md">Please select your availability</div>
+      <div className="font-bold text-md text-center">
+        Please select your availability
+      </div>
       <AvailabilityGrid
         eventTimeSlots={eventTimeSlots}
         color={(id: number) => getTimeSlotColor(id)}
