@@ -119,3 +119,13 @@
 html {
   letter-spacing: 0.025em;
 }
+
+.scrollbar-visible::-webkit-scrollbar{
+  display: block !important;
+  height: 8px;
+}
+
+.scrollbar-visible::-webkit-scrollbar-thumb{
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}

@@ -1,14 +1,12 @@
 import { useEffect, useState } from "react";
-import TimeSlot from "./TimeSlot";
-import prepareTimeSlots from "@/lib/prepareTimeSlots";
 import { TimeSlotProps } from "../../Event/event.types";
-import { format } from "date-fns";
 import { getUserGroupAvailabilities } from "@/api/availability";
 import { getColor } from "@/lib/getColor";
 import { useAvailabilityContext } from "@/pages/Availability/context/AvailabilityContext";
 import AvailableUsers from "@/pages/User/components/AvailableUsers";
 import UnavailableUsers from "@/pages/User/components/UnavailableUsers";
 import { prepareGroupTimeSlots } from "@/lib/prepareGroupTimeSlots";
+import AvailabilityGrid from "./AvailabilityGrid";
 
 function GroupAvailability({
   url,
@@ -18,7 +16,6 @@ function GroupAvailability({
   eventTimeSlots: TimeSlotProps[];
 }) {
   const { groupTimeSlots, dispatch, users } = useAvailabilityContext();
-  const [tsMap, setTsMap] = useState<Record<string, TimeSlotProps[]>>({});
   const [hoveredTimeSlot, setHoveredTimeSlot] = useState<number | null>(null);
 
   useEffect(() => {
@@ -35,41 +32,20 @@ function GroupAvailability({
     getAvailabilities();
   }, []);
 
-  useEffect(() => {
-    setTsMap(prepareTimeSlots(eventTimeSlots));
-  }, [eventTimeSlots]);
+  const getTimeSlotColor = (id: number) => {
+    return getColor((groupTimeSlots[id] || []).length, users.length);
+  };
 
   console.log(hoveredTimeSlot);
   return (
     <div className="flex flex-col gap-10">
       <div className="font-bold text-md">Group Availability</div>
-      <div className="flex gap-2 overflow-scroll pl-20">
-        {Object.entries(tsMap).map(([date, slots], index) => {
-          return (
-            <div className="flex flex-col gap-[1px]" key={date}>
-              <div className="flex flex-col items-center text-sm font-medium">
-                <div>{format(date, "MMM d")}</div>
-                <div>{format(date, "iii")}</div>
-              </div>
-              {slots.map((slot: TimeSlotProps) => {
-                return (
-                  <TimeSlot
-                    slot={slot}
-                    key={slot.id}
-                    column={index}
-                    setHoveredTimeSlot={(id: number) => setHoveredTimeSlot(id)}
-                    color={getColor(
-                      (groupTimeSlots[slot.id] || []).length,
-                      users.length
-                    )}
-                    onClick={() => {}}
-                  />
-                );
-              })}
-            </div>
-          );
-        })}
-      </div>
+      <AvailabilityGrid
+        eventTimeSlots={eventTimeSlots}
+        color={(id: number) => getTimeSlotColor(id)}
+        handleTimeSlotClick={() => {}}
+        setHoveredTimeSlot={setHoveredTimeSlot}
+      />
 
       <div className="grid grid-cols-2 gap-5">
         <AvailableUsers hoveredTimeSlot={hoveredTimeSlot} />

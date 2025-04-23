@@ -11,7 +11,7 @@ function TimeSlot({
   slot: TimeSlotProps;
   column: number;
   onClick: any;
-  setHoveredTimeSlot?: any;
+  setHoveredTimeSlot?: React.Dispatch<React.SetStateAction<number | null>>;
   color: string;
 }) {
   const isHour =
@@ -25,8 +25,12 @@ function TimeSlot({
         className={`w-20 h-7`}
         style={{ backgroundColor: color }}
         onClick={() => onClick(slot.id)}
-        onMouseEnter={() => setHoveredTimeSlot(slot.id)}
-        onMouseLeave={() => setHoveredTimeSlot(null)}
+        onMouseEnter={
+          setHoveredTimeSlot ? () => setHoveredTimeSlot(slot.id) : () => {}
+        }
+        onMouseLeave={
+          setHoveredTimeSlot ? () => setHoveredTimeSlot(null) : () => {}
+        }
       ></div>
 
       {isHour && column === 0 && (
