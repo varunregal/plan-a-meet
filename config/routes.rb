@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  devise_for :users, controllers: {
+    registrations: "users/registrations"
+  }
   get "inertia-example", to: "inertia_example#index"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
@@ -14,6 +17,6 @@ Rails.application.routes.draw do
   resources :events, param: :url do
     resources :user_availabilities
   end
-  resources :users
+  # resources :users
   root "events#new"
 end

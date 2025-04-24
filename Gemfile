@@ -76,3 +76,5 @@ gem "bcrypt", "~> 3.1", ">= 3.1.12"
 gem "pry"
 
 gem "active_model_serializers"
+
+gem "devise", "~> 4.9"

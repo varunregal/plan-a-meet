@@ -7,7 +7,5 @@ class CreateUserAvailabilities < ActiveRecord::Migration[8.0]
 
       t.timestamps
     end
-
-    # add_index :user_availabilities, [ :user_id, :event_id ], unique: true, name: 'index_user_availabilities_on_user_event'
   end
 end
