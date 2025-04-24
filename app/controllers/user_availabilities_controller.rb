@@ -14,6 +14,14 @@ class UserAvailabilitiesController < ApplicationController
     end
   end
 
+  def destroy
+    availability = UserAvailability.find(params[:id])
+    availability.destroy!
+    render json: availability
+  rescue => e
+    handle_error(e)
+  end
+
 
   private
   def find_event

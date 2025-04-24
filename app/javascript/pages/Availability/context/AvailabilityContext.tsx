@@ -1,4 +1,4 @@
-import { UserProps } from "@/pages/Event/event.types";
+import { AvailabilityProps, UserProps } from "@/pages/Event/event.types";
 import {
   createContext,
   Dispatch,
@@ -9,7 +9,7 @@ import {
 
 type State = {
   user: UserProps | null;
-  userTimeSlots: number[];
+  userTimeSlots: AvailabilityProps[];
   groupTimeSlots: Record<number, UserProps[]>;
   numberOfEventUsers: number;
   users: any;
@@ -19,13 +19,13 @@ type Action =
   | { type: "SET_USER"; payload: UserProps }
   | {
       type: "ADD_USER_SLOT";
-      payload: { user: UserProps | null; time_slot_id: number };
+      payload: AvailabilityProps;
     }
   | {
       type: "DELETE_USER_SLOT";
-      payload: { userId: number; time_slot_id: number };
+      payload: { id: number; time_slot_id: number; user_id: number };
     }
-  | { type: "SET_USER_TIME_SLOTS"; payload: number[] }
+  | { type: "SET_USER_TIME_SLOTS"; payload: AvailabilityProps[] }
   | { type: "SET_GROUP_TIME_SLOTS"; payload: Record<number, UserProps[]> }
   | { type: "SET_NUM_OF_USERS"; payload: number }
   | { type: "SET_USERS"; payload: UserProps[] };
@@ -35,24 +35,31 @@ const AvailabilityReducer = (state: State, action: Action): State => {
     case "SET_USER":
       return { ...state, user: action.payload };
     case "ADD_USER_SLOT":
-      if (!action.payload.user?.id) return { ...state };
+      if (!action.payload.time_slot_id) return { ...state };
       const key = action.payload.time_slot_id;
       const value = state.groupTimeSlots[key] || [];
 
       return {
         ...state,
-        userTimeSlots: [...state.userTimeSlots, action.payload.time_slot_id],
+        userTimeSlots: [...state.userTimeSlots, action.payload],
         groupTimeSlots: {
           ...state.groupTimeSlots,
           [key]: [...value, action.payload.user],
         },
       };
     case "DELETE_USER_SLOT":
+      const deleteKey = action.payload.time_slot_id;
       return {
         ...state,
         userTimeSlots: state.userTimeSlots.filter(
-          (item: number) => item !== action.payload.time_slot_id
+          (item: AvailabilityProps) => item.id !== action.payload.id
         ),
+        groupTimeSlots: {
+          ...state.groupTimeSlots,
+          [deleteKey]: state.groupTimeSlots[deleteKey].filter(
+            (user: UserProps) => user.id === action.payload.user_id
+          ),
+        },
       };
     case "SET_USER_TIME_SLOTS":
       return {

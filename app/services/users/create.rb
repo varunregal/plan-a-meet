@@ -11,7 +11,7 @@ class Users::Create
       user = find_and_create_user(event)
       availability = find_and_create_user_availability(event, user)
       users = event.users.reload.distinct
-      Result.success({ availability:, user: UserSerializer.new(user), users: })
+      Result.success({ availability: ActiveModelSerializers::SerializableResource.new(availability, each_serializer: UserAvailabilitySerializer), user: UserSerializer.new(user), users: })
     rescue => e
       Result.failure(e)
     end
@@ -32,7 +32,7 @@ class Users::Create
   end
 
   def find_and_create_user_availability(event, user)
-    availability = UserAvailability.where(event: event, user: user)
+    availability = UserAvailability.includes(:user, :event).where(event: event, user: user)
     if availability.count == 0
       UserAvailability.create!(event: event, user: user)
     else

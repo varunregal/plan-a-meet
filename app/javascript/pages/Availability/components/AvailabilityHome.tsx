@@ -45,13 +45,14 @@ function AvailabilityHome({
     setIsLoading(false);
     if (response.success) {
       toast.success("User signed in successfully!");
+
       dispatch({ type: "SET_USER", payload: response.data.user });
       dispatch({ type: "SET_USERS", payload: response.data.users });
       if (Array.isArray(response.data.availability)) {
-        const userTimeSlots = response.data.availability.map(
-          (item: AvailabilityProps) => item.time_slot_id
-        );
-        dispatch({ type: "SET_USER_TIME_SLOTS", payload: userTimeSlots });
+        dispatch({
+          type: "SET_USER_TIME_SLOTS",
+          payload: response.data.availability,
+        });
       }
     } else {
       toast.error(response.message);

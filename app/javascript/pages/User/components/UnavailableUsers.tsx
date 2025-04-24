@@ -8,13 +8,13 @@ function UnavailableUsers({
   hoveredTimeSlot: number | null;
 }) {
   const { groupTimeSlots, users } = useAvailabilityContext();
-  const usersInGroupTimeSlotsHoveredState = hoveredTimeSlot
-    ? new Set(
-        groupTimeSlots[hoveredTimeSlot]?.map((user: UserProps) => user.id)
-      )
-    : new Set();
+
+  const usersInGroupTimeSlotsHoveredState =
+    hoveredTimeSlot && groupTimeSlots[hoveredTimeSlot]?.length
+      ? groupTimeSlots[hoveredTimeSlot].map((user: UserProps) => user.id)
+      : [];
   const unavailableUsers = users.filter(
-    (user: UserProps) => !usersInGroupTimeSlotsHoveredState.has(user.id)
+    (user: UserProps) => !usersInGroupTimeSlotsHoveredState.includes(user.id)
   );
 
   return (

@@ -11,6 +11,7 @@ function AvailableUsers({
     (hoveredTimeSlot && groupTimeSlots[hoveredTimeSlot]?.length) || 0;
   const totalUsers = users.length;
   const availableUsers = hoveredTimeSlot ? groupTimeSlots[hoveredTimeSlot] : [];
+
   return (
     <div>
       <div className="font-medium text-sm underline mb-2">
