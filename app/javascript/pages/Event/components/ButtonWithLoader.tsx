@@ -10,7 +10,7 @@ function ButtonWithLoader({
   children: ReactNode;
 }) {
   return (
-    <Button type="submit" disabled={isLoading}>
+    <Button type="submit" disabled={isLoading} className="w-full">
       {isLoading && <Loader2 className="animate-spin" />}
       {children}
     </Button>
