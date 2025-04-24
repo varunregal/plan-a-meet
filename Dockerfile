@@ -33,11 +33,25 @@ RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y build-essential git libpq-dev pkg-config && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
+# Install Node and Yarn
+ARG NODE_VERSION=20.12.1
+ENV PATH="/usr/local/node/bin:$PATH"
+
+RUN curl -sL https://github.com/nodenv/node-build/archive/master.tar.gz | tar xz -C /tmp/ && \
+    /tmp/node-build-master/bin/node-build "${NODE_VERSION}" /usr/local/node && \
+    rm -rf /tmp/node-build-master && \
+    npm install -g yarn
+
 # Install application gems
 COPY Gemfile Gemfile.lock ./
 RUN bundle install && \
     rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git && \
     bundle exec bootsnap precompile --gemfile
+
+# Copy JavaScript deps and install
+COPY package.json yarn.lock ./
+RUN yarn install --frozen-lockfile --production && \
+    rm -rf ~/.npm
 
 # Copy application code
 COPY . .
