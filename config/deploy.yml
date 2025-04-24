@@ -93,16 +93,20 @@ builder:
 accessories:
   postgres:
     image: postgres:17
-    host: postgres.internal
-    # port: "127.0.0.1:5432:5432"
+    host: 159.89.51.145
+    port: 127.0.0.1:5432:5432
     env:
       clear:
         POSTGRES_DB: chrono_cross_production
         POSTGRES_USER: chrono_cross
       secret:
         - POSTGRES_PASSWORD
-      volumes:
-        - chrono_cross_pg_data:/var/lib/postgresql/data
+    directories:
+      - data:/var/lib/postgresql/data
+#       volumes:
+#         - chrono_cross_pg_data:/var/lib/postgresql/data
+# volumes:
+#   - chrono_cross_pg_data
 #     files:
 #       - config/mysql/production.cnf:/etc/mysql/my.cnf
 #       - db/production.sql:/docker-entrypoint-initdb.d/setup.sql
