@@ -83,7 +83,7 @@ production:
     database: chrono_cross_production
     username: chrono_cross
     host: chrono_cross-postgres
-    password: <%= ENV["CHRONO_CROSS_DATABASE_PASSWORD"] %>
+    password: <%= ENV["POSTGRES_PASSWORD"] %>
   cache:
     <<: *primary_production
     database: chrono_cross_production_cache
