@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-@plugin "tailwindcss-animate";
+/* @plugin "tailwindcss-animate";  kamal setup failed because of this. Enable it later*/ 
 
 @custom-variant dark (&:is(.dark *));
 
