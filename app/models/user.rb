@@ -1,11 +1,9 @@
 class User < ApplicationRecord
+  has_secure_password
+  has_many :sessions, dependent: :destroy
+
   has_many :user_availabilities, dependent: :destroy
   has_many :events, through: :user_availabilities
-  has_secure_password validations: false
 
-  validates :name, presence: true
-
-  def as_json(options = {})
-    super({ except: [ :password_digest ] }.merge(options))
-  end
+  normalizes :email_address, with: ->(e) { e.strip.downcase }
 end
