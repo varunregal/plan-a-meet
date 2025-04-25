@@ -1,7 +1,7 @@
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Link } from "@inertiajs/react";
+import { Link, router } from "@inertiajs/react";
 
 type MenuLink = { label: string; href: string };
 
@@ -36,10 +36,24 @@ export function Navbar() {
         <div className="flex-1 flex items-right justify-end gap-2">
           <div className="hidden md:flex items-center gap-2">
             <Button variant="ghost" asChild>
-              <Link href="/signin">Sign in</Link>
+              <Link href="/users/sign_in">Sign in</Link>
             </Button>
             <Button asChild>
-              <Link href="/signup">Sign up</Link>
+              <Link href="/users/sign_up">Sign up</Link>
+            </Button>
+            <Button
+              onClick={() =>
+                router.delete("users/sign_out", {
+                  onSuccess: () => {
+                    router.visit("/users/sign_up");
+                  },
+                  onError: () => {
+                    console.log("Something went wrong");
+                  },
+                })
+              }
+            >
+              Logout
             </Button>
           </div>
 
@@ -65,11 +79,12 @@ export function Navbar() {
 
                 <div className="grid grid-cols-2 gap-2 p-5 border-t border-gray-200">
                   <Button variant="outline" asChild>
-                    <Link href="/signin">Sign in</Link>
+                    <Link href="/users/sign_in">Sign in</Link>
                   </Button>
                   <Button asChild>
-                    <Link href="/signup">Sign up</Link>
+                    <Link href="/users/sign_up">Sign up</Link>
                   </Button>
+                  <Button>Logout</Button>
                 </div>
               </nav>
             </SheetContent>
