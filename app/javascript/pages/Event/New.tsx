@@ -16,10 +16,12 @@ import { EventResponseProps } from "./event.types";
 import { eventFormSchema, eventFormSchemaType } from "@/lib/schema";
 import { toast } from "sonner";
 import { useState } from "react";
-import { router } from "@inertiajs/react";
+import { router, usePage } from "@inertiajs/react";
 import ButtonWithLoader from "./components/ButtonWithLoader";
 
 function New() {
+  const { props } = usePage();
+  console.log(props);
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<eventFormSchemaType>({
     resolver: zodResolver(eventFormSchema),
@@ -59,56 +61,60 @@ function New() {
     }
   };
   return (
-    <div>
-      <div className="text-center flex flex-col gap-1 mb-10">
+    <div className="px-8 mt-20 w-full md:w-2/3 lg:w-1/2 mx-auto">
+      <div className="text-center flex flex-col gap-1 mb-15">
         <h2 className="font-bold text-lg">Create a New Meeting</h2>
         <p className="text-muted-foreground text-sm">
           Schedule meeting with others efficiently
         </p>
       </div>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="flex flex-col gap-10 items-center w-full"
+        >
           <FormField
             control={form.control}
             name="name"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="w-full">
                 <FormLabel>Event name</FormLabel>
                 <FormControl>
                   <Input
                     autoComplete="off"
                     placeholder="Eg. Team Lunch"
                     {...field}
-                    className="w-[300px]"
                   />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <div className="flex justify-between">
+          <div className="flex flex-col gap-10 w-full">
             <FormField
               control={form.control}
               name="day"
               render={({ field }) => <SelectDates field={field} />}
             />
-            <div className="flex flex-col space-y-5">
+            <div className="flex flex-col gap-5">
               <div className="text-sm font-medium">
                 What times work for you?
               </div>
-              <SelectTime
-                form={form}
-                name={"start_time"}
-                placeholder="Select start time"
-                label="Start time"
-              />
+              <div className="grid grid-cols-2 gap-4">
+                <SelectTime
+                  form={form}
+                  name={"start_time"}
+                  placeholder="Select start time"
+                  label="Start time"
+                />
 
-              <SelectTime
-                form={form}
-                name={"end_time"}
-                placeholder="Select end time"
-                label="End time"
-              />
+                <SelectTime
+                  form={form}
+                  name={"end_time"}
+                  placeholder="Select end time"
+                  label="End time"
+                />
+              </div>
             </div>
           </div>
           <ButtonWithLoader isLoading={isLoading}>

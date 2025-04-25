@@ -18,7 +18,7 @@ import { CalendarIcon } from "lucide-react";
 
 export default function SelectDates({ field }: SelectDateProps) {
   return (
-    <FormItem className="flex flex-col space-y-3">
+    <FormItem className="flex flex-col space-y-2">
       <FormLabel>What dates work for you?</FormLabel>
       <Popover>
         <PopoverTrigger asChild>
@@ -26,7 +26,7 @@ export default function SelectDates({ field }: SelectDateProps) {
             <Button
               variant={"outline"}
               className={cn(
-                "w-[300px] pl-3 text-left font-normal",
+                "pl-3 text-left font-normal",
                 !field.value && "text-muted-foreground"
               )}
             >
