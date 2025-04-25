@@ -39,21 +39,13 @@ export function Navbar() {
               <Link href="/users/sign_in">Sign in</Link>
             </Button>
             <Button asChild>
-              <Link href="/users/sign_up">Sign up</Link>
+              {/* <Link href="/users/sign_up">Sign up</Link> */}
+              <div onClick={() => router.visit("/users/sign_up")}>Sign up</div>
             </Button>
-            <Button
-              onClick={() =>
-                router.delete("users/sign_out", {
-                  onSuccess: () => {
-                    router.visit("/users/sign_up");
-                  },
-                  onError: () => {
-                    console.log("Something went wrong");
-                  },
-                })
-              }
-            >
-              Logout
+            <Button asChild>
+              <Link href="/users/sign_out" method="delete">
+                Logout
+              </Link>
             </Button>
           </div>
 

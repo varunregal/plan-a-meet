@@ -16,10 +16,12 @@ import { EventResponseProps } from "./event.types";
 import { eventFormSchema, eventFormSchemaType } from "@/lib/schema";
 import { toast } from "sonner";
 import { useState } from "react";
-import { router } from "@inertiajs/react";
+import { router, usePage } from "@inertiajs/react";
 import ButtonWithLoader from "./components/ButtonWithLoader";
 
 function New() {
+  const { props } = usePage();
+  console.log(props);
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<eventFormSchemaType>({
     resolver: zodResolver(eventFormSchema),

@@ -1,5 +1,5 @@
-require "pry"
 class EventsController < ApplicationController
+  before_action :authenticate_user!
   def show
     event = Event.find_by(url: params[:url])
     render inertia: "Event/Show", props: { event: EventSerializer.new(event) }
@@ -8,6 +8,7 @@ class EventsController < ApplicationController
   def new
     render inertia: "Event/New"
   end
+
   def create
     response = Events::Create.new(create_event_params).create_time_slots_and_event
     if response.success?

@@ -5,14 +5,38 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # before_action :configure_account_update_params, only: [:update]
 
   # GET /resource/sign_up
-  # def new
-  #   super
-  # end
+  def new
+    render inertia: "Auth/Register", props: { errors: {} }
+  end
 
   # POST /resource
   # def create
-  #   super
+  #   super do |resource|
+  #     puts current_user
+  #     if request.inertia?
+  #       flash.discard
+  #       puts after_sign_up_path_for(resource)
+  #       return inertia_location after_sign_up_path_for(resource)
+  #     end
+  #   end
   # end
+  def create
+    user = User.new(sign_up_params)
+
+    if user.save!
+      sign_up(resource_name, user)
+      redirect_to after_sign_up_path_for(user)
+    else
+      render inertia: "Auth/Register", props: {
+        errors: user.errors.messages,
+        values: sign_up_params.except(:password, :password_confirmation)
+      }, status: :unprocessable_entity
+    end
+  rescue => e
+    render inertia: "Auth/Register", props: {
+    errors: { base: [ "Something went wrong. Please try again." ] }
+  }, status: :internal_server_error
+  end
 
   # GET /resource/edit
   # def edit

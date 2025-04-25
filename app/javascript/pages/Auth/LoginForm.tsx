@@ -4,57 +4,38 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { registerFormSchema, registerFormSchemaType } from "@/lib/schema";
-import { createUser } from "@/api/user";
-import { Link, router } from "@inertiajs/react";
+import { loginFormSchema, loginFormSchemaType } from "@/lib/schema";
+import { Link, router, usePage } from "@inertiajs/react";
 
-export function RegisterForm({
-  className,
-  ...props
-}: React.ComponentPropsWithoutRef<"form">) {
+export function LoginForm() {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<registerFormSchemaType>({
-    resolver: zodResolver(registerFormSchema),
+  } = useForm<loginFormSchemaType>({
+    resolver: zodResolver(loginFormSchema),
   });
   const onSubmit = async (values: any) => {
     const user = {
-      name: values.name,
       email: values.email,
       password: values.password,
     };
-    router.post("/users", { user });
+    router.post("/users/sign_in", { user });
     // const response: any = await createUser(user);
     // if (response.success) router.visit(response.data?.redirect_to);
   };
+  const props = usePage().props;
+
+  console.log(props);
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className={cn("flex flex-col gap-6", className)}
-      {...props}
-    >
+    <form onSubmit={handleSubmit(onSubmit)} className={"flex flex-col gap-6"}>
       <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="text-2xl font-bold">Create an ccount</h1>
+        <h1 className="text-2xl font-bold">Login to your account</h1>
         <p className="text-balance text-sm text-muted-foreground">
-          Enter the details below to create an account
+          Enter the email and password below to login
         </p>
       </div>
       <div className="grid gap-10">
-        <div className="grid gap-2">
-          <Label htmlFor="email">Name</Label>
-          <Input
-            id="name"
-            type="text"
-            placeholder="John Doe"
-            required
-            {...register("name")}
-          />
-          {errors.name?.message && (
-            <p className="text-red-500">{errors.name?.message}</p>
-          )}
-        </div>
         <div className="grid gap-2">
           <Label htmlFor="email">Email</Label>
           <Input
@@ -89,13 +70,13 @@ export function RegisterForm({
           )}
         </div>
         <Button type="submit" className="w-full">
-          Sign up
+          Sign in
         </Button>
       </div>
       <div className="text-center text-sm">
-        Already have an account?{" "}
-        <Link href="/users/sign_in" className="underline underline-offset-4">
-          Login
+        Don't have an account?{" "}
+        <Link href="/users/sign_up" className="underline underline-offset-4">
+          Sign up
         </Link>
       </div>
     </form>
