@@ -16,12 +16,13 @@ import { EventResponseProps } from "./event.types";
 import { eventFormSchema, eventFormSchemaType } from "@/lib/schema";
 import { toast } from "sonner";
 import { useState } from "react";
-import { router, usePage } from "@inertiajs/react";
+import { Link, router, usePage } from "@inertiajs/react";
 import ButtonWithLoader from "./components/ButtonWithLoader";
+import { Button } from "@/components/ui/button";
 
 function New() {
-  const { props } = usePage();
-  console.log(props);
+  const { flash }: any = usePage().props;
+
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<eventFormSchemaType>({
     resolver: zodResolver(eventFormSchema),
@@ -62,6 +63,29 @@ function New() {
   };
   return (
     <div className="px-8 mt-20 w-full md:w-2/3 lg:w-1/2 mx-auto">
+      {flash.success && <div className="text-green-600">{flash.success}</div>}
+      {flash.error && <div className="text-red-600">{flash.error}</div>}
+      {/* <form action="/session" method="POST" className="w-full">
+        <input type="hidden" name="_method" value="delete" />
+        <input
+          type="hidden"
+          name="authenticity_token"
+          value={
+            document
+              .querySelector('meta[name="csrf-token"]')
+              ?.getAttribute("content") || ""
+          }
+        />
+        <button type="submit" className="flex w-full items-center gap-2">
+          Log out
+        </button>
+      </form> */}
+      <button
+        onClick={() => router.delete("/session")}
+        className="flex w-full items-center gap-2"
+      >
+        Log out
+      </button>
       <div className="text-center flex flex-col gap-1 mb-15">
         <h2 className="font-bold text-lg">Create a New Meeting</h2>
         <p className="text-muted-foreground text-sm">

@@ -27,3 +27,10 @@ export const userFormSchema = z.object({
 })
 
 export type userFormSchemaType = z.infer<typeof userFormSchema>
+
+export const loginFormSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8, "Password should be at least 8 characters")
+})
+
+export type loginFormSchemaType = z.infer<typeof loginFormSchema>

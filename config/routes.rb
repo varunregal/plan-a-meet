@@ -16,6 +16,6 @@ Rails.application.routes.draw do
   resources :events, param: :url do
     resources :user_availabilities
   end
-  resources :users
+  # resources :users
   root "events#new"
 end
