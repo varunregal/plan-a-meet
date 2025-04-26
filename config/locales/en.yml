@@ -32,6 +32,11 @@ en:
   registrations:
     create:
       success: "Signed up successfully!"
+  sessions:
+    create:
+      success: "Signed in successfully!"
   errors:
     messages:
       taken: "has already been taken"
+  common:
+    already_authenticated: "You are already logged in."

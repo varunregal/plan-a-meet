@@ -17,6 +17,12 @@ module Authentication
       resume_session
     end
 
+    def redirect_if_authenticated
+      if resume_session
+        redirect_to root_path, inertia: { errors: { base: t("common.already_authenticated") } }
+      end
+    end
+
     def require_authentication
       resume_session || request_authentication
     end
