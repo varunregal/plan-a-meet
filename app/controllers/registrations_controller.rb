@@ -6,13 +6,14 @@ class RegistrationsController < ApplicationController
     render inertia: "Auth/Signup"
   end
   def create
-    user = User.new(user_params)
-    if user.save
+    begin
+      user = User.new(user_params)
+      user.save!
       start_new_session_for user
-      flash[:notice] = "Signed up successfully!"
+      flash[:notice] = t(".success")
       redirect_to root_path
-    else
-      redirect_to new_registration_path, inertia: { errors: { message: user.errors.full_messages.join("\n") } }
+    rescue ActiveRecord::RecordInvalid => e
+      handle_record_invalid(e, new_registration_path)
     end
   end
 

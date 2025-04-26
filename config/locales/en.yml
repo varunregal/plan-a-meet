@@ -29,3 +29,9 @@
 
 en:
   hello: "Hello world"
+  registrations:
+    create:
+      success: "Signed up successfully!"
+  errors:
+    messages:
+      taken: "has already been taken"
