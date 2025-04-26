@@ -1,15 +1,6 @@
 require "pry"
 require "rails_helper"
 
-RSpec.describe "GET /registration", type: :request, inertia: true do
-  context "renders signup page" do
-    it "renders the sign up page" do
-      get new_registration_path
-      expect(response).to have_http_status(:ok)
-      expect(inertia.component).to eq 'Auth/Signup'
-    end
-  end
-end
 
 RSpec.describe "RegistrationsController", type: :request, inertia: true do
   describe "GET /registration" do

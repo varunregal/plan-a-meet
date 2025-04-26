@@ -1,5 +1,6 @@
 class SessionsController < ApplicationController
   allow_unauthenticated_access only: %i[ new create ]
+  before_action :redirect_if_authenticated, only: [ :new ]
   rate_limit to: 10, within: 3.minutes, only: :create, with: -> { redirect_to new_session_url, inertia: { errors: { base: [ "Too many attempts. Please try again later." ] } } }
 
   def new
@@ -12,7 +13,7 @@ class SessionsController < ApplicationController
       flash[:notice] = t(".success")
       redirect_to after_authentication_url
     else
-      redirect_to new_session_path, inertia: { errors: { message: "Invalid email or password" } }
+      redirect_to new_session_path, inertia: { errors: { base: [ "Invalid email or password" ] } }
     end
   end
 
