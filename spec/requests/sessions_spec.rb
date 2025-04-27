@@ -35,6 +35,15 @@ RSpec.describe "SessionsController", type: :request, inertia: true do
         inertia_props = inertia.props.deep_symbolize_keys
         expect(inertia_props[:errors][:base][0]).to eq("Invalid email or password")
       end
+
+      it("rejects empty password") do
+        modified_params = valid_params.merge(password: "")
+        post session_path, params: modified_params
+        follow_redirect!
+        expect(inertia.component).to eq("Auth/Login")
+        inertia_props = inertia.props.deep_symbolize_keys
+        expect(inertia_props[:errors][:base][0]).to eq("Invalid email or password")
+      end
     end
     context "redirect authenticated users from sign in page" do
       it("redirect to root path") do

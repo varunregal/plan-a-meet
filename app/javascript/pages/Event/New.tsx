@@ -15,7 +15,7 @@ import { createEvent } from "@/api/event";
 import { EventResponseProps } from "./event.types";
 import { eventFormSchema, eventFormSchemaType } from "@/lib/schema";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, router, usePage } from "@inertiajs/react";
 import ButtonWithLoader from "./components/ButtonWithLoader";
 import { Button } from "@/components/ui/button";
