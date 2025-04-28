@@ -22,7 +22,7 @@ import { Button } from "@/components/ui/button";
 
 function New() {
   const { flash }: any = usePage().props;
-
+  console.log(usePage().props);
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<eventFormSchemaType>({
     resolver: zodResolver(eventFormSchema),

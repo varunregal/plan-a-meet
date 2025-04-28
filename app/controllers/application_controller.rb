@@ -8,6 +8,6 @@ class ApplicationController < ActionController::Base
       success: flash[:notice],
       error: flash[:alert]
     }
-  }, current_user: -> { Current.user }
+  }, current_user: -> { UserSerializer.new(Current.user) if Current.user }
   allow_browser versions: :modern
 end

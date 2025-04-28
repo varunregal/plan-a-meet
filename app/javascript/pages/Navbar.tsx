@@ -31,7 +31,7 @@ function SignoutButton() {
 }
 export function Navbar() {
   const { current_user } = usePage().props;
-
+  console.log(current_user);
   const checkCurrentPage = (pathname?: string) => {
     return window.location.pathname === pathname;
   };

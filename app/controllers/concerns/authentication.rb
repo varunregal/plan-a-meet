@@ -2,6 +2,7 @@ module Authentication
   extend ActiveSupport::Concern
 
   included do
+    before_action :load_current_session
     before_action :require_authentication
     helper_method :authenticated?
   end
@@ -14,6 +15,11 @@ module Authentication
 
   private
 
+    # When user is authenticated and if the page doesn't require authentication
+    def load_current_session
+      Current.session ||= find_session_by_cookie
+    end
+
     def authenticated?
       resume_session
     end
@@ -24,8 +30,9 @@ module Authentication
       end
     end
 
+    # Calls request authentication only if the authenticated? check fails
     def require_authentication
-      resume_session || request_authentication
+      resume_session || request_authentication unless authenticated?
     end
 
     def resume_session
