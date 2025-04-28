@@ -7,7 +7,7 @@ class EventsController < ApplicationController
   end
 
   def new
-    render inertia: "Event/New"
+    render inertia: "Event/New", props: { currentUser: Current.user }
   end
   def create
     response = Events::Create.new(create_event_params).create_time_slots_and_event

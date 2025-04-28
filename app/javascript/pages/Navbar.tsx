@@ -1,12 +1,12 @@
-import { Menu } from "lucide-react";
+import { Menu, Underline } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Link, router } from "@inertiajs/react";
+import { Link, router, usePage } from "@inertiajs/react";
 
-type MenuLink = { label: string; href: string };
+type MenuLink = { label: string; href: string; alias?: string };
 
 const menuLinks: MenuLink[] = [
-  { label: "Create a Meet", href: "#" },
+  { label: "Create a Meet", href: "/events/new", alias: "/" },
   { label: "How it works", href: "#" },
   { label: "Notifications", href: "#" },
 ];
@@ -30,6 +30,12 @@ function SignoutButton() {
   return <Button onClick={() => router.delete("/session")}>Logout</Button>;
 }
 export function Navbar() {
+  const { current_user } = usePage().props;
+
+  const checkCurrentPage = (pathname?: string) => {
+    return window.location.pathname === pathname;
+  };
+
   return (
     <header className="w-full px-5 md:px-10">
       <div className="container mx-auto flex h-16 items-center">
@@ -44,7 +50,12 @@ export function Navbar() {
             <Link
               key={menuLink.label}
               href={menuLink.href}
-              className="text-sm font-medium"
+              className={`text-sm font-medium ${
+                checkCurrentPage(menuLink.href) ||
+                checkCurrentPage(menuLink?.alias)
+                  ? "underline"
+                  : ""
+              }`}
             >
               {menuLink.label}
             </Link>
@@ -53,9 +64,14 @@ export function Navbar() {
 
         <div className="flex-1 flex items-right justify-end gap-2">
           <div className="hidden md:flex items-center gap-2">
-            <SignInButton />
-            <SignupButton />
-            <SignoutButton />
+            {!current_user ? (
+              <>
+                <SignInButton />
+                <SignupButton />
+              </>
+            ) : (
+              <SignoutButton />
+            )}
           </div>
 
           {/* Mobile menu */}

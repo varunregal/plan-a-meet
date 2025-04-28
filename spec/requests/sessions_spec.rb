@@ -10,6 +10,22 @@ RSpec.describe "SessionsController", type: :request, inertia: true do
     end
   end
 
+  describe "DELETE /session" do
+    let(:valid_params) do
+      { email_address: "varun@example.com", password: "password" }
+    end
+    before { User.create!(valid_params.merge(name: "Varun")) }
+
+    it "redirects user to root_path after logout" do
+      post session_path, params: valid_params
+      follow_redirect!
+      delete session_path
+      expect(response).to redirect_to root_path
+      follow_redirect!
+      expect(inertia.component).to eq("Event/New")
+    end
+  end
+
   describe "POST /session" do
     let(:valid_params) do
       { email_address: "varun@example.com", password: "password" }

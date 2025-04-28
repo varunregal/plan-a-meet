@@ -5,7 +5,7 @@ import { createRoot } from "react-dom/client";
 
 // Temporary type definition, until @inertiajs/react provides one
 type ResolvedComponent = {
-  default: ReactNode;
+  default: React.ComponentType<any> & { layout?: (page: React.ReactNode) => React.ReactNode }
   layout?: (page: ReactNode) => ReactNode;
 };
 
@@ -33,7 +33,7 @@ createInertiaApp({
     // and use the following line.
     // see https://inertia-rails.dev/guide/pages#default-layouts
     //
-    // page.default.layout ||= (page) => createElement(Layout, null, page)
+    page.default.layout ||= (page) => createElement(RootLayout, null, page)
 
     return page;
   },
@@ -41,7 +41,7 @@ createInertiaApp({
   setup({ el, App, props }) {
     if (el) {
       createRoot(el).render(
-        createElement(RootLayout, null, createElement(App, props))
+        createElement(App, props)
       );
     } else {
       console.error(

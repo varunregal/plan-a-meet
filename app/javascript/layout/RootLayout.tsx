@@ -1,4 +1,4 @@
-import { Navbar } from "@/components/Navbar";
+import { Navbar } from "@/pages/Navbar";
 import { Toaster } from "@/components/ui/sonner";
 import { ReactNode } from "react";
 

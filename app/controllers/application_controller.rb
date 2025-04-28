@@ -8,6 +8,6 @@ class ApplicationController < ActionController::Base
       success: flash[:notice],
       error: flash[:alert]
     }
-  }
+  }, current_user: -> { Current.user }
   allow_browser versions: :modern
 end
