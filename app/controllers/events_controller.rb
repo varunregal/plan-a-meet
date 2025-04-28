@@ -1,5 +1,6 @@
 require "pry"
 class EventsController < ApplicationController
+  allow_unauthenticated_access only: [ :new, :create ]
   def show
     event = Event.find_by(url: params[:url])
     render inertia: "Event/Show", props: { event: EventSerializer.new(event), user: UserSerializer.new(Current.user) }
@@ -11,7 +12,7 @@ class EventsController < ApplicationController
   def create
     response = Events::Create.new(create_event_params).create_time_slots_and_event
     if response.success?
-      redirect_to event_path(response.data), inertia: { props: { event: EventSerializer.new(response.data) } }
+      redirect_to event_path(response.data)
     else
       handle_error(response.error, new_event_path)
     end

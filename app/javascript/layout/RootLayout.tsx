@@ -1,12 +1,14 @@
+import { Navbar } from "@/components/Navbar";
 import { Toaster } from "@/components/ui/sonner";
 import { ReactNode } from "react";
 
-function RootLayout({children}: {children: ReactNode}){
-  return(
-    <div>
-      <main>{children}</main>
-      <Toaster richColors position="top-center"/>
-    </div>
-  )
+function RootLayout({ children }: { children: ReactNode }) {
+  return (
+    <main>
+      <Navbar />
+      {children}
+      <Toaster richColors position="top-center" />
+    </main>
+  );
 }
-export default RootLayout
+export default RootLayout;

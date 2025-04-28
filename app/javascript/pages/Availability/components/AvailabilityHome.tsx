@@ -20,10 +20,12 @@ function AvailabilityHome({
   name,
   url,
   eventTimeSlots,
+  user: currentUser,
 }: {
   name: string;
   url: string;
   eventTimeSlots: TimeSlotProps[];
+  user: UserProps;
 }) {
   const [isLoading, setIsLoading] = useState(false);
   console.log(usePage().props);
