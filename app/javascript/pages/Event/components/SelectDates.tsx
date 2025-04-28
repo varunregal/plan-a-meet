@@ -27,19 +27,21 @@ export default function SelectDates({ field }: SelectDateProps) {
               variant={"outline"}
               className={cn(
                 "pl-3 text-left font-normal",
-                !field.value && "text-muted-foreground"
+                !field.value?.length && "text-muted-foreground"
               )}
             >
-              {(field.value.from ? format(field.value.from, "PPP") : "") +
-                " - " +
-                (field.value.to ? format(field.value.to, "PPP") : "")}
+              {field.value && field.value.length ? (
+                `${field.value.length} dates selected`
+              ) : (
+                <span>Pick one or more dates</span>
+              )}
               <CalendarIcon className="text-right" />
             </Button>
           </FormControl>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="start">
           <Calendar
-            mode="range"
+            mode="multiple"
             selected={field.value}
             onSelect={field.onChange}
             fromDate={new Date()}

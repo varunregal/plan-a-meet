@@ -28,38 +28,43 @@ function New() {
     resolver: zodResolver(eventFormSchema),
     defaultValues: {
       name: "",
-      day: {
-        from: new Date(),
-        to: new Date(),
-      },
+      dates: [],
       start_time: "9",
       end_time: "17",
     },
   });
 
   const onSubmit = async (values: eventFormSchemaType) => {
-    setIsLoading(true);
     const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
     const event = {
       name: values.name,
-      start_date: values.day.from.toISOString(),
-      end_date: values.day.to.toISOString(),
+      dates: values.dates,
       start_time: values.start_time,
       end_time: values.end_time,
       time_zone: timeZone,
     };
-    console.log(event);
-    const response: EventResponseProps = await createEvent(event);
-    setIsLoading(false);
-    if (response.success) {
-      if (response.data)
-        router.visit(`/events/${response.data.url}`, {
-          method: "get",
-        });
-    } else {
-      toast.error(response.message);
-    }
+    router.post("/events", { event });
+    // console.log(values.dates[0].toISOString());
+    // setIsLoading(true);
+    // const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    // const event = {
+    //   name: values.name,
+    //   dates: [],
+    //   start_time: values.start_time,
+    //   end_time: values.end_time,
+    //   time_zone: timeZone,
+    // };
+    // console.log(event);
+    // const response: EventResponseProps = await createEvent(event);
+    // setIsLoading(false);
+    // if (response.success) {
+    //   if (response.data)
+    //     router.visit(`/events/${response.data.url}`, {
+    //       method: "get",
+    //     });
+    // } else {
+    //   toast.error(response.message);
+    // }
   };
   return (
     <div className="px-8 mt-20 w-full md:w-2/3 lg:w-1/2 mx-auto">
@@ -117,7 +122,7 @@ function New() {
           <div className="flex flex-col gap-10 w-full">
             <FormField
               control={form.control}
-              name="day"
+              name="dates"
               render={({ field }) => <SelectDates field={field} />}
             />
             <div className="flex flex-col gap-5">

@@ -3,8 +3,7 @@ require "pry"
 class Events::Create
   def initialize(params)
     @name = params.fetch(:name)
-    @start_date = params.fetch(:start_date)
-    @end_date = params.fetch(:end_date)
+    @dates = params.fetch(:dates)
     @start_time = params.fetch(:start_time)
     @end_time = params.fetch(:end_time)
     @time_zone = params.fetch(:time_zone)
@@ -31,7 +30,7 @@ class Events::Create
 
   def generate_time_slots
     result = []
-    (Date.parse(@start_date)..Date.parse(@end_date)).each do |d|
+    @dates.each do |d|
       start_date_time = parse_and_combine_date_time(d.to_s, @start_time)
       end_date_time = parse_and_combine_date_time(d.to_s, @end_time)
       if end_date_time < start_date_time

@@ -13,8 +13,8 @@ class RegistrationsController < ApplicationController
       start_new_session_for user
       flash[:notice] = t(".success")
       redirect_to root_path
-    rescue ActiveRecord::RecordInvalid => e
-      handle_record_invalid(e, new_registration_path)
+    rescue => e
+      handle_error(e, new_registration_path)
     end
   end
 

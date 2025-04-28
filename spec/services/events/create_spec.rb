@@ -5,8 +5,7 @@ RSpec.describe Events::Create do
     let (:params) do
       {
         name: "Bar Hopping",
-        start_date: "2025-04-19T21:53:04.295Z",
-        end_date: "2025-04-21T21:53:04.295Z",
+        dates: [ "2025-04-19T04:00:00.000Z", "2025-04-20T04:00:00.000Z", "2025-04-21T04:00:00.000Z" ],
         start_time: "7",
         end_time: "9",
         time_zone: "America/New_York"

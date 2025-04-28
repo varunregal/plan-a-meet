@@ -14,6 +14,7 @@ import { useAvailabilityContext } from "../context/AvailabilityContext";
 import UserLoginForm from "@/pages/Event/components/UserLoginForm";
 import UserAvailability from "@/pages/Availability/components/UserAvailability";
 import GroupAvailability from "@/pages/Availability/components/GroupAvailability";
+import { usePage } from "@inertiajs/react";
 
 function AvailabilityHome({
   name,
@@ -25,6 +26,7 @@ function AvailabilityHome({
   eventTimeSlots: TimeSlotProps[];
 }) {
   const [isLoading, setIsLoading] = useState(false);
+  console.log(usePage().props);
   const { user, dispatch } = useAvailabilityContext();
   const form = useForm<userFormSchemaType>({
     resolver: zodResolver(userFormSchema),

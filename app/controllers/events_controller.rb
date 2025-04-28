@@ -2,7 +2,7 @@ require "pry"
 class EventsController < ApplicationController
   def show
     event = Event.find_by(url: params[:url])
-    render inertia: "Event/Show", props: { event: EventSerializer.new(event) }
+    render inertia: "Event/Show", props: { event: EventSerializer.new(event), user: UserSerializer.new(Current.user) }
   end
 
   def new
@@ -11,9 +11,9 @@ class EventsController < ApplicationController
   def create
     response = Events::Create.new(create_event_params).create_time_slots_and_event
     if response.success?
-      render json: response.data
+      redirect_to event_path(response.data), inertia: { props: { event: EventSerializer.new(response.data) } }
     else
-      handle_error(response.error)
+      handle_error(response.error, new_event_path)
     end
   end
 
@@ -21,6 +21,6 @@ class EventsController < ApplicationController
 
   private
   def create_event_params
-    params.expect(event: [ :name, :start_date, :end_date, :start_time, :end_time, :time_zone ])
+    params.expect(event: [ :name, :start_time, :end_time, :time_zone, dates: [] ])
   end
 end
