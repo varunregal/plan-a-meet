@@ -44,6 +44,7 @@ export type EventProps = {
   name: string;
   url: string;
   time_slots: TimeSlotProps[]
+  event_creator_id?: number
 };
 
 export type EventResponseProps = {

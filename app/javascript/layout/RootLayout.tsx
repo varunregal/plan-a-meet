@@ -6,7 +6,6 @@ function RootLayout({ children }: { children: ReactNode }) {
   const pathname = window.location.pathname;
   const isCredentialsPage =
     pathname.includes("/session") || pathname.includes("/registration");
-  console.log(isCredentialsPage);
   return (
     <main>
       <Navbar />

@@ -1,13 +1,8 @@
-import { AvailabilityProvider } from "../Availability/context/AvailabilityContext";
+import UserAvailability from "../Availability/components/UserAvailability";
 import { EventProps } from "./event.types";
-import GuestLogin from "../User/components/GuestLogin";
 
 function Show({ event }: { event: EventProps }) {
-  return (
-    <AvailabilityProvider>
-      <GuestLogin event={event} />
-    </AvailabilityProvider>
-  );
+  return <UserAvailability event={event} />;
 }
 
 export default Show;

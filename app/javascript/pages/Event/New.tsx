@@ -11,18 +11,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import SelectTime from "./components/SelectTime";
 import SelectDates from "./components/SelectDates";
-import { createEvent } from "@/api/event";
-import { EventResponseProps } from "./event.types";
 import { eventFormSchema, eventFormSchemaType } from "@/lib/schema";
-import { toast } from "sonner";
-import { useEffect, useState } from "react";
-import { Link, router, usePage } from "@inertiajs/react";
+import { useState } from "react";
+import { router, usePage } from "@inertiajs/react";
 import ButtonWithLoader from "./components/ButtonWithLoader";
-import { Button } from "@/components/ui/button";
 
 function New() {
   const { flash }: any = usePage().props;
-  console.log(usePage().props);
+
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<eventFormSchemaType>({
     resolver: zodResolver(eventFormSchema),
@@ -35,6 +31,7 @@ function New() {
   });
 
   const onSubmit = async (values: eventFormSchemaType) => {
+    setIsLoading(true);
     const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const event = {
       name: values.name,
@@ -43,13 +40,21 @@ function New() {
       end_time: values.end_time,
       time_zone: timeZone,
     };
-    router.post("/events", { event });
+    router.post(
+      "/events",
+      { event },
+      {
+        onFinish: () => {
+          setIsLoading(false);
+        },
+      }
+    );
   };
   return (
     <div>
       <div className="text-center flex flex-col gap-1 mb-15">
         <h2 className="font-bold text-lg">Create a New Meeting</h2>
-        <p className="text-muted-foreground text-sm">
+        <p className="text-gray-500 text-sm">
           Schedule meeting with others efficiently
         </p>
       </div>
