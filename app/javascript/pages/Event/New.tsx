@@ -44,30 +44,9 @@ function New() {
       time_zone: timeZone,
     };
     router.post("/events", { event });
-    // console.log(values.dates[0].toISOString());
-    // setIsLoading(true);
-    // const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    // const event = {
-    //   name: values.name,
-    //   dates: [],
-    //   start_time: values.start_time,
-    //   end_time: values.end_time,
-    //   time_zone: timeZone,
-    // };
-    // console.log(event);
-    // const response: EventResponseProps = await createEvent(event);
-    // setIsLoading(false);
-    // if (response.success) {
-    //   if (response.data)
-    //     router.visit(`/events/${response.data.url}`, {
-    //       method: "get",
-    //     });
-    // } else {
-    //   toast.error(response.message);
-    // }
   };
   return (
-    <div className="px-8 mt-20 w-full md:w-2/3 lg:w-1/2 mx-auto">
+    <div>
       <div className="text-center flex flex-col gap-1 mb-15">
         <h2 className="font-bold text-lg">Create a New Meeting</h2>
         <p className="text-muted-foreground text-sm">

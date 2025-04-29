@@ -1,9 +1,9 @@
 require "pry"
 class EventsController < ApplicationController
-  allow_unauthenticated_access only: [ :new, :create ]
+  allow_unauthenticated_access only: [ :new, :create, :show ]
   def show
     event = Event.find_by(url: params[:url])
-    render inertia: "Event/Show", props: { event: EventSerializer.new(event), user: UserSerializer.new(Current.user) }
+    render inertia: "Event/Show", props: { event: EventSerializer.new(event) }
   end
 
   def new
