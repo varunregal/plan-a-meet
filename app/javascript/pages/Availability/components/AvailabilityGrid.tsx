@@ -22,7 +22,7 @@ function AvailabilityGrid({
   }, [eventTimeSlots]);
 
   return (
-    <div className="flex gap-2 max-w-[340px] overflow-x-auto pl-20 pb-2 scrollbar-visible">
+    <div className="flex gap-2 max-w-full overflow-x-auto pl-20 pb-2 scrollbar-visible">
       {Object.entries(tsMap).map(([date, slots], index) => {
         return (
           <div className="flex flex-col gap-[1px]" key={date}>
