@@ -10,7 +10,7 @@ class EventsController < ApplicationController
     render inertia: "Event/New"
   end
   def create
-    response = Events::Create.new(create_event_params).create_time_slots_and_event
+    response = Events::Create.new(create_event_params, current_user: Current.user).create_time_slots_and_event
     if response.success?
       redirect_to event_path(response.data)
     else

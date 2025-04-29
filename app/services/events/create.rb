@@ -1,19 +1,18 @@
 require "time"
 require "pry"
 class Events::Create
-  def initialize(params)
+  def initialize(params, current_user:)
     @name = params.fetch(:name)
     @dates = params.fetch(:dates)
     @start_time = params.fetch(:start_time)
     @end_time = params.fetch(:end_time)
     @time_zone = params.fetch(:time_zone)
-    @user = Current.user
+    @user = current_user
   end
 
   def create_time_slots_and_event
     ActiveRecord::Base.transaction do
-      binding.pry
-      event = Event.new(name: @name, url: generate_unique_event_url)
+      event = Event.new(name: @name, url: generate_unique_event_url, event_creator: @user)
       create_time_slots(event)
       event.save!
       Result.success(event)
