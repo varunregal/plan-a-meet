@@ -1,5 +1,5 @@
 import { AvailabilityProvider } from "../Availability/context/AvailabilityContext";
-import { EventProps, UserProps } from "./event.types";
+import { EventProps } from "./event.types";
 import GuestLogin from "../User/components/GuestLogin";
 
 function Show({ event }: { event: EventProps }) {

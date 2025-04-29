@@ -7,10 +7,12 @@ class Events::Create
     @start_time = params.fetch(:start_time)
     @end_time = params.fetch(:end_time)
     @time_zone = params.fetch(:time_zone)
+    @user = Current.user
   end
 
   def create_time_slots_and_event
     ActiveRecord::Base.transaction do
+      binding.pry
       event = Event.new(name: @name, url: generate_unique_event_url)
       create_time_slots(event)
       event.save!

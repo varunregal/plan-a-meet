@@ -12,15 +12,17 @@ RSpec.describe Events::Create do
       }
     end
 
+    before { @user = User.create!(name: "Varun", email_address: "varun@example.com", password: "password") }
 
     it "event is saved successfully" do
-      service = described_class.new(params)
+      service = described_class.new(params.merge(event_creator: @user))
       result = service.create_time_slots_and_event
 
       expect(result.success?).to be true
       expect(result.data).to be_a(Event)
       expect(result.data.name).to eq("Bar Hopping")
       expect(result.data.time_slots.count).to eq(12)
+      expect(result.data.event_creator.name).to eq("Varun")
 
       first_slot = result.data.time_slots.first
       expect(first_slot.start_time.hour).to eq(11) # UTC time
