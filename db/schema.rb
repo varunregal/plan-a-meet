@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_25_063816) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_29_040410) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -19,6 +19,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_25_063816) do
     t.string "url", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "event_creator_id"
+    t.index ["event_creator_id"], name: "index_events_on_event_creator_id"
     t.index ["url"], name: "index_events_on_url", unique: true
   end
 
@@ -57,9 +59,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_25_063816) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "name", null: false
+    t.boolean "is_guest", default: false, null: false
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
   end
 
+  add_foreign_key "events", "users", column: "event_creator_id"
   add_foreign_key "sessions", "users"
   add_foreign_key "time_slots", "events"
   add_foreign_key "user_availabilities", "events"

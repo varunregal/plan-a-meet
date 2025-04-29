@@ -1,4 +1,4 @@
-import { Link, usePage } from "@inertiajs/react";
+import { Link } from "@inertiajs/react";
 import { LoginForm } from "./LoginForm";
 
 export default function Login() {
@@ -7,7 +7,7 @@ export default function Login() {
       <div className="flex flex-col gap-4 p-6 md:p-10">
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-md flex flex-col gap-5 text-center">
-            <div className="flex flex-col items-center gap-2 text-center">
+            <div className="flex flex-col gap-2 text-center">
               <h1 className="text-2xl font-bold">Login to your account</h1>
               <p className="text-balance text-sm text-muted-foreground">
                 Enter the email and password below to login
