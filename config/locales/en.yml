@@ -41,6 +41,9 @@ en:
       error: "Invalid email or password"
     delete:
       success: "Signed out successfully!"
+  events:
+    success: "Event created successfully!"
+    error: "Please sign in or sign up to finish creating your event."
   errors:
     messages:
       taken: "has already been taken"

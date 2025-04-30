@@ -23,11 +23,11 @@ class EventsController < ApplicationController
     if response.success?
       event = response.data
       if Current.user
-        flash[:notice] = "Event created!"
+        flash[:notice] = t(".success")
         redirect_to event_path(event)
       else
         session[:pending_event_url] = event.url
-        flash[:alert] = "Please log in or sign up to finish creating your event"
+        flash[:alert] = t(".error")
         redirect_to new_session_path
       end
     else

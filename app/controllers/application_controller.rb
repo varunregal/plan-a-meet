@@ -22,7 +22,7 @@ def assign_pending_event_creator(user)
 end
 
 def check_if_user_created_in_event_path
-  nil unless session[:user_created_in_event_path]
+  return unless session[:user_created_in_event_path]
   event = Event.find_by!(url: session.delete(:user_created_in_event_path))
   nil unless event
   @current_event = event
