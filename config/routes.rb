@@ -14,7 +14,9 @@ Rails.application.routes.draw do
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
   # Defines the root path route ("/")
-  resources :events, param: :url
+  resources :events, param: :url do
+    resources :availabilities, only: [ :index ]
+  end
 
   resources :time_slots, only: [] do
     resource :availability, only: [ :create, :destroy ]
