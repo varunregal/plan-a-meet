@@ -39,7 +39,7 @@ en:
       success: "Signed in successfully!"
       pending_event_success: "Thanks for signing up! Your event is now yours."
       error: "Invalid email or password"
-    delete:
+    destroy:
       success: "Signed out successfully!"
   events:
     success: "Event created successfully!"

@@ -11,8 +11,8 @@ import {
   UserProps,
 } from "@/pages/Event/event.types";
 import { useAvailabilityContext } from "../context/AvailabilityContext";
-import UserLoginForm from "@/pages/Event/components/UserLogin";
-import UserAvailability from "@/pages/Availability/components/UserAvailability";
+import UserLoginForm from "@/pages/Event/components/UserLoginWithAvailability";
+import UserAvailability from "@/pages/Event/components/Event";
 import GroupAvailability from "@/pages/Availability/components/GroupAvailability";
 import { usePage } from "@inertiajs/react";
 

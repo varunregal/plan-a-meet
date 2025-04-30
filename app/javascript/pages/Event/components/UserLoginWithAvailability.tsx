@@ -2,17 +2,17 @@ import { EventProps } from "../event.types";
 import { InfoIcon } from "lucide-react";
 import { useState } from "react";
 import { usePage } from "@inertiajs/react";
-import SelectUserAvailability from "@/pages/Availability/components/SelectUserAvailability";
+import SelectUserAvailability from "@/pages/Availability/components/UserAvailability";
 import { authFooterKeyType } from "@/pages/Auth/Auth.types";
 import AuthFooter from "@/pages/Auth/components/AuthFooter";
 import { authFooter } from "@/lib/authFooter";
 
-function UserLogin({ event }: { event: EventProps }) {
+function UserLoginWithAvailability({ event }: { event: EventProps }) {
   const { current_user } = usePage().props;
 
   const { event_creator_id } = event;
   const [currentAuth, setCurrentAuth] = useState<authFooterKeyType | null>(
-    current_user ? null : "guest"
+    current_user ? null : "sign_in"
   );
 
   const handleAuthClick = (auth: authFooterKeyType) => {
@@ -30,7 +30,7 @@ function UserLogin({ event }: { event: EventProps }) {
       )}
       <div>
         {current_user ? (
-          <SelectUserAvailability />
+          <SelectUserAvailability event={event} />
         ) : (
           <div>
             {currentAuth && (
@@ -46,4 +46,4 @@ function UserLogin({ event }: { event: EventProps }) {
   );
 }
 
-export default UserLogin;
+export default UserLoginWithAvailability;

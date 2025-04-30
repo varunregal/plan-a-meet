@@ -27,13 +27,13 @@ RSpec.describe "EventsController", type: :request, inertia: true do
       expect(inertia.component).to eq("Event/Show")
     end
 
-    it "should redirect to new_session_path if user is not logged in" do
+    it "should show login/signup in event_path if user is not logged in" do
       allow(Current).to receive(:user).and_return(nil)
       expect {
         post events_path, params: { event: valid_params }
       }.to change(Event, :count).by(1)
 
-      expect(response).to redirect_to(new_session_path)
+      expect(response).to redirect_to(event_path(Event.last))
       follow_redirect!
       post session_path, params: { email_address: user.email_address, password: "password" }
       follow_redirect!
@@ -46,7 +46,7 @@ RSpec.describe "EventsController", type: :request, inertia: true do
       expect {
         post events_path, params: { event: valid_params }
       }.to change(Event, :count).by(1)
-      expect(response).to redirect_to new_session_path
+      expect(response).to redirect_to event_path(Event.last)
       follow_redirect!
       get new_registration_path
       expect(response).to have_http_status(:ok)

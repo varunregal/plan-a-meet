@@ -28,7 +28,7 @@ class EventsController < ApplicationController
       else
         session[:pending_event_url] = event.url
         flash[:alert] = t(".error")
-        redirect_to new_session_path
+        redirect_to event_path(event)
       end
     else
       handle_error(response.error, new_event_path)

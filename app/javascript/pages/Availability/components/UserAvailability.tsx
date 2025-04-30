@@ -1,16 +1,26 @@
-import { Separator } from "@/components/ui/separator";
-import EventHeader from "@/pages/Event/components/EventHeader";
-import { AvailabilityProps, EventProps } from "@/pages/Event/event.types";
-import SelectUserAvailability from "./SelectUserAvailability";
-import { useAvailabilityContext } from "../context/AvailabilityContext";
-import { getColor } from "@/lib/getColor";
-import AvailabilityGrid from "./AvailabilityGrid";
-import { get } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import UserLogin from "@/pages/Event/components/UserLogin";
+import AvailabilityGrid from "./AvailabilityGrid";
+import { useAvailabilityContext } from "../context/AvailabilityContext";
+import {
+  AvailabilityProps,
+  EventProps,
+  UserProps,
+} from "@/pages/Event/event.types";
+import { getColor } from "@/lib/getColor";
+import { router, usePage } from "@inertiajs/react";
+import { api } from "@/lib/api";
+import {
+  createUserAvailability,
+  deleteUserAvailability,
+  getUserGroupAvailabilities,
+} from "@/api/availability";
+import { useEffect } from "react";
+import { prepareGroupTimeSlots } from "@/lib/prepareGroupTimeSlots";
+import GroupAvailability from "./GroupAvailability";
 
 function UserAvailability({ event }: { event: EventProps }) {
-  const { userTimeSlots } = useAvailabilityContext();
+  const { current_user }: { current_user: UserProps } = usePage<any>().props;
+  const { userTimeSlots, dispatch } = useAvailabilityContext();
 
   const getTimeSlotColor = (id: number) => {
     return userTimeSlots.find(
@@ -19,24 +29,21 @@ function UserAvailability({ event }: { event: EventProps }) {
       ? getColor(1, 1)
       : getColor(0, 1);
   };
+
+  const handleTimeSlotClick = async (time_slot: number) => {};
   return (
-    <div className="flex flex-col gap-10">
-      <EventHeader event={event} />
-      <Separator />
-      <UserLogin event={event} />
-      {/* <div className="flex flex-col gap-10">
-        <div className="flex justify-between items-center">
-          <div className="text-lg font-medium">Availability</div>
-          <div>
-            <Button variant={"secondary"}>Add Availaibility</Button>
-          </div>
+    <div>
+      <div className="grid grid-cols-2 gap-10">
+        <div className="flex flex-col gap-10 items-center">
+          <div className="text-md font-medium">Your Availability</div>
+          <AvailabilityGrid
+            eventTimeSlots={event.time_slots}
+            color={(id: number) => getTimeSlotColor(id)}
+            handleTimeSlotClick={handleTimeSlotClick}
+          />
         </div>
-        <AvailabilityGrid
-          eventTimeSlots={event.time_slots}
-          color={(id: number) => getTimeSlotColor(id)}
-          handleTimeSlotClick={() => {}}
-        />
-      </div> */}
+        <GroupAvailability eventTimeSlots={event.time_slots} url={event.url} />
+      </div>
     </div>
   );
 }

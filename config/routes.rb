@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
-  resource :session
-  resource :registration
+  resource :session, only: [ :new, :create, :destroy ]
+  resource :registration, only: [ :new, :create ]
   resources :passwords, param: :token
   get "inertia-example", to: "inertia_example#index"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
@@ -14,9 +14,10 @@ Rails.application.routes.draw do
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
   # Defines the root path route ("/")
-  resources :events, param: :url do
-    resources :user_availabilities
+  resources :events, param: :url
+
+  resources :time_slots, only: [] do
+    resource :availability, only: [ :create, :destroy ]
   end
-  # resources :users
   root "events#new"
 end

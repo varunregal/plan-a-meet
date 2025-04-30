@@ -12,9 +12,10 @@ import { useForm } from "react-hook-form";
 import SelectTime from "./components/SelectTime";
 import SelectDates from "./components/SelectDates";
 import { eventFormSchema, eventFormSchemaType } from "@/lib/schema";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { router, usePage } from "@inertiajs/react";
 import ButtonWithLoader from "./components/ButtonWithLoader";
+import { toast } from "sonner";
 
 function New() {
   const { flash }: any = usePage().props;
@@ -28,6 +29,11 @@ function New() {
       end_time: "17",
     },
   });
+
+  useEffect(() => {
+    if (flash.success) toast.success(flash.success);
+    else if (flash.error) toast.error(flash.error);
+  }, [flash]);
 
   const onSubmit = async (values: eventFormSchemaType) => {
     setIsLoading(true);
@@ -87,7 +93,7 @@ function New() {
             />
             <div className="flex flex-col gap-5">
               <div className="text-sm font-medium">
-                What times work for you?
+                What times work for you? (Eastern Time Zone)
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <SelectTime

@@ -10,9 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_29_073450) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_30_200344) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "availabilities", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "time_slot_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["time_slot_id"], name: "index_availabilities_on_time_slot_id"
+    t.index ["user_id", "time_slot_id"], name: "index_user_and_time_slot_on_availability", unique: true
+    t.index ["user_id"], name: "index_availabilities_on_user_id"
+  end
 
   create_table "events", force: :cascade do |t|
     t.string "name", null: false
@@ -42,17 +52,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_29_073450) do
     t.index ["event_id"], name: "index_time_slots_on_event_id"
   end
 
-  create_table "user_availabilities", force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.bigint "event_id", null: false
-    t.bigint "time_slot_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["event_id"], name: "index_user_availabilities_on_event_id"
-    t.index ["time_slot_id"], name: "index_user_availabilities_on_time_slot_id"
-    t.index ["user_id"], name: "index_user_availabilities_on_user_id"
-  end
-
   create_table "users", force: :cascade do |t|
     t.string "email_address"
     t.string "password_digest"
@@ -63,10 +62,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_29_073450) do
     t.index ["email_address"], name: "index_users_on_email_address_not_null", unique: true, where: "(email_address IS NOT NULL)"
   end
 
+  add_foreign_key "availabilities", "time_slots"
+  add_foreign_key "availabilities", "users"
   add_foreign_key "events", "users", column: "event_creator_id"
   add_foreign_key "sessions", "users"
   add_foreign_key "time_slots", "events"
-  add_foreign_key "user_availabilities", "events"
-  add_foreign_key "user_availabilities", "time_slots"
-  add_foreign_key "user_availabilities", "users"
 end

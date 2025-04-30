@@ -1,8 +1,8 @@
 class Event < ApplicationRecord
   has_many :time_slots, dependent: :destroy
   belongs_to :event_creator, class_name: "User", inverse_of: :created_events, optional: true
-  # has_many :user_availabilities, dependent: :destroy
-  # has_many :users, through: :user_availabilities, dependent: :destroy
+  has_many :availabilities, through: :time_slots
+  has_many :users, through: :availabilities
 
 
   validates :name, presence: true

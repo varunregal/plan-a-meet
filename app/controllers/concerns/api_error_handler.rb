@@ -17,7 +17,8 @@ module ApiErrorHandler
   private
 
   def handle_record_invalid(exception, path)
-    redirect_to path, inertia: { errors: exception.record.errors.messages }
+    # redirect_to path, inertia: { errors: exception.record.errors.messages }
+    redirect_to path, inertia: { errors: exception }
   end
 
   def handle_argument_error(exception, path)
@@ -25,7 +26,7 @@ module ApiErrorHandler
   end
 
   def handle_unexpected_error(exception, path)
-    redirect_to path, inertia: { errors: "Unexpected error: #{error.class} - #{error.message}" }
+    redirect_to path, inertia: { errors: "Unexpected error: #{exception.class} - #{exception.message}" }
   end
 
   def handle_record_not_found(exception, path)

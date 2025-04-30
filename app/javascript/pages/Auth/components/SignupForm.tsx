@@ -12,6 +12,7 @@ export function SignupForm({
   ...props
 }: React.ComponentPropsWithoutRef<"form">) {
   const { errors: pageErrors } = usePage().props;
+
   const {
     register,
     handleSubmit,
@@ -35,7 +36,7 @@ export function SignupForm({
       {...props}
     >
       <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="text-2xl font-bold">Create an ccount</h1>
+        <h1 className="text-2xl font-bold">Create an account</h1>
         <p className="text-balance text-sm text-muted-foreground">
           Enter the details below to create an account
         </p>
@@ -63,8 +64,12 @@ export function SignupForm({
             required
             {...register("email")}
           />
+
           {errors.email?.message && (
             <p className="text-red-500">{errors.email?.message}</p>
+          )}
+          {pageErrors?.email_address && (
+            <p className="text-red-500">{`Email address ${pageErrors.email_address[0]}`}</p>
           )}
         </div>
         <div className="grid gap-2">
@@ -80,15 +85,16 @@ export function SignupForm({
           {errors.password?.message && (
             <p className="text-red-500">{errors.password?.message}</p>
           )}
+          {pageErrors?.password && (
+            <p className="text-red-500">{`Password ${pageErrors.password[0]}`}</p>
+          )}
         </div>
         <Button type="submit" className="w-full">
           Sign up
         </Button>
       </div>
 
-      {pageErrors?.message && (
-        <p className="text-red-500">{pageErrors.message}</p>
-      )}
+      {pageErrors?.base && <p className="text-red-500">{pageErrors.base[0]}</p>}
     </form>
   );
 }

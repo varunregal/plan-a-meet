@@ -1,6 +1,7 @@
 class TimeSlot < ApplicationRecord
   belongs_to :event
-  has_many :user_availabilities, dependent: :destroy
+  has_many :availabilities, dependent: :destroy
+  has_many :users, through: :availabilities
 
   validates :start_time, presence: true
   validates :end_time, presence: true
