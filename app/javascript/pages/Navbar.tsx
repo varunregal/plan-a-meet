@@ -1,4 +1,4 @@
-import { Menu, Underline } from "lucide-react";
+import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Link, router, usePage } from "@inertiajs/react";
@@ -10,40 +10,32 @@ const menuLinks: MenuLink[] = [
   { label: "How it works", href: "#" },
   { label: "Notifications", href: "#" },
 ];
-function SignInButton() {
-  return (
-    <Button
-      variant="outline"
-      onClick={() => router.visit("/session/new", { replace: true })}
-    >
-      Sign in
-    </Button>
-  );
-}
+const SignInButton = () => (
+  <Button
+    variant="outline"
+    onClick={() => router.visit("/session/new", { replace: true })}
+  >
+    Sign in
+  </Button>
+);
 
-function SignupButton() {
-  return (
-    <Button
-      onClick={() => router.visit("/registration/new", { replace: true })}
-    >
-      Sign up
-    </Button>
-  );
-}
+const SignupButton = () => (
+  <Button onClick={() => router.visit("/registration/new", { replace: true })}>
+    Sign up
+  </Button>
+);
 
-function SignoutButton() {
-  return (
-    <Button onClick={() => router.delete("/session", { replace: true })}>
-      Logout
-    </Button>
-  );
-}
+const SignoutButton = () => (
+  <Button onClick={() => router.delete("/session", { replace: true })}>
+    Logout
+  </Button>
+);
 export function Navbar() {
   const { current_user } = usePage().props;
   const checkCurrentPage = (pathname?: string) => {
     return window.location.pathname === pathname;
   };
-  console.log({ current_user });
+
   return (
     <header className="w-full px-5 md:px-10">
       <div className="container mx-auto flex h-16 items-center">
@@ -102,10 +94,15 @@ export function Navbar() {
                   </Link>
                 ))}
 
-                <div className="grid grid-cols-2 gap-2 p-5 border-t border-gray-200">
-                  <SignInButton />
-                  <SignupButton />
-                  <SignoutButton />
+                <div className="grid grid-cols-1 gap-2 p-5 border-t border-gray-200">
+                  {!current_user ? (
+                    <>
+                      <SignInButton />
+                      <SignupButton />
+                    </>
+                  ) : (
+                    <SignoutButton />
+                  )}
                 </div>
               </nav>
             </SheetContent>

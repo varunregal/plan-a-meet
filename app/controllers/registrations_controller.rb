@@ -14,10 +14,10 @@ class RegistrationsController < ApplicationController
       assign_pending_event_creator(user)
       check_if_user_created_in_event_path
       if @pending_event
-        flash[:notice] = "Thanks for signing up! This event is now yours."
+        flash[:notice] = t(".pending_event_success")
         redirect_to event_path(@pending_event)
       elsif @current_event
-        flash[:notice] = "Thanks for signing up!"
+        flash[:notice] = t(".success")
         redirect_to event_path(@current_event)
       else
         flash[:notice] = t(".success")

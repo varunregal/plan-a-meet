@@ -14,7 +14,7 @@ export const authFooter: Record<authFooterKeyType, authFooterValueType> = {
     component: <LoginForm />,
   },
   sign_up: {
-    text: "Continue as Guest",
+    text: "Continue as Guest?",
     label: "Guest",
     redirect: "guest",
     component: <SignupForm />,

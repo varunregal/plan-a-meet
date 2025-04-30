@@ -40,7 +40,7 @@ export function SignupForm({
           Enter the details below to create an account
         </p>
       </div>
-      <div className="grid gap-10">
+      <div className="grid gap-7">
         <div className="grid gap-2">
           <Label htmlFor="email">Name</Label>
           <Input
@@ -68,19 +68,13 @@ export function SignupForm({
           )}
         </div>
         <div className="grid gap-2">
-          <div className="flex items-center">
-            <Label htmlFor="password">Password</Label>
-            <a
-              href="#"
-              className="ml-auto text-sm underline-offset-4 hover:underline"
-            >
-              Forgot your password?
-            </a>
-          </div>
+          <Label htmlFor="password">Password</Label>
+
           <Input
             id="password"
             type="password"
             required
+            placeholder="Enter your password"
             {...register("password")}
           />
           {errors.password?.message && (

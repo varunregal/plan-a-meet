@@ -1,5 +1,4 @@
-import { JSX } from "react";
-import { authFooterKeyType } from "../Auth.types";
+import { AuthFooterProps } from "../Auth.types";
 
 function AuthFooter({
   handleAuthClick,
@@ -7,20 +6,14 @@ function AuthFooter({
   redirect,
   label,
   component,
-}: {
-  handleAuthClick: (auth: authFooterKeyType) => void;
-  text: string;
-  label: string;
-  redirect: authFooterKeyType;
-  component: JSX.Element;
-}) {
+}: AuthFooterProps) {
   return (
     <div className="flex flex-col gap-5">
       {component}
       <div className="text-center text-sm">
         {text}{" "}
         <span
-          className="underline cursor-pointer"
+          className="underline cursor-pointer font-medium"
           onClick={() => {
             handleAuthClick(redirect);
           }}

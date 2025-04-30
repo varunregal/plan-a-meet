@@ -7,3 +7,11 @@ export type authFooterValueType = {
   redirect: authFooterKeyType;
   component: JSX.Element;
 };
+
+export type AuthFooterProps = {
+  handleAuthClick: (auth: authFooterKeyType) => void;
+  text: string;
+  label: string;
+  redirect: authFooterKeyType;
+  component: JSX.Element;
+}

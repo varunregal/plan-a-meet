@@ -14,7 +14,7 @@ function UserLogin({ event }: { event: EventProps }) {
   const [currentAuth, setCurrentAuth] = useState<authFooterKeyType | null>(
     current_user ? null : "guest"
   );
-  console.log({ current_user });
+
   const handleAuthClick = (auth: authFooterKeyType) => {
     setCurrentAuth(auth);
   };

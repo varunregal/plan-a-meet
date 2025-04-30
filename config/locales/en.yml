@@ -32,9 +32,15 @@ en:
   registrations:
     create:
       success: "Signed up successfully!"
+      pending_event_success: "Thanks for signing up! This event is now yours."
+
   sessions:
     create:
       success: "Signed in successfully!"
+      pending_event_success: "Thanks for signing up! Your event is now yours."
+      error: "Invalid email or password"
+    delete:
+      success: "Signed out successfully!"
   errors:
     messages:
       taken: "has already been taken"

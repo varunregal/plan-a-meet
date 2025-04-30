@@ -72,6 +72,7 @@ export function LoginForm() {
             id="password"
             type="password"
             required
+            placeholder="Enter your password"
             {...register("password")}
           />
           {errors.password?.message && (
