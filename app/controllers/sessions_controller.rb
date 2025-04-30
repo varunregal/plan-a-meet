@@ -11,8 +11,18 @@ class SessionsController < ApplicationController
   def create
     if user = User.authenticate_by(params.permit(:email_address, :password))
       start_new_session_for user
-      flash[:notice] = t(".success")
-      redirect_to after_authentication_url
+      assign_pending_event_creator(user)
+      check_if_user_created_in_event_path
+      if @pending_event
+        flash[:notice] = "Thanks for signing up! Your event is now yours."
+        redirect_to event_path(@pending_event)
+      elsif @current_event
+        flash[:notice] = "Logged in successfully!"
+        redirect_to event_path(@current_event)
+      else
+        flash[:notice] = t(".success")
+        redirect_to after_authentication_url
+      end
     else
       redirect_to new_session_path, inertia: { errors: { base: [ "Invalid email or password" ] } }
     end

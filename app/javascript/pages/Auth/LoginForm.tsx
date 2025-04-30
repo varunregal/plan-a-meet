@@ -37,7 +37,13 @@ export function LoginForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-10">
+      <div className="flex flex-col gap-2 text-center">
+        <h1 className="text-2xl font-bold">Login to your account</h1>
+        <p className="text-balance text-sm text-muted-foreground">
+          Enter the email and password below to login
+        </p>
+      </div>
       <div className="grid gap-7">
         <div className="grid gap-2">
           <Label htmlFor="email">Email</Label>

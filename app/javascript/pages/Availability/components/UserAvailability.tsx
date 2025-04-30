@@ -6,9 +6,12 @@ import { useAvailabilityContext } from "../context/AvailabilityContext";
 import { getColor } from "@/lib/getColor";
 import AvailabilityGrid from "./AvailabilityGrid";
 import { get } from "react-hook-form";
+import { Button } from "@/components/ui/button";
+import UserLogin from "@/pages/Event/components/UserLogin";
 
 function UserAvailability({ event }: { event: EventProps }) {
   const { userTimeSlots } = useAvailabilityContext();
+
   const getTimeSlotColor = (id: number) => {
     return userTimeSlots.find(
       (uts: AvailabilityProps) => uts.time_slot_id === id
@@ -20,14 +23,20 @@ function UserAvailability({ event }: { event: EventProps }) {
     <div className="flex flex-col gap-10">
       <EventHeader event={event} />
       <Separator />
-      <div className="flex flex-col gap-5">
-        <div className="text-md font-medium">Add your availabilities</div>
+      <UserLogin event={event} />
+      {/* <div className="flex flex-col gap-10">
+        <div className="flex justify-between items-center">
+          <div className="text-lg font-medium">Availability</div>
+          <div>
+            <Button variant={"secondary"}>Add Availaibility</Button>
+          </div>
+        </div>
         <AvailabilityGrid
           eventTimeSlots={event.time_slots}
           color={(id: number) => getTimeSlotColor(id)}
           handleTimeSlotClick={() => {}}
         />
-      </div>
+      </div> */}
     </div>
   );
 }

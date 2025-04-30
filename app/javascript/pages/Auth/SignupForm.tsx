@@ -91,12 +91,7 @@ export function SignupForm({
           Sign up
         </Button>
       </div>
-      <div className="text-center text-sm">
-        Already have an account?{" "}
-        <Link href="/session/new" className="underline underline-offset-4">
-          Login
-        </Link>
-      </div>
+
       {pageErrors?.message && (
         <p className="text-red-500">{pageErrors.message}</p>
       )}

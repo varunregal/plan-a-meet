@@ -1,3 +1,4 @@
+import { Link } from "@inertiajs/react";
 import { SignupForm } from "./SignupForm";
 
 export default function Register() {
@@ -8,6 +9,12 @@ export default function Register() {
           <div className="w-full max-w-md">
             <SignupForm />
           </div>
+        </div>
+        <div className="text-center text-sm">
+          Already have an account?{" "}
+          <Link href="/session/new" className="underline underline-offset-4">
+            Login
+          </Link>
         </div>
       </div>
       <div className="relative hidden bg-muted lg:block">

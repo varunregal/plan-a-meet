@@ -11,8 +11,18 @@ class RegistrationsController < ApplicationController
       user = User.new(user_params)
       user.save!
       start_new_session_for user
-      flash[:notice] = t(".success")
-      redirect_to root_path
+      assign_pending_event_creator(user)
+      check_if_user_created_in_event_path
+      if @pending_event
+        flash[:notice] = "Thanks for signing up! This event is now yours."
+        redirect_to event_path(@pending_event)
+      elsif @current_event
+        flash[:notice] = "Thanks for signing up!"
+        redirect_to event_path(@current_event)
+      else
+        flash[:notice] = t(".success")
+        redirect_to root_path
+      end
     rescue => e
       handle_error(e, new_registration_path)
     end

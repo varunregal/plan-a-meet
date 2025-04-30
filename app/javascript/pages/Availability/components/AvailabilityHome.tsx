@@ -11,7 +11,7 @@ import {
   UserProps,
 } from "@/pages/Event/event.types";
 import { useAvailabilityContext } from "../context/AvailabilityContext";
-import UserLoginForm from "@/pages/Event/components/UserLoginForm";
+import UserLoginForm from "@/pages/Event/components/UserLogin";
 import UserAvailability from "@/pages/Availability/components/UserAvailability";
 import GroupAvailability from "@/pages/Availability/components/GroupAvailability";
 import { usePage } from "@inertiajs/react";
@@ -63,7 +63,7 @@ function AvailabilityHome({
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-20">
-      {!user?.id ? (
+      {/* {!user?.id ? (
         <div className="space-y-12">
           <div className="font-bold">Let's plan for {name}</div>
           <Form {...form}>
@@ -74,7 +74,7 @@ function AvailabilityHome({
         </div>
       ) : (
         <UserAvailability url={url} eventTimeSlots={eventTimeSlots} />
-      )}
+      )} */}
       <GroupAvailability url={url} eventTimeSlots={eventTimeSlots} />
     </div>
   );

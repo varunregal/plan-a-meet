@@ -4,6 +4,9 @@ class EventsController < ApplicationController
   before_action :set_event, only: [ :edit, :update ]
   def show
     event = Event.find_by(url: params[:url])
+    if !Current.user
+      session[:user_created_in_event_path] = event.url
+    end
     render inertia: "Event/Show", props: { event: EventSerializer.new(event) }
   end
 
@@ -18,7 +21,15 @@ class EventsController < ApplicationController
   def create
     response = Events::Create.new(create_event_params, current_user: Current.user).create_time_slots_and_event
     if response.success?
-      redirect_to event_path(response.data)
+      event = response.data
+      if Current.user
+        flash[:notice] = "Event created!"
+        redirect_to event_path(event)
+      else
+        session[:pending_event_url] = event.url
+        flash[:alert] = "Please log in or sign up to finish creating your event"
+        redirect_to new_session_path
+      end
     else
       handle_error(response.error, new_event_path)
     end

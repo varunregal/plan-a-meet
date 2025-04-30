@@ -33,12 +33,10 @@ export function GuestForm() {
               <p className="text-red-500">{errors.name?.message}</p>
             )}
           </div>
-          <div className="flex justify-between items-center">
-            <Link href="/session/new" className="underline text-sm">
-              Already have an account?
-            </Link>
-            <Button type="submit">Sign in as Guest</Button>
-          </div>
+
+          <Button type="submit" className="w-full">
+            Sign in as Guest
+          </Button>
         </div>
       </div>
     </form>
