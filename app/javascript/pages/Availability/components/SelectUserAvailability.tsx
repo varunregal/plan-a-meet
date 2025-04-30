@@ -1,11 +1,4 @@
-import { TimeSlotProps } from "@/pages/Event/event.types";
-import AvailabilityGrid from "./AvailabilityGrid";
-
-function SelectUserAvailability({
-  eventTimeSlots,
-}: {
-  eventTimeSlots: TimeSlotProps[];
-}) {
+function SelectUserAvailability() {
   return (
     <div>
       <div className="text-md font-medium">Add your availabilities</div>

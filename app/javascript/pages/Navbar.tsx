@@ -12,35 +12,44 @@ const menuLinks: MenuLink[] = [
 ];
 function SignInButton() {
   return (
-    <Button variant="outline" asChild>
-      <Link href="/session/new">Sign in</Link>
+    <Button
+      variant="outline"
+      onClick={() => router.visit("/session/new", { replace: true })}
+    >
+      Sign in
     </Button>
   );
 }
 
 function SignupButton() {
   return (
-    <Button asChild>
-      <Link href="/registration/new">Sign up</Link>
+    <Button
+      onClick={() => router.visit("/registration/new", { replace: true })}
+    >
+      Sign up
     </Button>
   );
 }
 
 function SignoutButton() {
-  return <Button onClick={() => router.delete("/session")}>Logout</Button>;
+  return (
+    <Button onClick={() => router.delete("/session", { replace: true })}>
+      Logout
+    </Button>
+  );
 }
 export function Navbar() {
   const { current_user } = usePage().props;
   const checkCurrentPage = (pathname?: string) => {
     return window.location.pathname === pathname;
   };
-
+  console.log({ current_user });
   return (
     <header className="w-full px-5 md:px-10">
       <div className="container mx-auto flex h-16 items-center">
         <div className="flex-1">
           <Link href="/" className="flex items-center space-x-2">
-            <span className="font-bold text-lg">Plan A Meeting</span>
+            <span className="font-bold text-lg">Plan A Meet</span>
           </Link>
         </div>
 

@@ -1,18 +1,23 @@
-import { Alert } from "@/components/ui/alert";
 import { EventProps } from "../event.types";
 import { InfoIcon } from "lucide-react";
-import { SignupForm } from "@/pages/Auth/SignupForm";
-import { LoginForm } from "@/pages/Auth/LoginForm";
 import { useState } from "react";
 import { usePage } from "@inertiajs/react";
-import GuestLogin from "@/pages/User/components/GuestLogin";
-import { GuestForm } from "@/pages/Auth/GuestForm";
+import SelectUserAvailability from "@/pages/Availability/components/SelectUserAvailability";
+import { authFooterKeyType } from "@/pages/Auth/Auth.types";
+import AuthFooter from "@/pages/Auth/components/AuthFooter";
+import { authFooter } from "@/lib/authFooter";
 
 function UserLogin({ event }: { event: EventProps }) {
   const { current_user } = usePage().props;
 
   const { event_creator_id } = event;
-  const [showLogin, setShowLogin] = useState(true);
+  const [currentAuth, setCurrentAuth] = useState<authFooterKeyType | null>(
+    current_user ? null : "guest"
+  );
+  console.log({ current_user });
+  const handleAuthClick = (auth: authFooterKeyType) => {
+    setCurrentAuth(auth);
+  };
   return (
     <div className="flex flex-col gap-10">
       {!event_creator_id && (
@@ -24,28 +29,18 @@ function UserLogin({ event }: { event: EventProps }) {
         </div>
       )}
       <div>
-        {!current_user ? <GuestForm /> : <div>Show availability</div>}
-        {/* {showLogin ? (
-          <div className="flex flex-col gap-5">
-            <LoginForm />
-            <div className="text-center text-sm">
-              Don't have an account?{" "}
-              <span className="underline" onClick={() => setShowLogin(false)}>
-                Sign up
-              </span>
-            </div>
-          </div>
+        {current_user ? (
+          <SelectUserAvailability />
         ) : (
-          <div className="flex flex-col gap-5">
-            <SignupForm />
-            <div className="text-center text-sm">
-              Already have an account?{" "}
-              <span className="underline" onClick={() => setShowLogin(true)}>
-                Sign in
-              </span>
-            </div>
+          <div>
+            {currentAuth && (
+              <AuthFooter
+                handleAuthClick={handleAuthClick}
+                {...authFooter[currentAuth]}
+              />
+            )}
           </div>
-        )} */}
+        )}
       </div>
     </div>
   );

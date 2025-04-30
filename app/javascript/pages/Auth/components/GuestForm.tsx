@@ -17,10 +17,10 @@ export function GuestForm() {
 
   return (
     <form>
-      <div className="flex flex-col gap-5 border-[1px] border-gray-200 shadow-sm p-8 rounded-md">
-        <div className="font-medium text-lg">Continue as Guest</div>
+      <div className="flex flex-col gap-5 text-center">
+        <div className="font-bold text-2xl">Continue as Guest</div>
         <div className="grid gap-7">
-          <div className="grid gap-2">
+          <div className="grid gap-4">
             <Label htmlFor="name">Name</Label>
             <Input
               id="name"

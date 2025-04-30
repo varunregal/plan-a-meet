@@ -18,7 +18,6 @@ import ButtonWithLoader from "./components/ButtonWithLoader";
 
 function New() {
   const { flash }: any = usePage().props;
-
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<eventFormSchemaType>({
     resolver: zodResolver(eventFormSchema),

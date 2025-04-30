@@ -1,5 +1,5 @@
 import { Link } from "@inertiajs/react";
-import { SignupForm } from "./SignupForm";
+import { SignupForm } from "./components/SignupForm";
 
 export default function Register() {
   return (
