@@ -1,6 +1,6 @@
 class DropUserAvailabilities < ActiveRecord::Migration[8.0]
   def up
-    drop_table :user_availabilities
+    drop_table :user_availabilities, if_exists: true
   end
 
   def down
