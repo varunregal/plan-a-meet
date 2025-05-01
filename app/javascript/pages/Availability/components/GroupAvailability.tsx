@@ -9,19 +9,23 @@ import { getSlotColor } from "@/lib/getColor";
 function GroupAvailability({
   eventTimeSlots,
   canSchedule,
-  handleTimeSlotClick,
+  handleTimeSlotClick = () => {},
 }: {
   eventTimeSlots: TimeSlotProps[];
   canSchedule?: boolean;
-  handleTimeSlotClick: (time_slot_id: number) => void;
+  handleTimeSlotClick?: (time_slot_id: number) => void;
 }) {
   const { groupTimeSlots, users } = useAvailabilityContext();
   const [hoveredTimeSlot, setHoveredTimeSlot] = useState<number | null>(null);
+  const isScheduleSlotsPath =
+    window.location.pathname.includes("/scheduled_slots");
   return (
     <div className="flex flex-col gap-10 items-center">
-      <div className="font-bold text-md text-center underline">
-        Group Availability
-      </div>
+      {!isScheduleSlotsPath && (
+        <div className="font-bold text-md text-center underline">
+          Group Availability
+        </div>
+      )}
       <AvailabilityGrid
         eventTimeSlots={eventTimeSlots}
         color={(id: number) =>

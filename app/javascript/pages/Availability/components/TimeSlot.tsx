@@ -1,5 +1,5 @@
 import { format, parseISO } from "date-fns";
-import { TimeSlotProps } from "../../Event/event.types";
+import { ScheduledSlotProps, TimeSlotProps } from "../../Event/event.types";
 import { useAvailabilityContext } from "../context/AvailabilityContext";
 import { CheckIcon } from "lucide-react";
 
@@ -16,13 +16,17 @@ function TimeSlot({
   setHoveredTimeSlot?: React.Dispatch<React.SetStateAction<number | null>>;
   color: string;
 }) {
-  const { scheduledTimeSlots } = useAvailabilityContext();
+  const { scheduledTimeSlots, groupTimeSlots } = useAvailabilityContext();
   const isHour =
     (new Date(slot.start_time).getHours() * 60 +
       new Date(slot.start_time).getMinutes()) %
       60 ===
     0;
   const isScheduleSlots = window.location.pathname.includes("/scheduled_slots");
+  const checkSlotInScheduledSlots = (slot: number) =>
+    scheduledTimeSlots.some((item: number) => item === slot);
+  const checkSlotInGroupTime = (slot: number) =>
+    (groupTimeSlots[slot] || []).length;
   return (
     <div className="relative">
       <div
@@ -36,8 +40,12 @@ function TimeSlot({
           setHoveredTimeSlot ? () => setHoveredTimeSlot(null) : () => {}
         }
       >
-        {isScheduleSlots && scheduledTimeSlots.includes(slot.id) && (
-          <CheckIcon className="w-4 h-4 text-white stroke-4" />
+        {isScheduleSlots && checkSlotInScheduledSlots(slot.id) && (
+          <CheckIcon
+            className={`w-4 h-4 ${
+              checkSlotInGroupTime(slot.id) ? "text-white" : "text-gray-900"
+            } stroke-4`}
+          />
         )}
       </div>
 

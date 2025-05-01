@@ -17,6 +17,12 @@ Rails.application.routes.draw do
   resources :events, param: :url do
     resources :availabilities, only: [ :index ]
     resources :scheduled_slots, only: [ :index, :create, :destroy ]
+    member do
+      patch :schedule
+      get :schedule
+      patch :cancel
+      patch :reschedule
+    end
   end
 
   resources :time_slots, only: [] do

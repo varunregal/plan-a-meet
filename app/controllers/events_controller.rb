@@ -33,12 +33,29 @@ class EventsController < ApplicationController
     end
   end
   def update
-    # TODO
   end
 
+
   def schedule
-    event = Event.find_by(url: params[:event_url])
-    render inertia: "Event/Schedule", props: { event: EventSerializer.new(event) }
+    event = Event.find_by(url: params[:url])
+    if request.get?
+      render inertia: "Event/Schedule", props: { event:, scheduled_slots: event.scheduled_time_slots }
+    else
+      event.transaction do
+        event.scheduled_slots.delete_all
+        params[:slot_ids].each do |sid|
+          event.scheduled_slots.create!(time_slot_id: sid)
+        end
+        event.update!(status: "scheduled")
+      end
+      render json: { success: true, data: { event: } }
+    end
+  rescue ActiveRecord::RecordNotFound => exception
+    render json: { success: false, errors: "Couldn't find the current #{exception.model}" }, status: :not_found
+  rescue ActiveRecord::RecordInvalid => exception
+    render json: { success: false, errors: exception.message }, status: :unprocessable_entity
+  rescue StandardError => exception
+    render json: { success: false, errors: exception.message }, status: :internal_server_error
   end
 
 

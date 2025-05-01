@@ -43,8 +43,8 @@ export type EventProps = {
   id: number;
   name: string;
   url: string;
-  time_slots: TimeSlotProps[]
-  event_creator_id?: number
+  time_slots: TimeSlotProps[];
+  event_creator_id?: number;
 };
 
 export type EventResponseProps = {
@@ -58,16 +58,22 @@ export type TimeSlotProps = {
   start_time: string;
   end_time: string;
   event_id: number;
-  id: number
-}
+  id: number;
+};
 
 export type UserProps = {
-  id: number,
-  name: string
-}
+  id: number;
+  name: string;
+};
 
 export type AvailabilityProps = {
-  id: number,
-  time_slot_id: number,
-  user: UserProps
-}
+  id: number;
+  time_slot_id: number;
+  user: UserProps;
+};
+
+export type ScheduledSlotProps = {
+  id: number;
+  time_slot_id: number;
+  event_id: number;
+};

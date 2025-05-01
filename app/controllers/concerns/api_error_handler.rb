@@ -17,8 +17,7 @@ module ApiErrorHandler
   private
 
   def handle_record_invalid(exception, path)
-    # redirect_to path, inertia: { errors: exception.record.errors.messages }
-    redirect_to path, inertia: { errors: exception }
+    redirect_to path, inertia: { errors: exception.record.errors.messages }
   end
 
   def handle_argument_error(exception, path)

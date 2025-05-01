@@ -32,7 +32,7 @@ RSpec.describe "ScheduledSlotsController", type: :request, inertia: true do
   describe "POST /scheduled_slots" do
     it "create scheduled slots with valid params" do
       expect { post event_scheduled_slots_path(Event.last), params: { time_slot_id: Event.last.time_slots.first.id } }.to change(ScheduledSlot, :count).by(1)
-      expect(response.parsed_body["data"]["time_slot_id"]).to eq(Event.last.time_slots.first.id)
+      expect(response.parsed_body["data"]["scheduled_slot"]["time_slot_id"]).to eq(Event.last.time_slots.first.id)
     end
 
     it "cannot create scheduled slots with invalid url" do
@@ -48,6 +48,13 @@ RSpec.describe "ScheduledSlotsController", type: :request, inertia: true do
       post event_scheduled_slots_path(Event.last), params: { time_slot_id: Event.last.time_slots.first.id }
       expect { post event_scheduled_slots_path(Event.last), params: { time_slot_id: Event.last.time_slots.first.id } }.to change(ScheduledSlot, :count).by(0)
       expect(response.parsed_body[:errors]).to eq("Validation failed: Time slot has already been taken")
+    end
+  end
+
+  describe "DELETE /scheduled_slots" do
+    it "delete scheduled slot with valid params" do
+      post event_scheduled_slots_path(Event.last), params: { time_slot_id: Event.last.time_slots.first.id }
+      expect { delete event_scheduled_slot_path(Event.last, ScheduledSlot.last) }.to change(ScheduledSlot, :count).by(-1)
     end
   end
 end

@@ -1,4 +1,8 @@
-import { AvailabilityProps, UserProps } from "@/pages/Event/event.types";
+import {
+  AvailabilityProps,
+  ScheduledSlotProps,
+  UserProps,
+} from "@/pages/Event/event.types";
 import {
   createContext,
   Dispatch,
@@ -32,7 +36,8 @@ type Action =
   | { type: "SET_USERS"; payload: UserProps[] }
   | { type: "ADD_USER"; payload: UserProps }
   | { type: "SET_SCHEDULED_SLOTS"; payload: number[] }
-  | { type: "ADD_SCHEDULED_SLOT"; payload: number };
+  | { type: "ADD_SCHEDULED_SLOT"; payload: number }
+  | { type: "DELETE_SCHEDULED_SLOT"; payload: number };
 
 const AvailabilityReducer = (state: State, action: Action): State => {
   switch (action.type) {
@@ -100,6 +105,13 @@ const AvailabilityReducer = (state: State, action: Action): State => {
       return {
         ...state,
         scheduledTimeSlots: [...state.scheduledTimeSlots, action.payload],
+      };
+    case "DELETE_SCHEDULED_SLOT":
+      return {
+        ...state,
+        scheduledTimeSlots: state.scheduledTimeSlots.filter(
+          (item: number) => item !== action.payload
+        ),
       };
     default:
       return state;

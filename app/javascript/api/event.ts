@@ -1,4 +1,4 @@
-import { api } from "@/lib/api";
+import { api, requestJSON } from "@/lib/api";
 
 export const createEvent = async (event: any) => {
   try {
@@ -19,3 +19,13 @@ export const createEvent = async (event: any) => {
     }
   }
 };
+
+export const createBatchScheduledSlot = (
+  eventSlug: string,
+  time_slot_ids: number[]
+) =>
+  requestJSON<any>({
+    method: "PATCH",
+    url: `/events/${eventSlug}/schedule`,
+    data: { slot_ids: time_slot_ids },
+  });
