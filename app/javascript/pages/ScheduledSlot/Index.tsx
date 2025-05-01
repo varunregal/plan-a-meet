@@ -1,11 +1,11 @@
 import { Button } from "@/components/ui/button";
 import GroupAvailability from "../Availability/components/GroupAvailability";
-import { EventProps } from "./event.types";
 import useGetAvailabilities from "@/hooks/useGetAvailabilities";
 import { CheckIcon, EditIcon } from "lucide-react";
 import { useState } from "react";
+import { EventProps } from "../Event/event.types";
 
-function Schedule({ event }: { event: EventProps }) {
+function Index({ event }: { event: EventProps }) {
   useGetAvailabilities({ event });
   const [edit, setEdit] = useState(false);
   return (
@@ -36,4 +36,4 @@ function Schedule({ event }: { event: EventProps }) {
   );
 }
 
-export default Schedule;
+export default Index;

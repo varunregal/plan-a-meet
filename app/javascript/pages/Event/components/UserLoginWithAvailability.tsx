@@ -39,7 +39,9 @@ function UserLoginWithAvailability({ event }: { event: EventProps }) {
             <div className="md:w-fit md:self-end">
               {event_creator_id === current_user.id ? (
                 <Button
-                  onClick={() => router.visit(`/events/${event.url}/schedule`)}
+                  onClick={() =>
+                    router.visit(`/events/${event.url}/scheduled_slots`)
+                  }
                   disabled={!userTimeSlots.length}
                 >
                   Proceed to Next Step
