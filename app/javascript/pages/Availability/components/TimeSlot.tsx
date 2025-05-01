@@ -1,5 +1,7 @@
 import { format, parseISO } from "date-fns";
 import { TimeSlotProps } from "../../Event/event.types";
+import { useAvailabilityContext } from "../context/AvailabilityContext";
+import { CheckIcon } from "lucide-react";
 
 function TimeSlot({
   slot,
@@ -14,16 +16,17 @@ function TimeSlot({
   setHoveredTimeSlot?: React.Dispatch<React.SetStateAction<number | null>>;
   color: string;
 }) {
+  const { scheduledTimeSlots } = useAvailabilityContext();
   const isHour =
     (new Date(slot.start_time).getHours() * 60 +
       new Date(slot.start_time).getMinutes()) %
       60 ===
     0;
-
+  const isScheduleSlots = window.location.pathname.includes("/scheduled_slots");
   return (
     <div className="relative">
       <div
-        className={`w-20 h-7 hover:border-2 hover:border-purple-500`}
+        className={`w-20 h-7 hover:border-2 hover:border-purple-500 flex justify-center items-center`}
         style={{ backgroundColor: color }}
         onClick={() => onClick(slot.id)}
         onMouseEnter={
@@ -32,7 +35,11 @@ function TimeSlot({
         onMouseLeave={
           setHoveredTimeSlot ? () => setHoveredTimeSlot(null) : () => {}
         }
-      ></div>
+      >
+        {isScheduleSlots && scheduledTimeSlots.includes(slot.id) && (
+          <CheckIcon className="w-4 h-4 text-white stroke-4" />
+        )}
+      </div>
 
       {isHour && column === 0 && (
         <div className="absolute -left-20 -top-1 text-sm font-medium">

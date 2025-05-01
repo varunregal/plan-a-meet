@@ -1,7 +1,7 @@
 class ScheduledSlotsController < ApplicationController
   def index
     event = Event.find_by(url: params[:event_url])
-    render inertia: "ScheduledSlot/Index", props: { event: EventSerializer.new(event) }
+    render inertia: "ScheduledSlot/Index", props: { event: EventSerializer.new(event), scheduled_slots: event.scheduled_slots.pluck(:time_slot_id) }
   end
   def create
     event = Event.find_by!(url: params[:event_url])
