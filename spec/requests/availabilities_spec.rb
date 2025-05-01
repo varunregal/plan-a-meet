@@ -26,17 +26,17 @@ RSpec.describe "AvailabilitiesController", type: :request, inertia: true do
       expect { post time_slot_availability_path(@second_time_slot) }.to change(Availability, :count).by(1)
 
       get event_availabilities_path(Event.last)
-      expect(response.parsed_body["availabilities"][0]["time_slot_id"]).to eq(@time_slot.id)
-      expect(response.parsed_body["availabilities"][1]["time_slot_id"]).to eq(@second_time_slot.id)
-      expect(response.parsed_body["current_user_availabilities"][0]["time_slot_id"]).to eq(@time_slot.id)
-      expect(response.parsed_body["current_user_availabilities"][1]["time_slot_id"]).to eq(@second_time_slot.id)
+      expect(response.parsed_body["data"]["availabilities"][0]["time_slot_id"]).to eq(@time_slot.id)
+      expect(response.parsed_body["data"]["availabilities"][1]["time_slot_id"]).to eq(@second_time_slot.id)
+      expect(response.parsed_body["data"]["current_user_availabilities"][0]["time_slot_id"]).to eq(@time_slot.id)
+      expect(response.parsed_body["data"]["current_user_availabilities"][1]["time_slot_id"]).to eq(@second_time_slot.id)
     end
   end
 
   describe "POST /availabilities" do
     it "create availability with valid params" do
       expect { post time_slot_availability_path(@time_slot) }.to change(Availability, :count).by(1)
-      expect(response.parsed_body["time_slot_id"]).to eq(@time_slot.id)
+      expect(response.parsed_body["data"]["availability"]["time_slot_id"]).to eq(@time_slot.id)
     end
     it "cannot create availability with invalid params" do
       expect { post time_slot_availability_path(305) }.to change(Availability, :count).by(0)
@@ -47,6 +47,19 @@ RSpec.describe "AvailabilitiesController", type: :request, inertia: true do
       expect { post time_slot_availability_path(@time_slot) }.to change(Availability, :count).by(1)
       expect { post time_slot_availability_path(@time_slot) }.to change(Availability, :count).by(0)
       expect(response.parsed_body["errors"]).to eq("Validation failed: Time slot has already been taken")
+    end
+  end
+
+  describe "DELETE /availabilities" do
+    it "delete availability with valid params" do
+      post time_slot_availability_path(@time_slot)
+      expect { delete time_slot_availability_path(@time_slot) }.to change(Availability, :count).by(-1)
+      expect(response.parsed_body["data"]["availability"]["time_slot_id"]).to eq(@time_slot.id)
+    end
+
+    it "delete availability with invalid params" do
+      expect { delete time_slot_availability_path(305) }.to change(Availability, :count).by(0)
+      expect(response.parsed_body["errors"]).to eq("Couldn't find TimeSlot with 'id'=#{305}")
     end
   end
 end

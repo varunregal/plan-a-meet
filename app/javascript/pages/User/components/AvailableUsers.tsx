@@ -7,16 +7,14 @@ function AvailableUsers({
   hoveredTimeSlot: number | null;
 }) {
   const { groupTimeSlots, users } = useAvailabilityContext();
-  const currentAvailableUsersCount =
-    (hoveredTimeSlot && groupTimeSlots[hoveredTimeSlot]?.length) || 0;
-  const totalUsers = users.length;
-  const availableUsers = hoveredTimeSlot ? groupTimeSlots[hoveredTimeSlot] : [];
+
+  const availableUsers = hoveredTimeSlot
+    ? groupTimeSlots[hoveredTimeSlot]
+    : users;
 
   return (
     <div>
-      <div className="font-medium text-sm underline mb-2">
-        Available {`(${currentAvailableUsersCount}/${totalUsers})`}
-      </div>
+      <div className="font-medium underline mb-2">Responders</div>
       <UsersList users={availableUsers} />
     </div>
   );

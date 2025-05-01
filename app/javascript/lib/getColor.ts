@@ -1,10 +1,21 @@
-export function getColor(frequency: number, maxFrequency: number) {
-  if (frequency === 0) return `hsl(120, 0%, 95%)`;
-  const normalizedFrequency = frequency / maxFrequency;
-  const startLightness = 90;
-  const endLightness = 30;
-  const lightnessRange = startLightness - endLightness;
-  const finalLightness = startLightness - (normalizedFrequency * lightnessRange);
-  return `hsl(275, 100%, ${finalLightness}%)`;
-}
+export function getSlotColor(
+  frequency: number,
+  maxFrequency: number,
+): string {
+  
+  const freq = Math.max(0, Math.min(frequency, maxFrequency));
+  const t    = maxFrequency > 0 ? freq / maxFrequency : 0;
 
+  if(freq === 0){
+    return "oklch(96.7% 0.003 264.542)"
+  }
+
+  const H = 275;      
+  const S = 60;       
+
+  const L0 = 90;
+  const L1 = 40;
+  const L  = L0 - t * (L0 - L1);
+
+  return `hsl(${H}, ${S}%, ${L}%)`;
+}

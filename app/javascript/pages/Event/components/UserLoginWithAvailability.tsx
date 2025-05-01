@@ -2,7 +2,7 @@ import { EventProps } from "../event.types";
 import { InfoIcon } from "lucide-react";
 import { useState } from "react";
 import { usePage } from "@inertiajs/react";
-import SelectUserAvailability from "@/pages/Availability/components/UserAvailability";
+import UserAvailability from "@/pages/Availability/components/UserAvailability";
 import { authFooterKeyType } from "@/pages/Auth/Auth.types";
 import AuthFooter from "@/pages/Auth/components/AuthFooter";
 import { authFooter } from "@/lib/authFooter";
@@ -30,7 +30,7 @@ function UserLoginWithAvailability({ event }: { event: EventProps }) {
       )}
       <div>
         {current_user ? (
-          <SelectUserAvailability event={event} />
+          <UserAvailability event={event} />
         ) : (
           <div>
             {currentAuth && (

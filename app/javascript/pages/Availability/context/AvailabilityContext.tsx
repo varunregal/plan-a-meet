@@ -23,17 +23,23 @@ type Action =
     }
   | {
       type: "DELETE_USER_SLOT";
-      payload: { id: number; time_slot_id: number; user_id: number };
+      payload: AvailabilityProps;
     }
   | { type: "SET_USER_TIME_SLOTS"; payload: AvailabilityProps[] }
   | { type: "SET_GROUP_TIME_SLOTS"; payload: Record<number, UserProps[]> }
   | { type: "SET_NUM_OF_USERS"; payload: number }
-  | { type: "SET_USERS"; payload: UserProps[] };
+  | { type: "SET_USERS"; payload: UserProps[] }
+  | { type: "ADD_USER"; payload: UserProps };
 
 const AvailabilityReducer = (state: State, action: Action): State => {
   switch (action.type) {
     case "SET_USER":
-      return { ...state, user: action.payload };
+      return {
+        ...state,
+        user: action.payload,
+      };
+    case "ADD_USER":
+      return { ...state, users: [...state.users, action.payload] };
     case "ADD_USER_SLOT":
       if (!action.payload.time_slot_id) return { ...state };
       const key = action.payload.time_slot_id;
@@ -48,6 +54,7 @@ const AvailabilityReducer = (state: State, action: Action): State => {
         },
       };
     case "DELETE_USER_SLOT":
+      console.log(action.payload);
       const deleteKey = action.payload.time_slot_id;
       return {
         ...state,
@@ -57,7 +64,7 @@ const AvailabilityReducer = (state: State, action: Action): State => {
         groupTimeSlots: {
           ...state.groupTimeSlots,
           [deleteKey]: state.groupTimeSlots[deleteKey].filter(
-            (user: UserProps) => user.id === action.payload.user_id
+            (user: UserProps) => user.id !== action.payload.user.id
           ),
         },
       };

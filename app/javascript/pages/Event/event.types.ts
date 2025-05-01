@@ -68,7 +68,6 @@ export type UserProps = {
 
 export type AvailabilityProps = {
   id: number,
-  time_slot_id?: number,
-  event_id: number,
+  time_slot_id: number,
   user: UserProps
 }
