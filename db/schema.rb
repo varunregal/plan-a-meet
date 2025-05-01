@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_30_200344) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_01_143226) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -32,6 +32,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_30_200344) do
     t.bigint "event_creator_id"
     t.index ["event_creator_id"], name: "index_events_on_event_creator_id"
     t.index ["url"], name: "index_events_on_url", unique: true
+  end
+
+  create_table "scheduled_slots", force: :cascade do |t|
+    t.bigint "event_id", null: false
+    t.bigint "time_slot_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_id", "time_slot_id"], name: "index_scheduled_slot_on_event_and_time_slot", unique: true
+    t.index ["event_id"], name: "index_scheduled_slots_on_event_id"
+    t.index ["time_slot_id"], name: "index_scheduled_slots_on_time_slot_id"
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -65,6 +75,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_30_200344) do
   add_foreign_key "availabilities", "time_slots"
   add_foreign_key "availabilities", "users"
   add_foreign_key "events", "users", column: "event_creator_id"
+  add_foreign_key "scheduled_slots", "events"
+  add_foreign_key "scheduled_slots", "time_slots"
   add_foreign_key "sessions", "users"
   add_foreign_key "time_slots", "events"
 end

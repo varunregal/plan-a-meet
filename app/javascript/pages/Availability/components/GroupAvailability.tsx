@@ -6,12 +6,12 @@ import AvailableUsers from "@/pages/User/components/AvailableUsers";
 import AvailabilityGrid from "./AvailabilityGrid";
 import { getSlotColor } from "@/lib/getColor";
 
-export default function GroupAvailability({
+function GroupAvailability({
   eventTimeSlots,
   canSchedule,
 }: {
   eventTimeSlots: TimeSlotProps[];
-  canSchedule: boolean;
+  canSchedule?: boolean;
 }) {
   const { groupTimeSlots, users } = useAvailabilityContext();
   const [hoveredTimeSlot, setHoveredTimeSlot] = useState<number | null>(null);
@@ -39,3 +39,5 @@ export default function GroupAvailability({
     </div>
   );
 }
+
+export default GroupAvailability;

@@ -1,5 +1,5 @@
 import { TimeSlotProps } from "@/pages/Event/event.types";
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import TimeSlot from "./TimeSlot";
 import { format } from "date-fns";
 import prepareTimeSlots from "@/lib/prepareTimeSlots";
