@@ -23,18 +23,19 @@ function UserAvailability({ event }: { event: EventProps }) {
   };
 
   return (
-    <div>
-      <div className="grid grid-cols-2 gap-10">
-        <div className="flex flex-col gap-10 items-center">
-          <div className="text-md font-medium">Your Availability</div>
-          <AvailabilityGrid
-            eventTimeSlots={event.time_slots}
-            color={(id: number) => getCurrentUserTimeSlotColor(id)}
-            handleTimeSlotClick={handleTimeSlotClick}
-          />
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-15">
+      <div className="flex flex-col gap-10 items-center">
+        <div className="text-md font-bold underline">
+          Choose your availability{" "}
+          <span className="text-purple-600">{current_user.name}</span>
         </div>
-        <GroupAvailability eventTimeSlots={event.time_slots} />
+        <AvailabilityGrid
+          eventTimeSlots={event.time_slots}
+          color={(id: number) => getCurrentUserTimeSlotColor(id)}
+          handleTimeSlotClick={handleTimeSlotClick}
+        />
       </div>
+      <GroupAvailability eventTimeSlots={event.time_slots} />
     </div>
   );
 }

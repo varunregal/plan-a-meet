@@ -6,6 +6,7 @@ import UserAvailability from "@/pages/Availability/components/UserAvailability";
 import { authFooterKeyType } from "@/pages/Auth/Auth.types";
 import AuthFooter from "@/pages/Auth/components/AuthFooter";
 import { authFooter } from "@/lib/authFooter";
+import { Button } from "@/components/ui/button";
 
 function UserLoginWithAvailability({ event }: { event: EventProps }) {
   const { current_user } = usePage().props;
@@ -30,9 +31,14 @@ function UserLoginWithAvailability({ event }: { event: EventProps }) {
       )}
       <div>
         {current_user ? (
-          <UserAvailability event={event} />
+          <div className="flex flex-col gap-10">
+            <Button className="md:w-fit md:self-end">
+              Proceed to Next Step
+            </Button>
+            <UserAvailability event={event} />
+          </div>
         ) : (
-          <div>
+          <div className="md:w-2/3 md:mx-auto">
             {currentAuth && (
               <AuthFooter
                 handleAuthClick={handleAuthClick}

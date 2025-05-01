@@ -56,7 +56,7 @@ function New() {
     );
   };
   return (
-    <div>
+    <div className="md:w-3/4 lg:w-2/3 mx-auto">
       <div className="text-center flex flex-col gap-1 mb-15">
         <h2 className="font-bold text-lg">Create a New Meeting</h2>
         <p className="text-gray-500 text-sm">

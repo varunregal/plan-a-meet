@@ -17,7 +17,9 @@ export default function GroupAvailability({
 
   return (
     <div className="flex flex-col gap-10 items-center">
-      <div className="font-bold text-md text-center">Group Availability</div>
+      <div className="font-bold text-md text-center underline">
+        Group Availability
+      </div>
       <AvailabilityGrid
         eventTimeSlots={eventTimeSlots}
         color={(id: number) =>

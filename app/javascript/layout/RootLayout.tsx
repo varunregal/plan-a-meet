@@ -10,7 +10,9 @@ function RootLayout({ children }: { children: ReactNode }) {
     <main>
       <Navbar />
       <div
-        className={`${!isCredentialsPage ? "px-8 mt-20 w-full mx-auto" : ""}`}
+        className={`${
+          !isCredentialsPage ? "px-8 md:px-15 mt-20 w-full mx-auto" : ""
+        }`}
       >
         {children}
       </div>
