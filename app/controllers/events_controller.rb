@@ -1,7 +1,6 @@
 require "pry"
 class EventsController < ApplicationController
   allow_unauthenticated_access only: [ :new, :create, :show ]
-  before_action :set_event, only: [ :edit, :update ]
   def show
     event = Event.find_by(url: params[:url])
     if !Current.user
@@ -24,12 +23,11 @@ class EventsController < ApplicationController
       event = response.data
       if Current.user
         flash[:notice] = t(".success")
-        redirect_to event_path(event)
       else
         session[:pending_event_url] = event.url
         flash[:alert] = t(".error")
-        redirect_to event_path(event)
       end
+      redirect_to event_path(event)
     else
       handle_error(response.error, new_event_path)
     end
@@ -38,14 +36,15 @@ class EventsController < ApplicationController
     # TODO
   end
 
+  def schedule
+    event = Event.find_by(url: params[:event_url])
+    render inertia: "Event/Schedule", props: { event: EventSerializer.new(event) }
+  end
+
 
 
   private
   def create_event_params
     params.expect(event: [ :name, :start_time, :end_time, :time_zone, dates: [] ])
-  end
-
-  def set_event
-    @event = Event.find_by(url: params[:url])
   end
 end

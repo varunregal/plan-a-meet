@@ -1,16 +1,18 @@
 import { EventProps } from "../event.types";
-import { InfoIcon } from "lucide-react";
+import { CheckIcon, InfoIcon } from "lucide-react";
 import { useState } from "react";
-import { usePage } from "@inertiajs/react";
+import { router, usePage } from "@inertiajs/react";
 import UserAvailability from "@/pages/Availability/components/UserAvailability";
 import { authFooterKeyType } from "@/pages/Auth/Auth.types";
 import AuthFooter from "@/pages/Auth/components/AuthFooter";
 import { authFooter } from "@/lib/authFooter";
 import { Button } from "@/components/ui/button";
+import { useAvailabilityContext } from "@/pages/Availability/context/AvailabilityContext";
 
 function UserLoginWithAvailability({ event }: { event: EventProps }) {
-  const { current_user } = usePage().props;
-
+  // @ts-ignore
+  const { current_user }: { current_user: EventProps } = usePage().props;
+  const { userTimeSlots } = useAvailabilityContext();
   const { event_creator_id } = event;
   const [currentAuth, setCurrentAuth] = useState<authFooterKeyType | null>(
     current_user ? null : "sign_in"
@@ -21,24 +23,39 @@ function UserLoginWithAvailability({ event }: { event: EventProps }) {
   };
   return (
     <div className="flex flex-col gap-10">
-      {!event_creator_id && (
-        <div className="p-4 flex gap-3 text-blue-800 rounded-md items-center bg-blue-50">
+      {!current_user && (
+        <div className="md:w-1/2 md:mx-auto p-4 flex gap-3 text-blue-800 rounded-md items-center bg-blue-50">
           <InfoIcon className="w-4 h-4" />
           <div className="text-sm">
-            Event creator should login before proceeding
+            {!event_creator_id
+              ? "Event creator should sign in before proceeding"
+              : "Please Sign in/Sign up to add your availabilities"}
           </div>
         </div>
       )}
       <div>
         {current_user ? (
           <div className="flex flex-col gap-10">
-            <Button className="md:w-fit md:self-end">
-              Proceed to Next Step
-            </Button>
+            <div className="md:w-fit md:self-end">
+              {event_creator_id === current_user.id ? (
+                <Button
+                  onClick={() => router.visit(`/events/${event.url}/schedule`)}
+                  disabled={!userTimeSlots.length}
+                >
+                  Proceed to Next Step
+                </Button>
+              ) : (
+                <Button>
+                  <CheckIcon className="w-4 h-4" />
+                  Done
+                </Button>
+              )}
+            </div>
+
             <UserAvailability event={event} />
           </div>
         ) : (
-          <div className="md:w-2/3 md:mx-auto">
+          <div className="md:w-1/2 md:mx-auto">
             {currentAuth && (
               <AuthFooter
                 handleAuthClick={handleAuthClick}

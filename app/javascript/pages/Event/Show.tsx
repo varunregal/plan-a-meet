@@ -3,11 +3,7 @@ import { AvailabilityProvider } from "../Availability/context/AvailabilityContex
 import { EventProps } from "./event.types";
 
 function Show({ event }: { event: EventProps }) {
-  return (
-    <AvailabilityProvider>
-      <Event event={event} />
-    </AvailabilityProvider>
-  );
+  return <Event event={event} />;
 }
 
 export default Show;

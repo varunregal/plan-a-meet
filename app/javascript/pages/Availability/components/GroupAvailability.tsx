@@ -8,13 +8,14 @@ import { getSlotColor } from "@/lib/getColor";
 
 export default function GroupAvailability({
   eventTimeSlots,
+  canSchedule,
 }: {
   eventTimeSlots: TimeSlotProps[];
+  canSchedule: boolean;
 }) {
   const { groupTimeSlots, users } = useAvailabilityContext();
-
   const [hoveredTimeSlot, setHoveredTimeSlot] = useState<number | null>(null);
-
+  const handleTimeSlotClick = async () => {};
   return (
     <div className="flex flex-col gap-10 items-center">
       <div className="font-bold text-md text-center underline">
