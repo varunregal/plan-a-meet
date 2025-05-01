@@ -51,7 +51,7 @@ function useUserAvailability({
     const isOldUser = users.find(
       (user: UserProps) => user.id === current_user.id
     );
-    if (isOldUser) dispatch({ type: "ADD_USER", payload: current_user });
+    if (!isOldUser) dispatch({ type: "ADD_USER", payload: current_user });
 
     if (!isUserTimeSlot) {
       const response = await createCurrentUserAvailability(timeSlot);
