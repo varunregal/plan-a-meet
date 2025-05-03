@@ -47,7 +47,14 @@ function UserLoginWithAvailability({ event }: { event: EventProps }) {
                   Proceed to Next Step
                 </Button>
               ) : (
-                <Button>
+                <Button
+                  onClick={
+                    userTimeSlots.length
+                      ? () => router.visit(`/events/${event.url}/confirmation`)
+                      : () => {}
+                  }
+                  disabled={!userTimeSlots.length}
+                >
                   <CheckIcon className="w-4 h-4" />
                   Done
                 </Button>

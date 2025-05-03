@@ -1,5 +1,3 @@
-import React from "react";
-
 import {
   Card,
   CardContent,
@@ -10,22 +8,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { CheckCircle } from "lucide-react";
 import { format } from "date-fns";
-import { EventProps, ScheduledSlotProps, TimeSlotProps } from "./event.types";
-import { usePage } from "@inertiajs/react";
-
-interface TimeSlot {
-  id: number;
-  start_time: string;
-  end_time: string;
-}
-
-interface PageProps {
-  event: {
-    name: string;
-    url: string;
-  };
-  scheduled_slots: TimeSlot[];
-}
+import { EventProps, TimeSlotProps } from "./event.types";
 
 export default function EventScheduledPage({
   event,

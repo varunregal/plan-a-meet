@@ -1,5 +1,5 @@
 import { format, parseISO } from "date-fns";
-import { ScheduledSlotProps, TimeSlotProps } from "../../Event/event.types";
+import { TimeSlotProps } from "../../Event/event.types";
 import { useAvailabilityContext } from "../context/AvailabilityContext";
 import { CheckIcon } from "lucide-react";
 

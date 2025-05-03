@@ -39,7 +39,7 @@ class EventsController < ApplicationController
   def schedule
     event = Event.find_by(url: params[:url])
     if request.get?
-      render inertia: "Event/Schedule", props: { event:, scheduled_slots: event.scheduled_time_slots }
+      render inertia: "Event/Schedule", props: { event: EventSerializer.new(event), scheduled_slots: event.scheduled_time_slots }
     else
       event.transaction do
         event.scheduled_slots.delete_all
@@ -56,6 +56,11 @@ class EventsController < ApplicationController
     render json: { success: false, errors: exception.message }, status: :unprocessable_entity
   rescue StandardError => exception
     render json: { success: false, errors: exception.message }, status: :internal_server_error
+  end
+
+  def confirmation
+    event = Event.find_by(url: params[:url])
+    render inertia: "Event/Confirmation", props: { event: EventSerializer.new(event) }
   end
 
 
