@@ -1,21 +1,14 @@
 import { Button } from "@/components/ui/button";
 import GroupAvailability from "../Availability/components/GroupAvailability";
 import useGetAvailabilities from "@/hooks/useGetAvailabilities";
-import { CheckIcon, EditIcon } from "lucide-react";
-import { useEffect, useState } from "react";
-import {
-  EventProps,
-  ScheduledSlotProps,
-  TimeSlotProps,
-} from "../Event/event.types";
-import {
-  createScheduledSlot,
-  deleteScheduledSlot,
-  getScheduledSlots,
-} from "@/api/scheduledSlot";
+import { CheckIcon, InfoIcon } from "lucide-react";
+import { useEffect } from "react";
+import { EventProps } from "../Event/event.types";
+
 import { useAvailabilityContext } from "../Availability/context/AvailabilityContext";
 import { router } from "@inertiajs/react";
 import { createBatchScheduledSlot } from "@/api/event";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 function Index({
   event,
@@ -25,7 +18,6 @@ function Index({
   scheduled_slots: number[];
 }) {
   useGetAvailabilities({ event });
-  const [edit, setEdit] = useState(false);
   const { dispatch, scheduledTimeSlots: currentScheduledSlots } =
     useAvailabilityContext();
 
@@ -53,20 +45,25 @@ function Index({
   }, []);
   return (
     <div className="md:w-1/2 mx-auto flex flex-col gap-10">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-center md:relative">
+      <Alert className="md:mx-auto p-4 flex gap-3 text-blue-800 rounded-md items-center bg-blue-50">
+        <InfoIcon className="h-4 w-4" />
+        <AlertDescription className="text-sm text-blue-800">
+          Scheduling can be finalized once all participants have submitted their
+          availability.
+        </AlertDescription>
+      </Alert>
+      <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-center md:relative">
         <div className="font-bold underline">Schedule the event</div>
-        {!!currentScheduledSlots.length && (
-          <Button
-            className="md:absolute md:right-0"
-            onClick={handleScheduleClick}
-          >
-            <CheckIcon className="w-4 h-4 stroke-3" /> Schedule
-          </Button>
-        )}
+        <Button
+          className="md:absolute md:right-0"
+          onClick={handleScheduleClick}
+          disabled={!currentScheduledSlots.length}
+        >
+          <CheckIcon className="w-4 h-4 stroke-3" /> Schedule
+        </Button>
       </div>
       <GroupAvailability
         eventTimeSlots={event.time_slots}
-        canSchedule={edit}
         handleTimeSlotClick={handleTimeSlotClick}
       />
     </div>

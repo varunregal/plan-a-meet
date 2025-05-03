@@ -8,11 +8,9 @@ import { getSlotColor } from "@/lib/getColor";
 
 function GroupAvailability({
   eventTimeSlots,
-  canSchedule,
   handleTimeSlotClick = () => {},
 }: {
   eventTimeSlots: TimeSlotProps[];
-  canSchedule?: boolean;
   handleTimeSlotClick?: (time_slot_id: number) => void;
 }) {
   const { groupTimeSlots, users } = useAvailabilityContext();
