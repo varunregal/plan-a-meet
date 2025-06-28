@@ -26,8 +26,6 @@ export function SignupForm({
       email_address: values.email,
       password: values.password,
     });
-    // const response: any = await createUser(user);
-    // if (response.success) router.visit(response.data?.redirect_to);
   };
   return (
     <form

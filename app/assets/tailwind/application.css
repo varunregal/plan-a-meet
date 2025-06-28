@@ -116,9 +116,27 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
-html {
+body {
+  font-family: var(--font-sans);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.2;
   letter-spacing: 0.025em;
 }
+
+
+*,
+*::after,
+*::before{
+  box-sizing: border-box;
+}
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
 
 .scrollbar-visible::-webkit-scrollbar{
   display: block !important;
@@ -128,4 +146,8 @@ html {
 .scrollbar-visible::-webkit-scrollbar-thumb{
   background-color: rgba(0, 0, 0, 0.2);
   border-radius: 4px;
+}
+
+#app{
+  height: 100%;
 }

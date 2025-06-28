@@ -4,20 +4,11 @@ import { ReactNode } from "react";
 import { AvailabilityProvider } from "@/pages/Availability/context/AvailabilityContext";
 
 function RootLayout({ children }: { children: ReactNode }) {
-  const pathname = window.location.pathname;
-  const isCredentialsPage =
-    pathname.includes("/session") || pathname.includes("/registration");
   return (
     <AvailabilityProvider>
-      <main>
+      <main className="max-w-[1440px] mx-auto h-screen flex flex-col">
         <Navbar />
-        <div
-          className={`${
-            !isCredentialsPage ? "px-8 md:px-15 mt-20 w-full mx-auto" : ""
-          }`}
-        >
-          {children}
-        </div>
+        <div className="flex-1">{children}</div>
         <Toaster richColors position="top-center" />
       </main>
     </AvailabilityProvider>
