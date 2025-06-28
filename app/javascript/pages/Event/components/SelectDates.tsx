@@ -26,7 +26,7 @@ export default function SelectDates({ field }: SelectDateProps) {
             <Button
               variant={"outline"}
               className={cn(
-                "pl-3 text-left font-normal",
+                "pl-3 mb-0 text-left font-normal",
                 !field.value?.length && "text-muted-foreground"
               )}
             >
@@ -39,7 +39,7 @@ export default function SelectDates({ field }: SelectDateProps) {
             </Button>
           </FormControl>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="start">
+        <PopoverContent className="w-auto p-0" align="center">
           <Calendar
             mode="multiple"
             selected={field.value}

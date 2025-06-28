@@ -6,7 +6,7 @@ import { AvailabilityProvider } from "@/pages/Availability/context/AvailabilityC
 function RootLayout({ children }: { children: ReactNode }) {
   return (
     <AvailabilityProvider>
-      <main className="max-w-[1440px] mx-auto h-screen flex flex-col">
+      <main className="max-w-[1380px] mx-auto h-screen flex flex-col">
         <Navbar />
         <div className="flex-1">{children}</div>
         <Toaster richColors position="top-center" />

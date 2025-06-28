@@ -56,67 +56,69 @@ function New() {
     );
   };
   return (
-    <div className="md:w-3/4 lg:w-2/3 mx-auto">
-      <div className="text-center flex flex-col gap-1 mb-15">
-        <h2 className="font-bold text-lg">Create a New Meeting</h2>
-        <p className="text-gray-500 text-sm">
-          Schedule meeting with others efficiently
-        </p>
-      </div>
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="flex flex-col gap-10 items-center w-full"
-        >
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormLabel>Event name</FormLabel>
-                <FormControl>
-                  <Input
-                    autoComplete="off"
-                    placeholder="Eg. Team Lunch"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <div className="flex flex-col gap-10 w-full">
+    <div className="flex h-full justify-center">
+      <div className="w-full md:w-3/4 lg:w-2/3 px-5 md:px-0 flex flex-col gap-10">
+        <div className="flex flex-col gap-1 items-center">
+          <h2 className="font-bold text-lg">Create a New Meeting</h2>
+          <p className="text-gray-500 text-sm">
+            Schedule meeting with others efficiently
+          </p>
+        </div>
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="flex flex-col gap-7 items-center w-full"
+          >
             <FormField
               control={form.control}
-              name="dates"
-              render={({ field }) => <SelectDates field={field} />}
+              name="name"
+              render={({ field }) => (
+                <FormItem className="w-full">
+                  <FormLabel>Event name</FormLabel>
+                  <FormControl>
+                    <Input
+                      autoComplete="off"
+                      placeholder="Eg. Team Lunch"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            <div className="flex flex-col gap-5">
-              <div className="text-sm font-medium">
-                What times work for you? (Eastern Time Zone)
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <SelectTime
-                  form={form}
-                  name={"start_time"}
-                  placeholder="Select start time"
-                  label="Start time"
-                />
+            <div className="flex flex-col gap-7 w-full">
+              <FormField
+                control={form.control}
+                name="dates"
+                render={({ field }) => <SelectDates field={field} />}
+              />
+              <div className="flex flex-col gap-5">
+                <div className="text-sm font-medium">
+                  What times work for you? (Eastern Time Zone)
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <SelectTime
+                    form={form}
+                    name={"start_time"}
+                    placeholder="Select start time"
+                    label="Start time"
+                  />
 
-                <SelectTime
-                  form={form}
-                  name={"end_time"}
-                  placeholder="Select end time"
-                  label="End time"
-                />
+                  <SelectTime
+                    form={form}
+                    name={"end_time"}
+                    placeholder="Select end time"
+                    label="End time"
+                  />
+                </div>
               </div>
             </div>
-          </div>
-          <ButtonWithLoader isLoading={isLoading}>
-            Create Event
-          </ButtonWithLoader>
-        </form>
-      </Form>
+            <ButtonWithLoader isLoading={isLoading}>
+              Create Event
+            </ButtonWithLoader>
+          </form>
+        </Form>
+      </div>
     </div>
   );
 }
