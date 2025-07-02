@@ -50,10 +50,12 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
-
   gem "rspec-rails"
   gem "factory_bot_rails"
   gem "faker"
+  gem "pry"
+  gem "pry-rails"
+  gem "shoulda-matchers"
 end
 group :test do
   gem "capybara"
@@ -65,14 +67,14 @@ group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
   gem "ruby-lsp", require: false
+  gem "rubocop"
+  gem "rubocop-performance"
+  gem "rubocop-rails"
+  gem "rubocop-rspec"
 end
 
 
 gem "inertia_rails", "~> 3.6"
-
 gem "vite_rails", "~> 3.0"
-gem "pry"
-
 gem "active_model_serializers"
-
 gem "bcrypt", "~> 3.1"
