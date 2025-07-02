@@ -105,7 +105,7 @@ RSpec.describe "RegistrationsController", type: :request, inertia: true do
       end
     end
     context "when user visits event page before registration" do
-      let(:existing_event) { Event.create(name: 'Birthday Party', url: 'event-12444') }
+      let(:existing_event) { Event.create!(name: 'Birthday Party', url: 'event-12444') }
 
       before do
         get event_path(existing_event)

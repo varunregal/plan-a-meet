@@ -24,6 +24,8 @@ class RegistrationsController < ApplicationController
         errors: inertia_errors(@user)
       }
     end
+  rescue ActiveRecord::RecordNotFound
+    redirect_to root_path, alert: "The event no longer exists, but your account was created successfully"
   end
 
   private
