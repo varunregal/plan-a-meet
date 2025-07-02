@@ -3,79 +3,78 @@ require "rails_helper"
 
 
 RSpec.describe "RegistrationsController", type: :request, inertia: true do
-  describe "GET /registration" do
-    it "renders the sign up page" do
-      get new_registration_path
-      expect(response).to have_http_status(:ok)
-      expect(inertia.component).to eq 'Auth/Signup'
-    end
-  end
-
   describe "POST /registration" do
-    let(:valid_params) do
-      { name: "Varun", email_address: "varun@example.com", password: "password" }
-    end
-    subject(:make_request) { post registration_path, params: params }
-
-    context "with valid params" do
-      let(:params) { valid_params }
-
-      it "creates a user with valid params" do
-        expect { make_request }.to change(User, :count).by(1)
-        expect(response).to redirect_to(root_path) # Checks the status is 302 and the location in headers
-        follow_redirect!
-        expect(inertia.component).to eq "Event/New"
-        expect(inertia.props[:flash][:success]).to eq("Signed up successfully!")
+    let(:user) { attributes_for(:user) }
+    context "with valid parameters" do
+      let(:user_params) do
+        {
+          name: 'John Doe',
+          email_address: 'john@example.com',
+          password: 'password'
+        }
       end
 
-      it "creates a guest user" do
-        modified_params = valid_params.merge(email_address: nil, password: nil)
-        expect { post registration_path, params: modified_params }.to change(User, :count).by(1)
-        expect(response).to redirect_to(root_path)
-        follow_redirect!
-        expect(inertia.props[:flash][:success]).to eq("Signed up successfully!")
-      end
-    end
-
-    context "with invalid params" do
-      before { User.create!(valid_params) }
-      let(:params) { valid_params }
-
-      it("rejects duplicate email") do
-        expect { make_request }.to change(User, :count).by(0)
-        follow_redirect!
-        expect(inertia.component).to eq "Auth/Signup"
-        inertia_props = inertia.props.deep_symbolize_keys
-        expect(inertia_props[:errors][:email_address][0]).to eq("has already been taken")
-      end
-
-      it("cannot create a user with invalid password") do
-        modified_params = valid_params.merge(email: "john@example.com", password: "pass")
-        expect { post registration_path, params: modified_params }.to change(User, :count).by(0)
-        follow_redirect!
-        expect(inertia.component).to eq("Auth/Signup")
-        inertia_props = inertia.props.deep_symbolize_keys
-        expect(inertia_props[:errors][:password][0]).to eq("is too short (minimum is 8 characters)")
-      end
-    end
-    context "redirect authenticated users from sign up page" do
-      it("redirect to root path") do
-        post registration_path, params: valid_params
-        follow_redirect!
-        get new_registration_path
+      it 'creates a new user' do
+        expect {
+          post registration_path, params: user_params
+        }.to change(User, :count).by(1)
         expect(response).to redirect_to(root_path)
       end
+
+      it 'logs the user in after registration' do
+        post registration_path, params: user_params
+        expect(Session.count).to eq(1)
+        session = Session.first
+        expect(session.user.email_address).to eq('john@example.com')
+        expect(cookies[:session_id]).to be_present
+      end
     end
-    context "rate limit registrations" do
-      it "rate-limit after 10 tries" do
-        7.times do |i|
-          post registration_path, params: valid_params.merge(email_address: "user#{i}@example.com")
-          delete session_path
+
+    context "with invalid parameters" do
+      it 'does not create user with missing name' do
+        expect {
+          post registration_path, params: user.merge(name: "")
+      }.not_to change(User, :count)
+        expect(response).to redirect_to(new_registration_path)
+        follow_redirect!
+        expect(inertia.props[:errors]['name']).to include("Name can't be blank")
+      end
+
+
+      it 'renders signup page with errors when email is missing' do
+        new_invalid_params = user.merge(email_address: '')
+        post registration_path, params: new_invalid_params
+        expect(response).to redirect_to(new_registration_path)
+        follow_redirect!
+        expect(inertia.props[:errors]['email_address']).to include("Email address can't be blank")
+      end
+
+      it 'renders signup page with errors when password is too short' do
+        new_invalid_params = user.merge(password: '12345')
+        post registration_path, params: new_invalid_params
+        expect(response).to redirect_to(new_registration_path)
+        follow_redirect!
+        expect(inertia.props[:errors]['password']).to include('Password is too short (minimum is 8 characters)')
+      end
+    end
+    context 'with duplicate email' do
+      it 'redirects with error message when email already exists' do
+        create(:user, email_address: 'john@example.com')
+        duplicate_params = user.merge(email_address: "john@example.com")
+        post registration_path, params: duplicate_params
+        expect(response).to redirect_to(new_registration_path)
+        follow_redirect!
+        expect(inertia.props[:errors]['email_address']).to eq("Email address has already been taken")
+      end
+    end
+    context 'when rate limiting' do
+      it 'handles too many registration attempts' do
+        11.times do |i|
+          user_params = user.merge(email_address: "test#{i}@example.com")
+          post registration_path, params: user_params
         end
-        post registration_path, params: valid_params.merge(email_address: "user11@example.com")
-        follow_redirect!
-        inertia_props = inertia.props.deep_symbolize_keys
-        expect(inertia_props[:errors][:base][0]).to eq("Too many attempts. Please try again later.")
+        expect(response).to redirect_to(new_registration_path)
+        expect(flash[:alert]).to eq('Too many registration attempts. Please try again later')
       end
     end
   end

@@ -10,7 +10,7 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 require 'rspec/rails'
 require 'inertia_rails/rspec'
 # Add additional requires below this line. Rails is not loaded until this point!
-
+Rails.root.glob('spec/support/**/*.rb').sort.each { |f| require f }
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
 # run as spec files by default. This means that files in spec/support that end
@@ -67,6 +67,18 @@ RSpec.configure do |config|
 
   # Filter lines from Rails gems in backtraces.
   config.filter_rails_from_backtrace!
+
+  Shoulda::Matchers.configure do |matcher_config|
+    matcher_config.integrate do |with|
+      with.test_framework :rspec
+      with.library :rails
+    end
+  end
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
+  config.include FactoryBot::Syntax::Methods
+  config.include AuthenticationHelpers, type: :request
+  config.before do
+    Rails.cache.clear
+  end
 end

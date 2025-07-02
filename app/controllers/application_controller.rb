@@ -3,15 +3,15 @@ class ApplicationController < ActionController::Base
   include Authentication
   include ApiErrorHandler
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
-  inertia_share flash: -> {
-    {
-      success: flash[:notice],
-      error: flash[:alert]
-    }
-  }, current_user: -> { UserSerializer.new(Current.user) if Current.user }
+  inertia_share flash: -> { flash.to_hash }, current_user: -> { Current.user.as_json if Current.user }
   allow_browser versions: :modern
 
   private
+
+  def inertia_errors(model, full_messages: true)
+    model.errors.to_hash(full_messages).transform_values(&:to_sentence)
+  end
+
   def assign_pending_event_creator(user)
     return unless session[:pending_event_url]
     event = Event.find_by!(url: session.delete(:pending_event_url))

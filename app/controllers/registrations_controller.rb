@@ -1,17 +1,16 @@
 class RegistrationsController < ApplicationController
   allow_unauthenticated_access only: %i[new create]
   before_action :redirect_if_authenticated, only: [ :new ]
-  rate_limit to: 10, within: 3.minutes, only: :create, with: -> { redirect_to new_registration_url, inertia: { errors: { base: [ "Too many attempts. Please try again later." ] } } }
+  rate_limit to: 10, within: 3.minutes, only: :create, with: -> { redirect_to new_registration_url, alert: "Too many registration attempts. Please try again later" }
 
   def new
     render inertia: "Auth/Signup"
   end
   def create
-    begin
-      user = User.new(user_params)
-      user.save!
-      start_new_session_for user
-      assign_pending_event_creator(user)
+    @user = User.new(user_params)
+    if @user.save
+      start_new_session_for @user
+      assign_pending_event_creator(@user)
       check_if_user_created_in_event_path
       if @pending_event
         flash[:notice] = t(".pending_event_success")
@@ -23,9 +22,15 @@ class RegistrationsController < ApplicationController
         flash[:notice] = t(".success")
         redirect_to root_path
       end
-    rescue => e
-      handle_error(e, new_registration_path)
+    else
+      redirect_to new_registration_path, inertia: {
+        errors: inertia_errors(@user)
+      }
     end
+  rescue ActiveRecord::RecordNotUnique
+    redirect_to new_registration_path, alert: "This email is already registered"
+  rescue ArgumentError => e
+    redirect_to new_registration_path, alert: e.message.to_s
   end
 
   private
