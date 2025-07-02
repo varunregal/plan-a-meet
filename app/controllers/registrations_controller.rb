@@ -13,24 +13,17 @@ class RegistrationsController < ApplicationController
       assign_pending_event_creator(@user)
       check_if_user_created_in_event_path
       if @pending_event
-        flash[:notice] = t(".pending_event_success")
-        redirect_to event_path(@pending_event)
+        redirect_to event_path(@pending_event), notice: t(".pending_event_success")
       elsif @current_event
-        flash[:notice] = t(".success")
-        redirect_to event_path(@current_event)
+        redirect_to event_path(@current_event), notice: t(".success")
       else
-        flash[:notice] = t(".success")
-        redirect_to root_path
+        redirect_to root_path, notice: t(".success")
       end
     else
       redirect_to new_registration_path, inertia: {
         errors: inertia_errors(@user)
       }
     end
-  rescue ActiveRecord::RecordNotUnique
-    redirect_to new_registration_path, alert: "This email is already registered"
-  rescue ArgumentError => e
-    redirect_to new_registration_path, alert: e.message.to_s
   end
 
   private
