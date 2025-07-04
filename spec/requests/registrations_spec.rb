@@ -1,11 +1,11 @@
-require "pry"
-require "rails_helper"
+require 'pry'
+require 'rails_helper'
 
-
-RSpec.describe "RegistrationsController", type: :request, inertia: true do
-  describe "POST /registration" do
+RSpec.describe 'RegistrationsController', :inertia, type: :request do
+  describe 'POST /registration' do
     let(:user) { attributes_for(:user) }
-    context "with valid parameters" do
+
+    context 'with valid parameters' do
       let(:user_params) do
         {
           name: 'John Doe',
@@ -15,9 +15,9 @@ RSpec.describe "RegistrationsController", type: :request, inertia: true do
       end
 
       it 'creates a new user' do
-        expect {
+        expect do
           post registration_path, params: user_params
-        }.to change(User, :count).by(1)
+        end.to change(User, :count).by(1)
         expect(response).to redirect_to(root_path)
       end
 
@@ -30,11 +30,11 @@ RSpec.describe "RegistrationsController", type: :request, inertia: true do
       end
     end
 
-    context "with invalid parameters" do
+    context 'with invalid parameters' do
       it 'does not create user with missing name' do
-        expect {
-          post registration_path, params: user.merge(name: "")
-      }.not_to change(User, :count)
+        expect do
+          post registration_path, params: user.merge(name: '')
+        end.not_to change(User, :count)
         expect(response).to redirect_to(new_registration_path)
         follow_redirect!
         expect(inertia.props[:errors]['name']).to include("Name can't be blank")
@@ -60,11 +60,11 @@ RSpec.describe "RegistrationsController", type: :request, inertia: true do
     context 'with duplicate email' do
       it 'redirects with error message when email already exists' do
         create(:user, email_address: 'john@example.com')
-        duplicate_params = user.merge(email_address: "john@example.com")
+        duplicate_params = user.merge(email_address: 'john@example.com')
         post registration_path, params: duplicate_params
         expect(response).to redirect_to(new_registration_path)
         follow_redirect!
-        expect(inertia.props[:errors]['email_address']).to eq("Email address has already been taken")
+        expect(inertia.props[:errors]['email_address']).to eq('Email address has already been taken')
       end
     end
 
@@ -79,21 +79,21 @@ RSpec.describe "RegistrationsController", type: :request, inertia: true do
       end
     end
 
-    context "when user has created an event before registration" do
+    context 'when user has created an event before registration' do
       before do
         post events_path, params: {
           event: {
-            name: "Birthday Party",
-            dates: [ "2025-04-19" ],
-            start_time: "10",
-            end_time: "12",
-            time_zone: "America/New_York"
+            name: 'Birthday Party',
+            dates: ['2025-04-19'],
+            start_time: '10',
+            end_time: '12',
+            time_zone: 'America/New_York'
           }
         }
         @created_event = Event.last
       end
 
-      it "assigns the user as event creator after registration" do
+      it 'assigns the user as event creator after registration' do
         post registration_path, params: user
         expect(@created_event.reload.event_creator).to eq(User.last)
         expect(response).to redirect_to(event_path(@created_event))
@@ -101,17 +101,18 @@ RSpec.describe "RegistrationsController", type: :request, inertia: true do
 
       it 'shows correct success message when user becomes user creator' do
         post registration_path, params: user
-        expect(flash[:notice]).to eq("Thanks for signing up! This event is now yours.")
+        expect(flash[:notice]).to eq('Thanks for signing up! This event is now yours.')
       end
     end
-    context "when user visits event page before registration" do
+
+    context 'when user visits event page before registration' do
       let(:existing_event) { Event.create!(name: 'Birthday Party', url: 'event-12444') }
 
       before do
         get event_path(existing_event)
       end
 
-      it "redirects to event page after registration" do
+      it 'redirects to event page after registration' do
         post registration_path, params: user
 
         expect(response).to redirect_to(event_path(existing_event))

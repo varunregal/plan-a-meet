@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
-  def index
-  end
+  def index; end
+
   private
 
   def set_event
