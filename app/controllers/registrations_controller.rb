@@ -9,10 +9,11 @@ class RegistrationsController < ApplicationController
     render inertia: 'Auth/Signup'
   end
 
-  def create
+  def create # rubocop:disable Metrics/AbcSize
     @user = User.new(user_params)
     if @user.save
       start_new_session_for @user
+      UserMailer.welcome_email(@user).deliver_later
       assign_pending_event_creator(@user)
       check_if_user_created_in_event_path
       if @pending_event

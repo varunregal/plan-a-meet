@@ -9,7 +9,8 @@ class User < ApplicationRecord
   validates :email_address, presence: true, uniqueness: { case_sensitive: false }
   validates :email_address, format: { with: URI::MailTo::EMAIL_REGEXP }, if: :email_address?
 
-  has_many :created_events, class_name: "Event", foreign_key: "event_creator_id", inverse_of: :event_creator, dependent: :nullify
+  has_many :created_events, class_name: 'Event', foreign_key: 'event_creator_id', inverse_of: :event_creator,
+                            dependent: :nullify
   has_many :availabilities, dependent: :destroy
   has_many :time_slots, through: :availabilities
 
