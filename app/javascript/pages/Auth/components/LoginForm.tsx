@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginFormSchema, loginFormSchemaType } from "@/lib/schema";
-import { router, usePage } from "@inertiajs/react";
+import { Link, router, usePage } from "@inertiajs/react";
 
 export function LoginForm() {
   const {
@@ -32,7 +32,7 @@ export function LoginForm() {
         onError: (errors) => {
           console.warn("Authentication failed: ", errors);
         },
-      }
+      },
     );
   };
 
@@ -62,8 +62,8 @@ export function LoginForm() {
           <div className="flex items-center">
             <Label htmlFor="password">Password</Label>
             <a
-              href="#"
-              className="ml-auto text-sm underline-offset-4 hover:underline"
+              href="/passwords/new"
+              className="ml-auto text-sm underline-offset-4 underline"
             >
               Forgot your password?
             </a>
