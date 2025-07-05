@@ -5,6 +5,7 @@ class Event < ApplicationRecord
   has_many :users, through: :availabilities
   has_many :scheduled_slots, dependent: :destroy
   has_many :scheduled_time_slots, through: :scheduled_slots, source: :time_slot
+  has_many :invitations, dependent: :destroy
 
   validates :name, presence: true
   validates :url, presence: true, uniqueness: true
