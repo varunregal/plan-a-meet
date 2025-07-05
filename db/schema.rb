@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_05_060246) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_05_062037) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -33,6 +33,23 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_05_060246) do
     t.string "status", default: "created", null: false
     t.index ["event_creator_id"], name: "index_events_on_event_creator_id"
     t.index ["url"], name: "index_events_on_url", unique: true
+  end
+
+  create_table "invitations", force: :cascade do |t|
+    t.bigint "event_id", null: false
+    t.bigint "inviter_id", null: false
+    t.bigint "invitee_id"
+    t.string "email_address", null: false
+    t.string "status", default: "pending", null: false
+    t.string "invitation_token", null: false
+    t.datetime "sent_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_id", "email_address"], name: "index_invitations_on_event_id_and_email_address", unique: true
+    t.index ["event_id"], name: "index_invitations_on_event_id"
+    t.index ["invitation_token"], name: "index_invitations_on_invitation_token", unique: true
+    t.index ["invitee_id"], name: "index_invitations_on_invitee_id"
+    t.index ["inviter_id"], name: "index_invitations_on_inviter_id"
   end
 
   create_table "scheduled_slots", force: :cascade do |t|
@@ -217,6 +234,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_05_060246) do
   add_foreign_key "availabilities", "time_slots"
   add_foreign_key "availabilities", "users"
   add_foreign_key "events", "users", column: "event_creator_id"
+  add_foreign_key "invitations", "events"
+  add_foreign_key "invitations", "users", column: "invitee_id"
+  add_foreign_key "invitations", "users", column: "inviter_id"
   add_foreign_key "scheduled_slots", "events"
   add_foreign_key "scheduled_slots", "time_slots"
   add_foreign_key "sessions", "users"

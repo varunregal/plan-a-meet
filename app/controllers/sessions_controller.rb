@@ -9,20 +9,18 @@ class SessionsController < ApplicationController
     render inertia: 'Auth/Login'
   end
 
-  def create
-    if user = User.authenticate_by(params.permit(:email_address, :password))
+  def create # rubocop:disable Metrics/AbcSize
+    user = User.authenticate_by(params.permit(:email_address, :password))
+    if user
       start_new_session_for user
       assign_pending_event_creator(user)
       check_if_user_created_in_event_path
       if @pending_event
-        flash[:notice] = t('.pending_event_success')
-        redirect_to event_path(@pending_event)
+        redirect_to event_path(@pending_event), notice: t('.pending_event_success')
       elsif @current_event
-        flash[:notice] = t('.success')
-        redirect_to event_path(@current_event)
+        redirect_to event_path(@current_event), notice: t('.success')
       else
-        flash[:notice] = t('.success')
-        redirect_to after_authentication_url
+        redirect_to after_authentication_url, notice: t('.success')
       end
     else
       redirect_to new_session_path, inertia: { errors: { base: [t('.error')] } }
@@ -31,7 +29,6 @@ class SessionsController < ApplicationController
 
   def destroy
     terminate_session
-    flash[:notice] = t('.success')
-    redirect_to root_path
+    redirect_to root_path, notice: t('.success')
   end
 end

@@ -48,3 +48,4 @@ node_modules
 /config/credentials/production.key
 digitalocean
 digitalocean.pub
+CLAUDE.md
