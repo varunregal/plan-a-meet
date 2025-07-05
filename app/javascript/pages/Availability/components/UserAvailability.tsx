@@ -17,7 +17,7 @@ function UserAvailability({ event }: { event: EventProps }) {
 
   const getCurrentUserTimeSlotColor = (id: number) => {
     const selected = userTimeSlots.some(
-      (uts: AvailabilityProps) => uts.time_slot_id === id
+      (uts: AvailabilityProps) => uts.time_slot_id === id,
     );
     return selected ? "oklch(62.7% 0.265 303.9)" : "oklch(96.7% 0.003 264.542)";
   };
@@ -25,7 +25,7 @@ function UserAvailability({ event }: { event: EventProps }) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-15">
       <div className="flex flex-col gap-10 items-center">
-        <div className="text-md font-bold underline">
+        <div className="text-md font-bold underline underline-offset-4">
           Choose your availability{" "}
           <span className="text-purple-600">{current_user.name}</span>
         </div>

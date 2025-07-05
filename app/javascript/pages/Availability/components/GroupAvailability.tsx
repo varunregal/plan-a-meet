@@ -20,7 +20,7 @@ function GroupAvailability({
   return (
     <div className="flex flex-col gap-10 items-center">
       {!isScheduleSlotsPath && (
-        <div className="font-bold text-md text-center underline">
+        <div className="font-bold text-md text-center underline underline-offset-4">
           Group Availability
         </div>
       )}
