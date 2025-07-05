@@ -14,7 +14,7 @@ export const eventFormSchema = z
     {
       message: "End time must be later than start time",
       path: ["end_time"],
-    }
+    },
   )
   .refine(
     (data) => {
@@ -23,7 +23,7 @@ export const eventFormSchema = z
     {
       message: "Please select at least one date",
       path: ["dates"],
-    }
+    },
   );
 
 export type eventFormSchemaType = z.infer<typeof eventFormSchema>;
@@ -49,9 +49,3 @@ export const signupFormSchema = z.object({
 });
 
 export type signupFormSchemaType = z.infer<typeof signupFormSchema>;
-
-export const guestFormSchema = z.object({
-  name: z.string().min(2, "Name should be at least 2 characters"),
-});
-
-export type guestFormSchemaType = z.infer<typeof guestFormSchema>;

@@ -1,6 +1,6 @@
 import { JSX } from "react";
 
-export type authFooterKeyType = "sign_in" | "sign_up" | "guest";
+export type authFooterKeyType = "sign_in" | "sign_up";
 export type authFooterValueType = {
   text: string;
   label: string;
@@ -14,4 +14,4 @@ export type AuthFooterProps = {
   label: string;
   redirect: authFooterKeyType;
   component: JSX.Element;
-}
+};

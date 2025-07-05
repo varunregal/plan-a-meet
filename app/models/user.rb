@@ -1,9 +1,9 @@
 class User < ApplicationRecord
-  has_secure_password validations: false
+  has_secure_password
   has_many :sessions, dependent: :destroy
 
   validates :name, presence: true
-  validates :password, length: { minimum: 8 }, allow_blank: true
+  validates :password, length: { minimum: 8, maximum: 20 }
   before_validation :normalize_email
   validates :email_address, presence: true, uniqueness: { case_sensitive: false }
   validates :email_address, format: { with: URI::MailTo::EMAIL_REGEXP }, if: :email_address?

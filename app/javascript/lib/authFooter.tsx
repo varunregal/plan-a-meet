@@ -2,7 +2,6 @@ import {
   authFooterKeyType,
   authFooterValueType,
 } from "@/pages/Auth/Auth.types";
-import { GuestForm } from "@/pages/Auth/components/GuestForm";
 import { LoginForm } from "@/pages/Auth/components/LoginForm";
 import { SignupForm } from "@/pages/Auth/components/SignupForm";
 
@@ -14,15 +13,9 @@ export const authFooter: Record<authFooterKeyType, authFooterValueType> = {
     component: <LoginForm />,
   },
   sign_up: {
-    text: "Continue as Guest?",
-    label: "Guest",
-    redirect: "guest",
-    component: <SignupForm />,
-  },
-  guest: {
-    text: "Already have an account?",
+    text: "Already have an account",
     label: "Login",
     redirect: "sign_in",
-    component: <GuestForm />,
+    component: <SignupForm />,
   },
 };
