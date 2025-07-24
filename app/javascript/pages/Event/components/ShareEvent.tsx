@@ -6,7 +6,7 @@ export default function ShareEvent({ event }: { event: EventProps }) {
   const handleCopyEventURL = async () => {
     try {
       await navigator.clipboard.writeText(
-        `${window.location.origin}/events/${event.url}`
+        `${window.location.origin}/events/${event.url}`,
       );
       toast.success("Copied to the Clipboard!");
     } catch (error) {
@@ -14,7 +14,6 @@ export default function ShareEvent({ event }: { event: EventProps }) {
       toast.error("Failed to copy the Event URL");
     }
   };
-  console.log(window.location);
   return (
     <Button
       variant="outline"

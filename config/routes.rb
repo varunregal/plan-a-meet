@@ -1,13 +1,13 @@
 Rails.application.routes.draw do
-  resource :session, only: [ :new, :create, :destroy ]
-  resource :registration, only: [ :new, :create ]
+  resource :session, only: %i[new create destroy]
+  resource :registration, only: %i[new create]
   resources :passwords, param: :token
-  get "inertia-example", to: "inertia_example#index"
+  get 'inertia-example', to: 'inertia_example#index'
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
-  get "up" => "rails/health#show", as: :rails_health_check
+  get 'up' => 'rails/health#show', as: :rails_health_check
 
   # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
@@ -15,8 +15,8 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   resources :events, param: :url do
-    resources :availabilities, only: [ :index ]
-    resources :scheduled_slots, only: [ :index, :create, :destroy ]
+    resources :availabilities, only: [:index]
+    resources :scheduled_slots, only: %i[index create destroy]
     member do
       patch :schedule
       get :schedule
@@ -24,10 +24,11 @@ Rails.application.routes.draw do
       patch :reschedule
       get :confirmation
     end
+    resources :invitations
   end
 
   resources :time_slots, only: [] do
-    resource :availability, only: [ :create, :destroy ]
+    resource :availability, only: %i[create destroy]
   end
-  root "events#new"
+  root 'events#new'
 end

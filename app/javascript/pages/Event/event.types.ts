@@ -45,6 +45,13 @@ export type EventProps = {
   url: string;
   time_slots: TimeSlotProps[];
   event_creator_id?: number;
+  invitations?: InvitationProps[];
+};
+export type InvitationProps = {
+  id: number;
+  email_address: string;
+  status: "pending" | "accepted" | "declined";
+  invitee?: UserProps;
 };
 
 export type EventResponseProps = {

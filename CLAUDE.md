@@ -67,6 +67,14 @@ Every new feature should include comprehensive test coverage including unit test
 ### Code Style
 The codebase follows Rails conventions with Tailwind CSS for styling. Email templates use inline styles for maximum compatibility. All code should be formatted consistently using automated tools, and error handling should be specific rather than generic.
 
+## Development Principles
+
+### Code Generation and Development Approach
+- Don't generate more than 20 lines of code at a time
+- Always use Test-Driven Development (TDD) approach for Rails
+- Explain the problem and approach before generating code
+- Proceed with problem-solving in a step-by-step approach
+
 ## Running the Application
 
 ### Development Setup
@@ -79,5 +87,10 @@ The codebase follows Rails conventions with Tailwind CSS for styling. Email temp
 - Development uses Resend SMTP with API keys stored in Rails credentials
 - Email delivery is enabled in development for testing
 - All email templates are tested and verified to work across different email clients
+
+## Claude Code Guidelines
+
+### Development Principles
+- Never write content to the files unless explicitly requested
 
 This guide should be updated as new features are implemented and architectural decisions are made.
