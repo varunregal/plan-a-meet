@@ -11,16 +11,10 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Plus, X } from "lucide-react";
+import { Check, Clock, Plus, X, XIcon } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { useForm } from "@inertiajs/react";
 
-export type InvitationProps = {
-  id: number;
-  email_address: string;
-  status: "pending" | "accepted" | "declined";
-  invitee?: UserProps;
-};
 interface InvitePeopleDialogProps {
   event: EventProps;
   open: boolean;
@@ -58,7 +52,10 @@ function InvitePeopleDialog({
     e.preventDefault();
 
     post(`/events/${event.url}/invitations`, {
-      onSuccess: () => onOpenChange(false),
+      onSuccess: () => {
+        setData("invitation", { email_addresses: [""] });
+        onOpenChange(false);
+      },
       preserveScroll: true,
     });
   };
@@ -72,9 +69,54 @@ function InvitePeopleDialog({
           </DialogDescription>
         </DialogHeader>
         <Separator />
+        {event.invitations && event.invitations.length > 0 && (
+          <>
+            <div className="space-y-2">
+              <Label>Already Invited ({event.invitations.length})</Label>
+              <div className="space-y-1">
+                {event.invitations.map((invitation) => (
+                  <div
+                    key={invitation.id}
+                    className="flex items-center justify-between text-sm py-2 px-3
+              bg-muted/50 rounded-md"
+                  >
+                    <span className="text-muted-foreground">
+                      {invitation.email_address}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      {invitation.status === "accepted" && (
+                        <>
+                          <Check className="h-3 w-3 text-green-600" />
+                          <span className="text-green-600 text-xs">
+                            Accepted
+                          </span>
+                        </>
+                      )}
+                      {invitation.status === "pending" && (
+                        <>
+                          <Clock className="h-3 w-3 text-yellow-600" />
+                          <span className="text-yellow-600 text-xs">
+                            Pending
+                          </span>
+                        </>
+                      )}
+                      {invitation.status === "declined" && (
+                        <>
+                          <XIcon className="h-3 w-3 text-red-600" />
+                          <span className="text-red-600 text-xs">Declined</span>
+                        </>
+                      )}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <Separator />
+          </>
+        )}
         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
           <div className="grid gap-4">
-            <Label htmlFor="emails">Email Addresses</Label>
+            <Label htmlFor="emails">Add New Invitations</Label>
             {data.invitation.email_addresses.map((email, index) => (
               <div key={index} className="flex gap-2">
                 <Input
