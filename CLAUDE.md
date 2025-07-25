@@ -27,17 +27,37 @@ The application uses Rails 8.0.1 with PostgreSQL for the backend, React 19 with 
 - Event sharing via unique URLs
 - User availability tracking across time slots
 - Event creator assignment and management
+- **Invitation System (In Progress)**
+  - Invitation model with email validation and status tracking
+  - InvitationsController with proper authorization
+  - Frontend dialog for sending invitations with Inertia form handling
+  - Validation and error handling for email addresses
+  - Display of existing invitations with status indicators
 
 ### Code Quality & Testing
 - Comprehensive test coverage for registrations and core functionality
 - Fixed factory patterns to match actual model structures
 - RSpec test suite with proper configuration
 - Consistent code formatting with automated tools
+- TDD approach for invitation feature with request specs
 
 ## Phase One Roadmap
 
-### User Invitation System
-The next major feature will allow event creators to invite participants via email after event creation. This includes an "Invite People" button on the event show page, invitation emails with clear messaging about who invited them, and proper user onboarding for invited participants who need to create accounts.
+### User Invitation System (In Progress)
+**Completed:**
+- Database model for invitations with associations and validations
+- API endpoint for creating invitations with email validation
+- Frontend UI with InvitePeopleDialog component
+- Form validation and error handling using Inertia
+- Display of sent invitations with status indicators
+- Integration with event show page
+
+**Next Steps:**
+- Create InvitationMailer for sending invitation emails
+- Add invitation acceptance/decline flow
+- Implement guest user onboarding for invited participants
+- Add invitation count to the Invite People button
+- Filter duplicate emails in frontend before submission
 
 ### Real-time Notifications
 We'll implement both in-app and email notifications for availability updates. When participants mark their availability, the event creator will receive notifications. This ensures everyone stays informed about participation changes throughout the scheduling process.
@@ -74,6 +94,12 @@ The codebase follows Rails conventions with Tailwind CSS for styling. Email temp
 - Always use Test-Driven Development (TDD) approach for Rails
 - Explain the problem and approach before generating code
 - Proceed with problem-solving in a step-by-step approach
+
+### Testing Best Practices
+- Always check for existing factories before writing manual test setup
+- Use FactoryBot factories for all model associations in tests
+- Follow DRY principles - don't recreate what already exists
+- Investigate existing test patterns and infrastructure before writing new tests
 
 ## Running the Application
 

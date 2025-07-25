@@ -1,50 +1,58 @@
+<div style="background-color: #f3f4f6; padding: 40px 20px;">
 <div
-  style="font-family: -apple-system, BlinkMacSystemFont, Roboto, sans-serif; line-height: 1.6; color: #374151; max-width: 600px; margin: 0 auto; background: #ffffff;"
+  style="font-family: -apple-system, BlinkMacSystemFont, Roboto, sans-serif; line-height: 1.6; color: #374151; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);"
 >
   <div
-    style="background: #ffffff; padding: 48px 32px 24px; text-align: center; border-bottom: 2px solid #6e56cf;"
+    style="background: #ffffff; padding: 40px 24px 32px; text-align: center; border-bottom: 1px solid #e5e7eb;"
   >
     <h1
-      style="color: #111827; font-size: 32px; font-weight: 700; margin: 0; letter-spacing: -0.02em;"
+      style="color: #111827; font-size: 24px; font-weight: 600; margin: 0; letter-spacing: -0.025em;"
     >Reset Your Password</h1>
-    <p style="color: #6b7280; font-size: 16px; margin: 12px 0 0 0;">Secure your account</p>
+    <p style="color: #6b7280; font-size: 14px; margin: 8px 0 0 0;">Secure your account</p>
   </div>
 
-  <div style="padding: 48px 32px; background: #ffffff;">
-    <div style="margin-bottom: 40px;">
+  <div style="padding: 32px 24px; background: #ffffff;">
+    <div style="margin-bottom: 24px;">
       <p
-        style="color: #111827; font-size: 24px; font-weight: 600; margin: 0 0 16px 0; letter-spacing: -0.01em;"
-      >Hi
-        <%= @user.name %>,</p>
+        style="color: #111827; font-size: 16px; font-weight: 500; margin: 0 0 12px 0;"
+      >Hi <%= @user.name %>,</p>
       <p
-        style="color: #4b5563; font-size: 16px; margin: 0 0 24px 0; line-height: 1.6;"
+        style="color: #6b7280; font-size: 14px; margin: 0; line-height: 1.5;"
       >
-        We received a request to reset your password for Plan A Meet. Click the
+        We received a request to reset your password for <strong style="color: #6e56cf;">Plan A Meet</strong>. Click the
         button below to create a new password.
       </p>
     </div>
 
     <div
-      style="background: #fafafa; padding: 32px; border-radius: 12px; border: 1px solid #e5e7eb; margin-bottom: 40px;"
+      style="background: #fafafa; padding: 16px; border-radius: 8px; border: 1px solid #e5e7eb; border-left: 3px solid #6e56cf; margin-bottom: 24px;"
     >
       <p
-        style="color: #4b5563; font-size: 15px; margin: 0 0 20px 0; line-height: 1.5;"
+        style="color: #6b7280; font-size: 14px; margin: 0 0 8px 0; line-height: 1.5;"
       >
         This password reset link will expire in
-        <strong>15 minutes</strong>
+        <strong style="color: #111827;">15 minutes</strong>
         for security reasons.
       </p>
-      <p style="color: #6b7280; font-size: 14px; margin: 0; line-height: 1.4;">
+      <p style="color: #9ca3af; font-size: 12px; margin: 0; line-height: 1.4;">
         If you didn't request this password reset, you can safely ignore this
         email.
       </p>
     </div>
 
-    <div style="text-align: center; margin-bottom: 32px;">
+    <div style="text-align: center; margin-bottom: 24px;">
       <a
         href="<%= edit_password_url(@user.password_reset_token) %>"
-        style="display: inline-block; background: #6e56cf; color: white; padding: 16px 32px; text-decoration: none; border-radius: 8px; font-weight: 500; font-size: 16px; transition: all 0.2s ease;"
+        style="display: inline-block; background: #6e56cf; color: white; padding: 10px 16px; text-decoration: none; border-radius: 6px; font-weight: 500; font-size: 14px;"
       >Reset Password</a>
     </div>
+
+    <div style="border-top: 1px solid #e5e7eb; padding-top: 16px; text-align: center;">
+      <p style="color: #9ca3af; font-size: 12px; margin: 0;">
+        This is an automated message from Plan A Meet.
+        Please do not reply to this email.
+      </p>
+    </div>
   </div>
+</div>
 </div>

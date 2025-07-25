@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { EventProps, UserProps } from "../event.types";
+import { EventProps } from "../event.types";
 import {
   Dialog,
   DialogContent,

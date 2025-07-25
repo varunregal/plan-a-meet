@@ -6,14 +6,22 @@ class InvitationsController < ApplicationController
     email_addresses = check_valid_email_addresses(invitation_params[:email_addresses])
     return unless email_addresses
 
-    invitations = email_addresses.map do |email_address|
-      @event.invitations.build(email_address:, inviter: Current.user)
+    successful_invitations = []
+    failed_invitations = []
+    email_addresses.each do |email_address|
+      invitation = @event.invitations.build(email_address:, inviter: Current.user)
+      if invitation.save
+        successful_invitations << invitation
+        InvitationMailer.invitation_email(invitation).deliver_later
+      else
+        failed_invitations << invitation
+      end
     end
 
-    if invitations.all?(&:save)
-      redirect_to event_path(@event), notice: "Successfully sent #{invitations.count} invitation(s)"
+    if successful_invitations.any?
+      redirect_to event_path(@event), notice: "Successfully sent #{successful_invitations.count} invitation(s)"
     else
-      errors = invitations.map(&:errors).map(&:full_messages).flatten
+      errors = failed_invitations.map(&:errors).map(&:full_messages).flatten
       redirect_back fallback_location: event_path(@event), inertia: { errors: { email_addresses: errors } }
     end
   end
