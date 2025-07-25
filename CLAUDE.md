@@ -27,12 +27,14 @@ The application uses Rails 8.0.1 with PostgreSQL for the backend, React 19 with 
 - Event sharing via unique URLs
 - User availability tracking across time slots
 - Event creator assignment and management
-- **Invitation System (In Progress)**
-  - Invitation model with email validation and status tracking
-  - InvitationsController with proper authorization
-  - Frontend dialog for sending invitations with Inertia form handling
-  - Validation and error handling for email addresses
-  - Display of existing invitations with status indicators
+- **Invitation System**
+  - Invitation model with email validation and status tracking (completed)
+  - InvitationsController with proper authorization (completed)
+  - Frontend dialog for sending invitations with Inertia form handling (completed)
+  - Validation and error handling for email addresses (completed)
+  - Display of existing invitations with status indicators (completed)
+  - InvitationMailer sending emails when invitations are created (completed)
+  - Consistent email templates matching app design system (completed)
 
 ### Code Quality & Testing
 - Comprehensive test coverage for registrations and core functionality
@@ -43,21 +45,15 @@ The application uses Rails 8.0.1 with PostgreSQL for the backend, React 19 with 
 
 ## Phase One Roadmap
 
-### User Invitation System (In Progress)
-**Completed:**
-- Database model for invitations with associations and validations
-- API endpoint for creating invitations with email validation
-- Frontend UI with InvitePeopleDialog component
-- Form validation and error handling using Inertia
-- Display of sent invitations with status indicators
-- Integration with event show page
-
+### Invitation Acceptance/Decline Flow (TODO)
 **Next Steps:**
-- Create InvitationMailer for sending invitation emails
-- Add invitation acceptance/decline flow
-- Implement guest user onboarding for invited participants
-- Add invitation count to the Invite People button
-- Filter duplicate emails in frontend before submission
+- Create route for accepting/declining invitations via token
+- Implement controller action to handle invitation responses
+- Create view for invitation acceptance page
+- Handle guest user registration if invitee doesn't have an account
+- Update invitation status when accepted/declined
+- Redirect to event page after acceptance
+- Add tests for the acceptance flow
 
 ### Real-time Notifications
 We'll implement both in-app and email notifications for availability updates. When participants mark their availability, the event creator will receive notifications. This ensures everyone stays informed about participation changes throughout the scheduling process.
@@ -79,7 +75,14 @@ Future AI enhancements could include calendar integration with Google Calendar a
 ## Development Guidelines
 
 ### Email Templates
-All email templates follow the established design system using #6e56cf as the primary brand color, system fonts for compatibility, and generous padding inspired by modern design patterns. Templates should be mobile-responsive and work across all major email clients.
+All email templates follow the established design system:
+- Primary brand color #6e56cf for buttons and accents
+- Clean, minimalist design matching shadcn components
+- Consistent spacing: 32px/24px padding, 16px for cards
+- Gray background wrapper (#f3f4f6) for consistent display in all email clients
+- Button styling: 10px 16px padding, 6px border-radius
+- Font sizes: 24px for headers, 14px for body text, 12px for small text
+- Mobile-responsive and tested across major email clients
 
 ### Testing Strategy
 Every new feature should include comprehensive test coverage including unit tests, integration tests, and email functionality verification. The test suite uses RSpec with proper factory patterns that match actual model structures.

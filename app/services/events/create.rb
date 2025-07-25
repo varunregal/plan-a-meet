@@ -1,5 +1,5 @@
-require "time"
-require "pry"
+require 'time'
+require 'pry'
 class Events::Create
   def initialize(params, current_user:)
     @name = params.fetch(:name)
@@ -17,11 +17,12 @@ class Events::Create
       event.save!
       Result.success(event)
     end
-  rescue => e
+  rescue StandardError => e
     Result.failure(e)
   end
 
   private
+
   def create_time_slots(event)
     time_slots = generate_time_slots
     time_slots.each do |slot|
@@ -34,12 +35,11 @@ class Events::Create
     @dates.each do |d|
       start_date_time = parse_and_combine_date_time(d.to_s, @start_time)
       end_date_time = parse_and_combine_date_time(d.to_s, @end_time)
-      if end_date_time < start_date_time
-        raise ArgumentError, "Start Date cannot be before End Date"
-      end
-      while start_date_time < end_date_time do
+      raise ArgumentError, 'Start Date cannot be before End Date' if end_date_time < start_date_time
+
+      while start_date_time < end_date_time
         result << { start_date_time: start_date_time, end_date_time: start_date_time + 30.minutes }
-        start_date_time = start_date_time + 30.minutes
+        start_date_time += 15.minutes
       end
     end
     result
@@ -53,7 +53,7 @@ class Events::Create
 
   def generate_unique_event_url
     loop do
-      url = SecureRandom.base64(8).gsub("/", "_").gsub(/=+$/, "")
+      url = SecureRandom.base64(8).gsub('/', '_').gsub(/=+$/, '')
       return url unless Event.exists?(url: url)
     end
   end
