@@ -8,9 +8,21 @@ class Event < ApplicationRecord
   has_many :invitations, dependent: :destroy
 
   validates :name, presence: true
-  validates :url, presence: true, uniqueness: true
+  validates :url, uniqueness: true
+  before_validation :generate_url_token, on: :create
 
   def to_param
     url
+  end
+
+  private
+
+  def generate_url_token
+    return if url.present?
+
+    loop do
+      self.url = SecureRandom.alphanumeric(8).downcase
+      break unless Event.exists?(url:)
+    end
   end
 end
