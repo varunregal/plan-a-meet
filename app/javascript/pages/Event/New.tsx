@@ -16,6 +16,7 @@ import { useEffect, useState } from "react";
 import { router, usePage } from "@inertiajs/react";
 import ButtonWithLoader from "./components/ButtonWithLoader";
 import { toast } from "sonner";
+import { format } from "date-fns";
 
 function New() {
   const { flash }: any = usePage().props;
@@ -40,20 +41,21 @@ function New() {
     const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const event = {
       name: values.name,
-      dates: values.dates,
-      start_time: values.start_time,
-      end_time: values.end_time,
+      dates: values.dates.map((date) => format(date, "yyyy-MM-dd")),
+      start_time: values.start_time.padStart(2, "0") + ":00",
+      end_time: values.end_time.padStart(2, "0") + ":00",
       time_zone: timeZone,
     };
-    router.post(
-      "/events",
-      { event },
-      {
-        onFinish: () => {
-          setIsLoading(false);
-        },
-      }
-    );
+    console.log({ event });
+    // router.post(
+    //   "/events",
+    //   { event },
+    //   {
+    //     onFinish: () => {
+    //       setIsLoading(false);
+    //     },
+    //   },
+    // );
   };
   return (
     <div className="flex h-full justify-center">

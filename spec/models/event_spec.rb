@@ -39,4 +39,26 @@ RSpec.describe Event, type: :model do
       expect(event.to_param).to eq(event.url)
     end
   end
+
+  describe '#create_time_slots' do
+    let(:event) { create(:event) }
+    let(:dates) { ['2025-08-01'] }
+    let(:start_time) { '09:00' }
+    let(:end_time) { '10:00' }
+    let(:time_zone) { 'America/New_York' }
+
+    it 'creates time slots for a single date' do
+      expect do
+        event.create_time_slots(dates, start_time, end_time, time_zone)
+      end.to change { event.time_slots.count }.by(4)
+    end
+
+    it 'stores times in UTC in the database' do
+      event.create_time_slots(dates, start_time, end_time, time_zone)
+      first_slot = event.time_slots.first
+
+      expect(first_slot.start_time.utc.strftime('%H:%M')).to eq '13:00'
+      expect(first_slot.end_time.utc.strftime('%H:%M')).to eq '13:15'
+    end
+  end
 end

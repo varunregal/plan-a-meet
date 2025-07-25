@@ -15,6 +15,24 @@ class Event < ApplicationRecord
     url
   end
 
+  def create_time_slots(dates, start_time, end_time, time_zone)
+    Time.use_zone(time_zone) do
+      dates.each do |date|
+        start_datetime = Time.zone.parse("#{date} #{start_time}:00")
+        end_datetime = Time.zone.parse("#{date} #{end_time}:00")
+        current_time = start_datetime
+
+        while current_time < end_datetime
+          time_slots.create!(
+            start_time: current_time,
+            end_time: current_time + 15.minutes
+          )
+          current_time += 15.minutes
+        end
+      end
+    end
+  end
+
   private
 
   def generate_url_token

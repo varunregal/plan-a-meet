@@ -8,6 +8,12 @@ Plan A Meet is a modern event scheduling application built with Ruby on Rails 8 
 
 The application uses Rails 8.0.1 with PostgreSQL for the backend, React 19 with TypeScript and Inertia.js for the frontend, and Tailwind CSS with shadcn/ui components for styling. The email system is powered by Resend for reliable delivery, and SolidQueue handles background job processing.
 
+### Time Slot Architecture
+- Time slots are now 15-minute intervals (changed from 30 minutes)
+- Events automatically generate unique 8-character URL tokens using a custom callback
+- All times are stored in UTC in the database
+- Frontend handles timezone conversion based on user selection
+
 ## Completed Features
 
 ### Authentication & User Management
