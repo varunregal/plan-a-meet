@@ -60,5 +60,18 @@ RSpec.describe Event, type: :model do
       expect(first_slot.start_time.utc.strftime('%H:%M')).to eq '13:00'
       expect(first_slot.end_time.utc.strftime('%H:%M')).to eq '13:15'
     end
+
+    it 'handles different time zones correctly' do
+      event.create_time_slots(dates, start_time, end_time, 'America/Los_Angeles')
+
+      pacific_slot = event.time_slots.first
+      expect(pacific_slot.start_time.utc.strftime('%H:%M')).to eq('16:00')
+
+      event.time_slots.destroy_all
+
+      event.create_time_slots(dates, start_time, end_time, 'Asia/Tokyo')
+      tokyo_slot = event.time_slots.first
+      expect(tokyo_slot.start_time.utc.strftime('%H:%M')).to eq('00:00')
+    end
   end
 end
