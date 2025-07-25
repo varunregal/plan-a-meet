@@ -38,7 +38,7 @@ class Events::Create
       raise ArgumentError, 'Start Date cannot be before End Date' if end_date_time < start_date_time
 
       while start_date_time < end_date_time
-        result << { start_date_time: start_date_time, end_date_time: start_date_time + 30.minutes }
+        result << { start_date_time: start_date_time, end_date_time: start_date_time + 15.minutes }
         start_date_time += 15.minutes
       end
     end
