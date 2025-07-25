@@ -1,4 +1,5 @@
 require 'rails_helper'
+require 'pry'
 
 RSpec.describe 'Invitations', :inertia, type: :request do
   let(:user) { create(:user) }
@@ -11,9 +12,7 @@ RSpec.describe 'Invitations', :inertia, type: :request do
   describe 'POST /events/:url/invitations' do
     let(:valid_params) do
       {
-        invitation: {
-          email_addresses: ['test1@example.com', 'test2@example.com']
-        }
+        email_addresses: ['test1@example.com', 'test2@example.com']
       }
     end
 
@@ -22,6 +21,16 @@ RSpec.describe 'Invitations', :inertia, type: :request do
         expect do
           post event_invitations_path(event), params: valid_params
         end.to change(Invitation, :count).by(2)
+      end
+    end
+
+    context 'with invalid params' do
+      it 'returns error for empty emails array' do
+        post event_invitations_path(event), params: { email_addresses: [] }
+        expect(response).to have_http_status(:redirect)
+        follow_redirect!
+        expect(inertia.props[:errors]).to be_present
+        expect(inertia.props[:errors]['email_addresses']).to include('Please provide at least one email address')
       end
     end
   end

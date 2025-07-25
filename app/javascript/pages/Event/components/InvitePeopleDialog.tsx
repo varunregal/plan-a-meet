@@ -26,39 +26,39 @@ function InvitePeopleDialog({
   open,
   onOpenChange,
 }: InvitePeopleDialogProps) {
-  const { data, setData, processing, post } = useForm({
-    invitation: { email_addresses: [""] },
+  const { data, setData, processing, post, errors } = useForm({
+    email_addresses: [""],
   });
 
   const addEmailField = () => {
-    setData("invitation", {
-      email_addresses: [...data.invitation.email_addresses, ""],
-    });
+    setData("email_addresses", [...data.email_addresses, ""]);
   };
+
   const removeEmailField = (index: number) => {
-    setData("invitation", {
-      email_addresses: data.invitation.email_addresses.filter(
-        (_, i) => i !== index,
-      ),
-    });
+    setData(
+      "email_addresses",
+      data.email_addresses.filter((_, i) => i !== index),
+    );
   };
 
   const updateEmail = (index: number, value: string) => {
-    const newEmails = [...data.invitation.email_addresses];
+    const newEmails = [...data.email_addresses];
     newEmails[index] = value;
-    setData("invitation", { email_addresses: newEmails });
+    setData("email_addresses", newEmails);
   };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     post(`/events/${event.url}/invitations`, {
       onSuccess: () => {
-        setData("invitation", { email_addresses: [""] });
+        setData("email_addresses", [""]);
         onOpenChange(false);
       },
       preserveScroll: true,
     });
   };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
@@ -117,7 +117,7 @@ function InvitePeopleDialog({
         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
           <div className="grid gap-4">
             <Label htmlFor="emails">Add New Invitations</Label>
-            {data.invitation.email_addresses.map((email, index) => (
+            {data.email_addresses.map((email, index) => (
               <div key={index} className="flex gap-2">
                 <Input
                   type="email"
@@ -126,7 +126,7 @@ function InvitePeopleDialog({
                   onChange={(e) => updateEmail(index, e.target.value)}
                   className="flex-1"
                 />
-                {data.invitation.email_addresses.length > 1 && (
+                {data.email_addresses.length > 1 && (
                   <Button
                     type="button"
                     variant="outline"
@@ -149,6 +149,9 @@ function InvitePeopleDialog({
               Add Another Email
             </Button>
           </div>
+          {errors.email_addresses && (
+            <p className="text-sm text-red-600">{errors.email_addresses[0]}</p>
+          )}
           <DialogFooter>
             <Button
               type="button"

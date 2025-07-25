@@ -1,17 +1,20 @@
 class InvitationsController < ApplicationController
   before_action :find_event
   before_action :authorize_event_creator
+
   def create
-    email_addresses = invitation_params[:email_addresses]
-    invitations = []
-    email_addresses.each do |email_address|
-      invitation = @event.invitations.create(email_address:, inviter: Current.user)
-      invitations << invitation if invitation.persisted?
+    email_addresses = check_valid_email_addresses(invitation_params[:email_addresses])
+    return unless email_addresses
+
+    invitations = email_addresses.map do |email_address|
+      @event.invitations.build(email_address:, inviter: Current.user)
     end
-    if invitations.any?
+
+    if invitations.all?(&:save)
       redirect_to event_path(@event), notice: "Successfully sent #{invitations.count} invitation(s)"
     else
-      redirect_to event_path(@event), alert: 'Failed to send invitations'
+      errors = invitations.map(&:errors).map(&:full_messages).flatten
+      redirect_back fallback_location: event_path(@event), inertia: { errors: { email_addresses: errors } }
     end
   end
 
@@ -26,6 +29,16 @@ class InvitationsController < ApplicationController
   end
 
   def invitation_params
-    params.require(:invitation).permit(email_addresses: [])
+    params.permit(email_addresses: [])
+  end
+
+  def check_valid_email_addresses(email_addresses)
+    valid_email_addresses = email_addresses.compact_blank
+    if valid_email_addresses.empty?
+      redirect_back fallback_location: event_path(@event),
+                    inertia: { errors: { email_addresses: ['Please provide at least one email address'] } }
+      return nil
+    end
+    valid_email_addresses
   end
 end
