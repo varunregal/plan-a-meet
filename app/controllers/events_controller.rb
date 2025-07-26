@@ -7,6 +7,7 @@ class EventsController < ApplicationController
 
   def create
     event = Event.new(event_params)
+    event.event_creator = Current.user if authenticated?
 
     if event.save
       create_time_slots(event)
