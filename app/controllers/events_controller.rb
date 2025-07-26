@@ -1,4 +1,3 @@
-require 'pry'
 class EventsController < ApplicationController
   allow_unauthenticated_access only: %i[new create]
   def new
@@ -15,12 +14,9 @@ class EventsController < ApplicationController
   rescue ActiveRecord::RecordInvalid
     redirect_to new_event_path, inertia: { errors: event.errors }
   rescue ArgumentError => e
-    event.errors.add(:base, e.message)
-    redirect_to new_event_path, inertia: { errors: event.errors }
+    handle_argument_error(event, e)
   rescue StandardError => e
-    log_error(e)
-    redirect_to new_event_path,
-                alert: "We couldn't create your event. Please try again or contact support if the problem persists."
+    handle_standard_error(e)
   end
 
   private
@@ -47,5 +43,17 @@ class EventsController < ApplicationController
   def log_error(error)
     Rails.logger.error "Event creation failed: #{error.class} - #{error.message}"
     Rails.logger.error error.backtrace.join("\n")
+  end
+
+  def handle_argument_error(event, error)
+    event.errors.add(:base, error.message)
+    redirect_to new_event_path, inertia: { errors: event.errors }
+  end
+
+  def handle_standard_error(error)
+    log_error(error)
+    redirect_to new_event_path,
+                alert: "We couldn't create your event. Please try again or
+    contact support if the problem persists."
   end
 end
