@@ -11,17 +11,17 @@ RSpec.describe 'EventsController', :inertia, type: :request do
   end
 
   describe 'POST /evens' do
-    let(:valid_params) do
-      {
-        name: 'Weekend Bar Hopping',
-        dates: %w[2025-08-01],
-        start_time: '03:00',
-        end_time: '04:00',
-        time_zone: 'America/New_York'
-      }
-    end
+    context 'without authentication and valid_params' do
+      let(:valid_params) do
+        {
+          name: 'Weekend Bar Hopping',
+          dates: %w[2025-08-01],
+          start_time: '03:00',
+          end_time: '04:00',
+          time_zone: 'America/New_York'
+        }
+      end
 
-    context 'without authentication' do
       it 'creates a new event' do
         expect { post events_path, params: valid_params }.to change(Event, :count).by(1)
       end
@@ -31,7 +31,16 @@ RSpec.describe 'EventsController', :inertia, type: :request do
       end
     end
 
-    context 'with authentication' do
+    context 'with authentication and valid_params' do
+      let(:valid_params) do
+        {
+          name: 'Weekend Bar Hopping',
+          dates: %w[2025-08-01],
+          start_time: '03:00',
+          end_time: '04:00',
+          time_zone: 'America/New_York'
+        }
+      end
       let(:user) { create(:user) }
 
       before { sign_in_as(user) }
@@ -40,6 +49,26 @@ RSpec.describe 'EventsController', :inertia, type: :request do
         post events_path, params: valid_params
         event = Event.last
         expect(event.event_creator).to eq user
+      end
+    end
+
+    context 'with invalid parameters' do
+      let(:invalid_params) do
+        {
+          name: '',
+          dates: ['2025-08-01'],
+          start_time: '03:00',
+          end_time: '04:00',
+          time_zone: 'America/New_York'
+        }
+      end
+
+      it 'does not create an event' do
+        expect { post events_path, params: invalid_params }.not_to change(Event, :count)
+      end
+
+      it 'does not create any time slots' do
+        expect { post events_path, params: invalid_params }.not_to change(TimeSlot, :count)
       end
     end
   end
