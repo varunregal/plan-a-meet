@@ -6,22 +6,16 @@ class EventsController < ApplicationController
   end
 
   def create
+    event = build_event
     ActiveRecord::Base.transaction do
-      event = Event.new(event_params)
-      event.event_creator = Current.user if authenticated?
-
-      if event.save
-        create_time_slots(event)
-        redirect_to event_path(event.url), notice: 'Event created successfully!'
-      else
-        redirect_to new_event_path, inertia: { errors: event.errors }
-      end
+      event.save!
+      create_time_slots(event)
     end
+    redirect_to event_path(event), notice: 'Event created successfully!'
   rescue ActiveRecord::RecordInvalid => e
-    redirect_to new_event_path, alert: 'Please check your event details and try again.'
+    redirect_to new_event_path, inertia: { errors: event.errors }
   rescue StandardError => e
-    Rails.logger.error "Event creation failed: #{e.class} - #{e.message}"
-    Rails.logger.error e.backtrace.join("\n")
+    log_error(e)
     redirect_to new_event_path,
                 alert: "We couldn't create your event. Please try again or contact support if the problem persists."
   end
@@ -32,6 +26,12 @@ class EventsController < ApplicationController
     params.permit(:name)
   end
 
+  def build_event
+    Event.new(event_params).tap do |event|
+      event.event_creator = Current.user if authenticated?
+    end
+  end
+
   def create_time_slots(event)
     event.create_time_slots(
       dates: params[:dates],
@@ -39,5 +39,10 @@ class EventsController < ApplicationController
       end_time: params[:end_time],
       time_zone: params[:time_zone]
     )
+  end
+
+  def log_error(error)
+    Rails.logger.error "Event creation failed: #{error.class} - #{error.message}"
+    Rails.logger.error error.backtrace.join("\n")
   end
 end

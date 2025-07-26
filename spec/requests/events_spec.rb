@@ -76,6 +76,14 @@ RSpec.describe 'EventsController', :inertia, type: :request do
       it 'does not create any time slots' do
         expect { post events_path, params: invalid_params }.not_to change(TimeSlot, :count)
       end
+
+      it 'returns validation errors via Inertia' do
+        post events_path, params: invalid_params
+        expect(response).to redirect_to(new_event_path)
+        follow_redirect!
+        expect(inertia.props[:errors]).to be_present
+        expect(inertia.props[:errors]['name']).to include("can't be blank")
+      end
     end
 
     context 'when time slot creation fails' do
