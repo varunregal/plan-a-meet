@@ -48,4 +48,20 @@ RSpec.describe TimeSlot, type: :model do
       end
     end
   end
+
+  describe 'factory' do
+    it 'has a valid factory' do
+      time_slot = build(:time_slot)
+      expect(time_slot).to be_valid
+    end
+  end
+
+  describe 'time slot duration' do
+    let(:time_slot) { create(:time_slot) }
+
+    it 'has the correct duration' do
+      duration = (time_slot.end_time - time_slot.start_time) / 60
+      expect(duration).to eq(15.0)
+    end
+  end
 end
