@@ -12,7 +12,7 @@ class EventsController < ApplicationController
 
       if event.save
         create_time_slots(event)
-        redirect_to event_path(event.url)
+        redirect_to event_path(event.url), notice: 'Event created successfully!'
       else
         redirect_to new_event_path, inertia: { errors: event.errors }
       end
