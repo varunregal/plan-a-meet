@@ -11,18 +11,22 @@ RSpec.describe 'EventsController', :inertia, type: :request do
   end
 
   describe 'POST /evens' do
-    let(:valid_attributes) do
+    let(:valid_params) do
       {
         name: 'Weekend Bar Hopping',
-        dates: %w[2025-08-01 2025-08-02 2025-08-03],
-        start_time: '18',
-        end_time: '21',
+        dates: %w[2025-08-01],
+        start_time: '03:00',
+        end_time: '04:00',
         time_zone: 'America/New_York'
       }
     end
 
     it 'creates a new event' do
-      expect { post events_path, params: valid_attributes }.to change(Event, :count).by(1)
+      expect { post events_path, params: valid_params }.to change(Event, :count).by(1)
+    end
+
+    it 'creates time slots for the event' do
+      expect { post events_path, params: valid_params }.to change(TimeSlot, :count).by(4)
     end
   end
 end

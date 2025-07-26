@@ -15,7 +15,7 @@ class Event < ApplicationRecord
     url
   end
 
-  def create_time_slots(dates, start_time, end_time, time_zone)
+  def create_time_slots(dates:, start_time:, end_time:, time_zone:)
     Time.use_zone(time_zone) do
       dates.each do |date|
         start_datetime = Time.zone.parse("#{date} #{start_time}:00")

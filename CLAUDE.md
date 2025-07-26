@@ -96,6 +96,17 @@ Every new feature should include comprehensive test coverage including unit test
 ### Code Style
 The codebase follows Rails conventions with Tailwind CSS for styling. Email templates use inline styles for maximum compatibility. All code should be formatted consistently using automated tools, and error handling should be specific rather than generic.
 
+### Rails Architecture Best Practices
+- **Prefer Models and Controllers**: Keep business logic in models and controllers following Rails conventions
+- **Use Services Sparingly**: Only create service objects when the logic is complex and doesn't fit naturally in models or controllers
+- **Error Handling**: Use Rails standard error handling patterns:
+  - Model validations for data integrity
+  - Controller rescue_from for handling exceptions
+  - Return meaningful error messages to users
+  - Use Rails' built-in error responses (422 for validation errors, 404 for not found, etc.)
+- **Fat Models, Skinny Controllers**: Business logic belongs in models, controllers should orchestrate
+- **Avoid Premature Abstraction**: Start with simple Rails patterns, extract to services only when necessary
+
 ## Development Principles
 
 ### Code Generation and Development Approach

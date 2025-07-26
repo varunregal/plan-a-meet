@@ -49,12 +49,12 @@ RSpec.describe Event, type: :model do
 
     it 'creates time slots for a single date' do
       expect do
-        event.create_time_slots(dates, start_time, end_time, time_zone)
+        event.create_time_slots(dates:, start_time:, end_time:, time_zone:)
       end.to change { event.time_slots.count }.by(4)
     end
 
     it 'stores times in UTC in the database' do
-      event.create_time_slots(dates, start_time, end_time, time_zone)
+      event.create_time_slots(dates:, start_time:, end_time:, time_zone:)
       first_slot = event.time_slots.first
 
       expect(first_slot.start_time.utc.strftime('%H:%M')).to eq '13:00'
@@ -62,14 +62,14 @@ RSpec.describe Event, type: :model do
     end
 
     it 'handles different time zones correctly' do
-      event.create_time_slots(dates, start_time, end_time, 'America/Los_Angeles')
+      event.create_time_slots(dates:, start_time:, end_time:, time_zone: 'America/Los_Angeles')
 
       pacific_slot = event.time_slots.first
       expect(pacific_slot.start_time.utc.strftime('%H:%M')).to eq('16:00')
 
       event.time_slots.destroy_all
 
-      event.create_time_slots(dates, start_time, end_time, 'Asia/Tokyo')
+      event.create_time_slots(dates:, start_time:, end_time:, time_zone: 'Asia/Tokyo')
       tokyo_slot = event.time_slots.first
       expect(tokyo_slot.start_time.utc.strftime('%H:%M')).to eq('00:00')
     end
