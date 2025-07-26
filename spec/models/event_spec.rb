@@ -74,4 +74,52 @@ RSpec.describe Event, type: :model do
       expect(tokyo_slot.start_time.utc.strftime('%H:%M')).to eq('00:00')
     end
   end
+
+  describe '#create_time_slots validation' do
+    let(:event) { create(:event) }
+
+    context 'with invalid parameters' do
+      it 'raises ArgumentError when any required parameter is missing' do
+        expect do
+          event.create_time_slots(
+            dates: [], start_time: '09:00', end_time: '10:00', time_zone: 'UTC'
+          )
+        end.to raise_error(ArgumentError, 'Missing required parameters')
+
+        expect do
+          event.create_time_slots(
+            dates: ['2025-08-01'], start_time: '',
+            end_time: '10:00', time_zone: 'UTC'
+          )
+        end.to raise_error(ArgumentError, 'Missing required parameters')
+
+        expect do
+          event.create_time_slots(
+            dates: ['2025-08-01'], start_time: '09:00',
+            end_time: '', time_zone: 'UTC'
+          )
+        end.to raise_error(ArgumentError, 'Missing required parameters')
+
+        expect do
+          event.create_time_slots(
+            dates: ['2025-08-01'], start_time: '09:00',
+            end_time: '10:00', time_zone: ''
+          )
+        end.to raise_error(ArgumentError, 'Missing required parameters')
+      end
+    end
+
+    context 'with valid parameters' do
+      it 'creates time slots successfully' do
+        expect do
+          event.create_time_slots(
+            dates: ['2025-08-01'],
+            start_time: '09:00',
+            end_time: '10:00',
+            time_zone: 'America/New_York'
+          )
+        end.to change { event.time_slots.count }.by(4)
+      end
+    end
+  end
 end

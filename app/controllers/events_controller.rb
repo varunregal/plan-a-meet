@@ -12,7 +12,10 @@ class EventsController < ApplicationController
       create_time_slots(event)
     end
     redirect_to event_path(event), notice: 'Event created successfully!'
-  rescue ActiveRecord::RecordInvalid => e
+  rescue ActiveRecord::RecordInvalid
+    redirect_to new_event_path, inertia: { errors: event.errors }
+  rescue ArgumentError => e
+    event.errors.add(:base, e.message)
     redirect_to new_event_path, inertia: { errors: event.errors }
   rescue StandardError => e
     log_error(e)

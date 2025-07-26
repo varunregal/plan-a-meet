@@ -58,7 +58,7 @@ RSpec.describe 'EventsController', :inertia, type: :request do
       end
     end
 
-    context 'with invalid parameters' do
+    context 'with invalid event parameters' do
       let(:invalid_params) do
         {
           name: '',
@@ -83,6 +83,29 @@ RSpec.describe 'EventsController', :inertia, type: :request do
         follow_redirect!
         expect(inertia.props[:errors]).to be_present
         expect(inertia.props[:errors]['name']).to include("can't be blank")
+      end
+    end
+
+    context 'with invalid time slot parameters' do
+      let(:invalid_params) do
+        {
+          name: 'Team Meeting',
+          dates: [],
+          start_time: '03:00',
+          end_time: '04:00',
+          time_zone: 'America/New_York'
+        }
+      end
+
+      it 'does not create an event' do
+        expect { post events_path, params: invalid_params }.not_to change(Event, :count)
+      end
+
+      it 'returns error message' do
+        post events_path, params: invalid_params
+        expect(response).to redirect_to new_event_path
+        follow_redirect!
+        expect(inertia.props[:errors]['base']).to include('Missing required parameters')
       end
     end
 

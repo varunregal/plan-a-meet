@@ -1,4 +1,12 @@
 class Event < ApplicationRecord
+  class TimeSlotValidationError < StandardError
+    attr_reader :errors
+
+    def initialize(errors)
+      @errors = errors
+      super(errors.map { |k, v| "#{k} #{v}" }.join(', '))
+    end
+  end
   has_many :time_slots, dependent: :destroy
   belongs_to :event_creator, class_name: 'User', inverse_of: :created_events, optional: true
   has_many :availabilities, through: :time_slots
@@ -16,6 +24,7 @@ class Event < ApplicationRecord
   end
 
   def create_time_slots(dates:, start_time:, end_time:, time_zone:)
+    handle_validation_errors(dates:, start_time:, end_time:, time_zone:)
     Time.use_zone(time_zone) do
       dates.each do |date|
         start_datetime = Time.zone.parse("#{date} #{start_time}:00")
@@ -41,6 +50,13 @@ class Event < ApplicationRecord
     loop do
       self.url = SecureRandom.alphanumeric(8).downcase
       break unless Event.exists?(url:)
+    end
+  end
+
+  def handle_validation_errors(dates:, start_time:, end_time:, time_zone:)
+    if dates.blank? || dates.all?(&:blank?) || start_time.blank? ||
+       end_time.blank? || time_zone.blank?
+      raise ArgumentError, 'Missing required parameters'
     end
   end
 end

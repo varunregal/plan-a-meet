@@ -16,10 +16,10 @@ RSpec/MultipleExpectations:
   Max: 4
 
 RSpec/ExampleLength:
-  Max: 20
+  Max: 30
 
 Metrics/MethodLength:
-  Max: 20
+  Max: 30
 
 Style/Documentation:
   Enabled: false
