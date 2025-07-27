@@ -143,4 +143,25 @@ RSpec.describe 'EventsController', :inertia, type: :request do
       end
     end
   end
+
+  describe 'GET /events/:url' do
+    let(:event) { create(:event) }
+
+    context 'when event exists' do
+      it 'returns success and renders show page' do
+        get event_path(event)
+        expect(response).to have_http_status(:success)
+        expect(inertia.component).to eq 'Event/Show'
+        expect(inertia.props[:id]).to eq event.id
+        expect(inertia.props[:name]).to eq event.name
+      end
+    end
+
+    context 'when event does not exist' do
+      it 'returns 404 not found' do
+        get event_path('nonexistent')
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+  end
 end

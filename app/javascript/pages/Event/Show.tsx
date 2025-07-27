@@ -1,8 +1,5 @@
-import Event from "./components/Event";
-import { EventProps } from "./event.types";
-
-function Show({ event }: { event: EventProps }) {
-  return <Event event={event} />;
+function Show({ id, name }: { id: number; name: string }) {
+  return <div>Event Name: {name}</div>;
 }
 
 export default Show;

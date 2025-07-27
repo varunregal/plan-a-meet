@@ -1,5 +1,10 @@
 class EventsController < ApplicationController
-  allow_unauthenticated_access only: %i[new create]
+  allow_unauthenticated_access only: %i[new create show]
+  def show
+    event = Event.find_by!(url: params[:url])
+    render inertia: 'Event/Show', props: { id: event.id, name: event.name }
+  end
+
   def new
     render inertia: 'Event/New'
   end
@@ -53,7 +58,6 @@ class EventsController < ApplicationController
   def handle_standard_error(error)
     log_error(error)
     redirect_to new_event_path,
-                alert: "We couldn't create your event. Please try again or
-    contact support if the problem persists."
+                alert: "We couldn't create your event. Please try again or contact support if the problem persists."
   end
 end

@@ -47,15 +47,15 @@ function New() {
       time_zone: timeZone,
     };
     console.log({ event });
-    // router.post(
-    //   "/events",
-    //   { event },
-    //   {
-    //     onFinish: () => {
-    //       setIsLoading(false);
-    //     },
-    //   },
-    // );
+    router.post(
+      "/events",
+      { ...event },
+      {
+        onFinish: () => {
+          setIsLoading(false);
+        },
+      },
+    );
   };
   return (
     <div className="flex h-full justify-center">
