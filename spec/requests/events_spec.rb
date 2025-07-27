@@ -174,7 +174,7 @@ RSpec.describe 'EventsController', :inertia, type: :request do
     end
   end
 
-  describe 'anonymouse session tracking' do
+  describe 'anonymous session tracking' do
     it 'does not set anonymous session when just viewing an event' do
       event = create(:event)
 
@@ -183,7 +183,7 @@ RSpec.describe 'EventsController', :inertia, type: :request do
       expect(jar.signed[:anonymous_session_id]).to be_nil
     end
 
-    it 'sets anonymous session when creating an event' do
+    it 'sets anonymous session when creating an event and saves it to the event' do
       post events_path, params: {
         name: 'Team Meeting',
         dates: ['2025-08-01'],
@@ -194,6 +194,11 @@ RSpec.describe 'EventsController', :inertia, type: :request do
 
       jar = ActionDispatch::Cookies::CookieJar.build(request, cookies.to_hash)
       expect(jar.signed[:anonymous_session_id]).to be_present
+
+      event = Event.last
+      expect(event.anonymous_session_id).to be_present
+      expect(event.anonymous_session_id).to eq jar.signed[:anonymous_session_id]
+      expect(event.event_creator).to be_nil
     end
 
     it 'does not set anonymous session for authenticated users creating events' do
@@ -210,6 +215,9 @@ RSpec.describe 'EventsController', :inertia, type: :request do
 
       jar = ActionDispatch::Cookies::CookieJar.build(request, cookies.to_hash)
       expect(jar.signed[:anonymous_session_id]).to be_nil
+      event = Event.last
+      expect(event.anonymous_session_id).to be_nil
+      expect(event.event_creator).to eq(user)
     end
   end
 end

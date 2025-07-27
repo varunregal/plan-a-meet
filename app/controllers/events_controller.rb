@@ -13,12 +13,13 @@ class EventsController < ApplicationController
   end
 
   def create
-    event = build_event
+    anonymous_session_id = ensure_anonymous_session_value
+    event = build_event_with_session(anonymous_session_id)
     ActiveRecord::Base.transaction do
       event.save!
       create_time_slots(event)
     end
-    set_anonymous_session_if_needed
+    store_anonymous_session_cookie(anonymous_session_id) if anonymous_session_id
     redirect_to event_path(event), notice: 'Event created successfully!'
   rescue ActiveRecord::RecordInvalid
     redirect_to new_event_path, inertia: { errors: event.errors }
@@ -36,7 +37,11 @@ class EventsController < ApplicationController
 
   def build_event
     Event.new(event_params).tap do |event|
-      event.event_creator = Current.user if authenticated?
+      if authenticated?
+        event.event_creator = Current.user
+      else
+        event.anonymous_session_id = cookies.signed[:anonymous_session_id]
+      end
     end
   end
 
@@ -65,11 +70,25 @@ class EventsController < ApplicationController
                 alert: "We couldn't create your event. Please try again or contact support if the problem persists."
   end
 
-  def set_anonymous_session_if_needed
-    return if authenticated?
+  def ensure_anonymous_session_value
+    return nil if authenticated?
 
+    cookies.signed[:anonymous_session_id] || SecureRandom.hex(16)
+  end
+
+  def build_event_with_session(anonymous_session_id)
+    Event.new(event_params).tap do |event|
+      if authenticated?
+        event.event_creator = Current.user
+      else
+        event.anonymous_session_id = anonymous_session_id
+      end
+    end
+  end
+
+  def store_anonymous_session_cookie(value)
     cookies.signed[:anonymous_session_id] ||= {
-      value: SecureRandom.hex(16),
+      value:,
       expires: 30.days.from_now,
       httponly: true,
       same_site: :lax

@@ -83,129 +83,165 @@ Once the event creator schedules the final event time, all participants will rec
 ## Anonymous User Architecture
 
 ### Overview
-Plan A Meet follows a "Zero friction entry, progressive engagement" philosophy. Users can create events and mark availability without creating an account. Authentication is only required when users want advanced features like event management, notifications, or cross-device access.
+Plan A Meet allows users to create events and mark availability without creating an account. This "zero friction" approach maximizes participation while offering clear benefits for those who choose to sign up.
 
-### Identity Management System
+### Implementation Strategy
 
-#### Identity Levels
-1. **Anonymous (Level 0)**
-   - Identified by browser cookie (ephemeral_id)
-   - Can create events and mark availability
-   - Data persists for 30 days of inactivity
-   - All actions tied to browser session
+#### Cookie-Based Sessions
+We use signed cookies to track anonymous users without polluting the database with temporary user records:
 
-2. **Identified (Level 1)**
-   - User provides email (no password required)
-   - Can receive notifications
-   - Data linked to email address
-   - Can access their events via email links
-
-3. **Authenticated (Level 2)**
-   - Full account with password
-   - Cross-device access
-   - Event management dashboard
-   - Calendar integrations
-
-#### Technical Implementation
-
-**Browser-Based Tracking**
-- Every visitor receives a unique ephemeral_id (UUID) stored in a secure HttpOnly cookie
-- This ID links all their anonymous actions (creating events, marking availability)
-- Cookie persists for 30 days, refreshed on each visit
-
-**Database Schema Additions**
-```
-events table:
-- creator_email (for anonymous creators)
-- ephemeral_id (links to browser session)
-
-availabilities table:
-- participant_email (for anonymous participants)
-- participant_name (for display purposes)
-- ephemeral_id (links to browser session)
-
-ephemeral_sessions table:
-- id (UUID)
-- last_seen_at
-- created_at
-- session_data (JSON)
+```ruby
+# Set only when users take actions (create event, mark availability)
+cookies.signed[:anonymous_session_id] = {
+  value: SecureRandom.hex(16),
+  expires: 30.days.from_now,
+  httponly: true,
+  same_site: :lax
+}
 ```
 
-**Session Flow Example**
-1. User visits site → Generate ephemeral_id → Store in cookie
-2. User creates event → Link event to ephemeral_id
-3. User marks availability → Link availability to ephemeral_id
-4. User provides email → Link email to all data with that ephemeral_id
-5. User creates account → Migrate all email-linked data to user account
+#### Database Schema
+```ruby
+# Migration for anonymous user tracking
+class AddAnonymousSessionTracking < ActiveRecord::Migration[8.0]
+  def change
+    # Track anonymous event creators
+    add_column :events, :anonymous_session_id, :string
+    add_index :events, :anonymous_session_id
+    
+    # Track anonymous availability markers  
+    add_column :availabilities, :anonymous_session_id, :string
+    add_column :availabilities, :participant_name, :string
+    add_index :availabilities, :anonymous_session_id
+  end
+end
+```
 
-### Progressive Engagement Strategy
+#### Controller Implementation
+```ruby
+# EventsController
+def create
+  event = build_event
+  ActiveRecord::Base.transaction do
+    event.save!
+    create_time_slots(event)
+  end
+  set_anonymous_session_if_needed  # Only sets for anonymous users
+  redirect_to event_path(event)
+end
 
-#### Engagement Triggers
-- **Stay Anonymous**: Create event, mark availability, view event
-- **Provide Email**: Get notifications, access event via email, download calendar file
-- **Create Account**: Manage multiple events, view analytics, integrate calendar
+private
 
-#### Value Propositions at Each Level
-1. **Anonymous**: "Schedule in seconds, no sign-up required"
-2. **Email**: "Never miss an update about your events"
-3. **Account**: "Your personal scheduling assistant"
+def build_event
+  Event.new(event_params).tap do |event|
+    if authenticated?
+      event.event_creator = Current.user
+    else
+      event.anonymous_session_id = cookies.signed[:anonymous_session_id]
+    end
+  end
+end
 
-### Implementation Phases
+def set_anonymous_session_if_needed
+  return if authenticated?
+  
+  cookies.signed[:anonymous_session_id] ||= {
+    value: SecureRandom.hex(16),
+    expires: 30.days.from_now,
+    httponly: true,
+    same_site: :lax
+  }
+end
+```
 
-#### Phase 1: Anonymous Event Creation (Current)
-- ✅ Already implemented
-- Events can be created without authentication
+### Conversion Flow
 
-#### Phase 2: Anonymous Availability Marking (Next)
-- Add ephemeral_id system
-- Update Availability model to support anonymous users
-- Create UI for name/email collection when marking availability
+When anonymous users sign up or sign in, we convert their data:
 
-#### Phase 3: Identity Resolution
-- Build email claiming system
-- Create migration logic for anonymous → identified data
-- Implement "claim your events" email flow
+```ruby
+# In RegistrationsController/SessionsController
+def convert_anonymous_to_authenticated(user)
+  anonymous_session_id = cookies.signed[:anonymous_session_id]
+  return unless anonymous_session_id
+  
+  # Convert events
+  Event.where(anonymous_session_id: anonymous_session_id)
+       .update_all(
+         event_creator_id: user.id,
+         anonymous_session_id: nil
+       )
+  
+  # Convert availabilities
+  Availability.where(anonymous_session_id: anonymous_session_id)
+              .update_all(
+                 user_id: user.id,
+                 anonymous_session_id: nil
+               )
+  
+  # Clear the anonymous session
+  cookies.delete(:anonymous_session_id)
+end
+```
 
-#### Phase 4: Progressive Features
-- Add features that encourage (but don't require) authentication
-- Calendar sync, recurring events, team scheduling
-- Analytics and insights
+### Feature Access Levels
 
-### Key Principles
+#### Anonymous Users Can:
+- Create events
+- Share event links
+- Mark availability (with required name)
+- View basic availability grid
 
-1. **Never Block Core Functionality**
-   - Creating events and marking availability must always work without login
-   - Authentication is only for enhanced features
+#### Sign Up to Unlock:
+- Email notifications when people respond
+- See full participant names (not just "John S.")
+- Manage multiple events from dashboard
+- Access events from any device
+- Advanced analytics and insights
 
-2. **Transparent Data Handling**
-   - Clear communication about what happens to anonymous data
-   - Easy data export/deletion for GDPR compliance
+### Shared Device Support
 
-3. **Smooth Upgrade Path**
-   - Converting from anonymous → account should be one click
-   - Never lose user data during conversion
-   - Email-based account creation (no password initially)
+For computers used by multiple people, we provide a "Not you?" option:
 
-### Cookie Strategy for Anonymous Users
+```ruby
+# When showing existing availability
+if @existing_availability
+  # Show: "Marking as: John Smith [Not you?]"
+  # Clicking "Not you?" clears session and starts fresh
+end
 
-#### Implementation Approach
-We use a simple cookie-based system to remember anonymous users within the same browser:
+# Controller action
+def reset_anonymous_session
+  cookies.delete(:anonymous_session_id)
+  redirect_back(fallback_location: event_path(params[:event_url]))
+end
+```
 
-1. **No cookie on first visit** - Don't set cookies until user takes an action
-2. **Set cookie on interaction** - When user creates event or marks availability
-3. **Cookie contents**:
-   ```ruby
-   cookies.encrypted[:guest_session] = {
-     value: {
-       id: SecureRandom.uuid,
-       name: "User's Name",
-       created_at: Time.current
-     }.to_json,
-     expires: 30.days.from_now,
-     httponly: true,
-     secure: Rails.env.production?
-   }
-   ```
+### Progressive Engagement UI
+
+```ruby
+# On event creation (anonymous)
+"Event created! Share this link: ..."
+"Sign up to get notified when people respond"
+
+# When someone marks availability (for anonymous creator)
+"3 people have responded to your event"
+"Sign up to see who and get instant notifications"
+
+# Clear value propositions
+"Why sign up?"
+"✓ Email notifications"
+"✓ See who responded" 
+"✓ Manage all your events"
+"✓ Never lose access"
+```
+
+### Key Design Decisions
+
+1. **Cookie-only approach** - No database pollution with temporary users
+2. **30-day expiration** - Balances convenience with cleanup
+3. **Required names** - Anonymous doesn't mean "Unknown Person"
+4. **Progressive disclosure** - Only ask for info when providing clear value
+5. **Shared device support** - "Not you?" for multi-user browsers
 
 #### Handling Shared Browsers
 For browsers used by multiple people (family computer, work computer):
