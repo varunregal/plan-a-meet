@@ -1,8 +1,11 @@
 class EventsController < ApplicationController
   allow_unauthenticated_access only: %i[new create show]
+
   def show
     event = Event.find_by!(url: params[:url])
-    render inertia: 'Event/Show', props: { id: event.id, name: event.name }
+    render inertia: 'Event/Show',
+           props: { id: event.id, name: event.name,
+                    time_slots: event.time_slots.as_json(only: %i[id start_time end_time]) }
   end
 
   def new
@@ -15,6 +18,7 @@ class EventsController < ApplicationController
       event.save!
       create_time_slots(event)
     end
+    set_anonymous_session_if_needed
     redirect_to event_path(event), notice: 'Event created successfully!'
   rescue ActiveRecord::RecordInvalid
     redirect_to new_event_path, inertia: { errors: event.errors }
@@ -59,5 +63,16 @@ class EventsController < ApplicationController
     log_error(error)
     redirect_to new_event_path,
                 alert: "We couldn't create your event. Please try again or contact support if the problem persists."
+  end
+
+  def set_anonymous_session_if_needed
+    return if authenticated?
+
+    cookies.signed[:anonymous_session_id] ||= {
+      value: SecureRandom.hex(16),
+      expires: 30.days.from_now,
+      httponly: true,
+      same_site: :lax
+    }
   end
 end

@@ -155,6 +155,15 @@ RSpec.describe 'EventsController', :inertia, type: :request do
         expect(inertia.props[:id]).to eq event.id
         expect(inertia.props[:name]).to eq event.name
       end
+
+      it 'includes time slots data' do
+        time_slot = create(:time_slot, event:)
+        get event_path(event)
+        expect(inertia.props[:time_slots]).to be_an Array
+        expect(inertia.props[:time_slots].length).to eq 1
+        expect(inertia.props[:time_slots].first['id']).to eq time_slot.id
+        expect(inertia.props[:time_slots].first['start_time']).to be_present
+      end
     end
 
     context 'when event does not exist' do
@@ -162,6 +171,45 @@ RSpec.describe 'EventsController', :inertia, type: :request do
         get event_path('nonexistent')
         expect(response).to have_http_status(:not_found)
       end
+    end
+  end
+
+  describe 'anonymouse session tracking' do
+    it 'does not set anonymous session when just viewing an event' do
+      event = create(:event)
+
+      get event_path(event)
+      jar = ActionDispatch::Cookies::CookieJar.build(request, cookies.to_hash)
+      expect(jar.signed[:anonymous_session_id]).to be_nil
+    end
+
+    it 'sets anonymous session when creating an event' do
+      post events_path, params: {
+        name: 'Team Meeting',
+        dates: ['2025-08-01'],
+        start_time: '09:00',
+        end_time: '10:00',
+        time_zone: 'America/New_York'
+      }
+
+      jar = ActionDispatch::Cookies::CookieJar.build(request, cookies.to_hash)
+      expect(jar.signed[:anonymous_session_id]).to be_present
+    end
+
+    it 'does not set anonymous session for authenticated users creating events' do
+      user = create(:user)
+      sign_in_as(user)
+
+      post events_path, params: {
+        name: 'Team Meeting',
+        dates: ['2025-08-01'],
+        start_time: '09:00',
+        end_time: '10:00',
+        time_zone: 'America/New_York'
+      }
+
+      jar = ActionDispatch::Cookies::CookieJar.build(request, cookies.to_hash)
+      expect(jar.signed[:anonymous_session_id]).to be_nil
     end
   end
 end

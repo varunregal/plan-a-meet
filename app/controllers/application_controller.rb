@@ -1,4 +1,4 @@
-require "pry"
+require 'pry'
 class ApplicationController < ActionController::Base
   include Authentication
   include ApiErrorHandler
@@ -14,16 +14,20 @@ class ApplicationController < ActionController::Base
 
   def assign_pending_event_creator(user)
     return unless session[:pending_event_url]
+
     event = Event.find_by!(url: session.delete(:pending_event_url))
     return unless event
+
     event.update(event_creator: user)
     @pending_event = event
   end
 
   def check_if_user_created_in_event_path
     return unless session[:user_created_in_event_path]
+
     event = Event.find_by!(url: session.delete(:user_created_in_event_path))
     return unless event
+
     @current_event = event
   end
 end
