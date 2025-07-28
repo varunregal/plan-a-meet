@@ -166,7 +166,7 @@ RSpec.describe 'EventsController', :inertia, type: :request do
       end
     end
 
-    context 'when anonymous creator vbiew their event' do
+    context 'when anonymous creator view their event' do
       it 'identifies them as the creator' do
         post events_path, params: {
           name: 'Team Meeting',
@@ -178,7 +178,6 @@ RSpec.describe 'EventsController', :inertia, type: :request do
 
         event = Event.last
 
-        # Step 2: View the event (same session continues)
         get event_path(event)
 
         expect(inertia.props[:is_creator]).to be true
