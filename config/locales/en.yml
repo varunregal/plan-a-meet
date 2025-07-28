@@ -31,7 +31,7 @@ en:
   hello: "Hello world"
   registrations:
     create:
-      success: "Signed up successfully!"
+      success: "Successfully signed up!"
       pending_event_success: "Thanks for signing up! This event is now yours."
 
   sessions:

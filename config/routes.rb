@@ -26,6 +26,7 @@ Rails.application.routes.draw do
     end
     resources :invitations
   end
+  resource :profile, only: [:show]
 
   resources :time_slots, only: [] do
     resource :availability, only: %i[create destroy]

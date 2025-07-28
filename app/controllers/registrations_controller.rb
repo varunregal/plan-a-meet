@@ -14,11 +14,11 @@ class RegistrationsController < ApplicationController
     if @user.save
       start_new_session_for @user
       UserMailer.welcome_email(@user).deliver_later
-
-      redirect_to root_path, notice: t('.success')
+      convert_anonymous_to_authenticated(@user)
+      redirect_back fallback_location: profile_path, notice: t('.success')
     else
       redirect_to new_registration_path, inertia: {
-        errors: @user.errors
+        errors: inertia_errors(@user)
       }
     end
   rescue ActiveRecord::RecordNotFound
