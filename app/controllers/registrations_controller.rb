@@ -9,23 +9,16 @@ class RegistrationsController < ApplicationController
     render inertia: 'Auth/Signup'
   end
 
-  def create # rubocop:disable Metrics/AbcSize
+  def create
     @user = User.new(user_params)
     if @user.save
       start_new_session_for @user
       UserMailer.welcome_email(@user).deliver_later
-      assign_pending_event_creator(@user)
-      check_if_user_created_in_event_path
-      if @pending_event
-        redirect_to event_path(@pending_event), notice: t('.pending_event_success')
-      elsif @current_event
-        redirect_to event_path(@current_event), notice: t('.success')
-      else
-        redirect_to root_path, notice: t('.success')
-      end
+
+      redirect_to root_path, notice: t('.success')
     else
       redirect_to new_registration_path, inertia: {
-        errors: inertia_errors(@user)
+        errors: @user.errors
       }
     end
   rescue ActiveRecord::RecordNotFound

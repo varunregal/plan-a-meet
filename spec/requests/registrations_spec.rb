@@ -78,46 +78,5 @@ RSpec.describe 'RegistrationsController', :inertia, type: :request do
         expect(flash[:alert]).to eq('Too many registration attempts. Please try again later')
       end
     end
-
-    context 'when user has created an event before registration' do
-      before do
-        post events_path, params: {
-          event: {
-            name: 'Birthday Party',
-            dates: ['2025-04-19'],
-            start_time: '10',
-            end_time: '12',
-            time_zone: 'America/New_York'
-          }
-        }
-        @created_event = Event.last
-      end
-
-      it 'assigns the user as event creator after registration' do
-        post registration_path, params: user
-        expect(@created_event.reload.event_creator).to eq(User.last)
-        expect(response).to redirect_to(event_path(@created_event))
-      end
-
-      it 'shows correct success message when user becomes user creator' do
-        post registration_path, params: user
-        expect(flash[:notice]).to eq('Thanks for signing up! This event is now yours.')
-      end
-    end
-
-    context 'when user visits event page before registration' do
-      let(:existing_event) { Event.create!(name: 'Birthday Party', url: 'event-12444') }
-
-      before do
-        get event_path(existing_event)
-      end
-
-      it 'redirects to event page after registration' do
-        post registration_path, params: user
-
-        expect(response).to redirect_to(event_path(existing_event))
-        expect(existing_event.reload.event_creator).to be_nil
-      end
-    end
   end
 end
