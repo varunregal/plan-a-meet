@@ -6,7 +6,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LoginForm } from "./LoginForm";
 import { SignupForm } from "./SignupForm";
 
@@ -15,7 +15,7 @@ export function AuthModal({
   onOpenChange,
   defaultTab = "login",
   title = "Authentication required",
-  description = "Pledase sign in or create an account to continue",
+  description = "Please sign in or create an account to continue",
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -24,6 +24,16 @@ export function AuthModal({
   description?: string;
 }) {
   const [activeTab, setActiveTab] = useState(defaultTab);
+
+  const handleSuccess = () => {
+    onOpenChange(false);
+  };
+
+  useEffect(() => {
+    if (open) {
+      setActiveTab(defaultTab);
+    }
+  }, [open, defaultTab]);
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
@@ -42,11 +52,11 @@ export function AuthModal({
           </TabsList>
 
           <TabsContent value="login" className="mt-4">
-            <LoginForm isModal={true} />
+            <LoginForm isModal={true} onSuccess={handleSuccess} />
           </TabsContent>
 
           <TabsContent value="signup" className="mt-4">
-            <SignupForm isModal={true} />
+            <SignupForm isModal={true} onSuccess={handleSuccess} />
           </TabsContent>
         </Tabs>
       </DialogContent>

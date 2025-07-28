@@ -9,8 +9,13 @@ import { signupFormSchema, signupFormSchemaType } from "@/lib/schema";
 
 export function SignupForm({
   className,
+  isModal = false,
+  onSuccess,
   ...props
-}: React.ComponentPropsWithoutRef<"form">) {
+}: React.ComponentPropsWithoutRef<"form"> & {
+  isModal?: boolean;
+  onSuccess?: () => void;
+}) {
   const { errors: pageErrors } = usePage().props;
 
   const {
@@ -21,11 +26,19 @@ export function SignupForm({
     resolver: zodResolver(signupFormSchema),
   });
   const onSubmit = async (values: any) => {
-    router.post("/registration", {
-      name: values.name,
-      email_address: values.email,
-      password: values.password,
-    });
+    router.post(
+      "/registration",
+      {
+        name: values.name,
+        email_address: values.email,
+        password: values.password,
+      },
+      {
+        onSuccess: () => {
+          if (onSuccess) onSuccess();
+        },
+      },
+    );
   };
   return (
     <form
@@ -33,12 +46,15 @@ export function SignupForm({
       className={cn("flex flex-col gap-6", className)}
       {...props}
     >
-      <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="text-2xl font-bold">Create an account</h1>
-        <p className="text-balance text-sm text-muted-foreground">
-          Enter the details below to create an account
-        </p>
-      </div>
+      {!isModal && (
+        <div className="flex flex-col items-center gap-2 text-center">
+          <h1 className="text-2xl font-bold">Create an account</h1>
+          <p className="text-balance text-sm text-muted-foreground">
+            Enter the details below to create an account
+          </p>
+        </div>
+      )}
+
       <div className="grid gap-7">
         <div className="grid gap-2">
           <Label htmlFor="email">Name</Label>

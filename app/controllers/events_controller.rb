@@ -43,6 +43,10 @@ class EventsController < ApplicationController
     params.permit(:name)
   end
 
+  def time_slot_params
+    params.permit(:start_time, :end_time, :time_zone, dates: [])
+  end
+
   def build_event
     Event.new(event_params).tap do |event|
       if authenticated?
@@ -55,10 +59,10 @@ class EventsController < ApplicationController
 
   def create_time_slots(event)
     event.create_time_slots(
-      dates: params[:dates],
-      start_time: params[:start_time],
-      end_time: params[:end_time],
-      time_zone: params[:time_zone]
+      dates: time_slot_params[:dates],
+      start_time: time_slot_params[:start_time],
+      end_time: time_slot_params[:end_time],
+      time_zone: time_slot_params[:time_zone]
     )
   end
 
