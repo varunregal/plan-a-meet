@@ -13,8 +13,8 @@ class SessionsController < ApplicationController
     user = User.authenticate_by(params.permit(:email_address, :password))
     if user
       start_new_session_for user
-
-      redirect_to after_authentication_url, notice: t('.success')
+      convert_anonymous_to_authenticated(user)
+      redirect_back fallback_location: profile_path, notice: t('.success')
     else
       redirect_to new_session_path, inertia: { errors: { base: [t('.error')] } }
     end

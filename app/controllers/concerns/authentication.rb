@@ -27,7 +27,7 @@ module Authentication
   def redirect_if_authenticated
     return unless resume_session
 
-    redirect_to root_path, inertia: { errors: { base: t('common.already_authenticated') } }
+    redirect_to profile_path, inertia: { errors: { base: t('common.already_authenticated') } }
   end
 
   # Calls request authentication only if the authenticated? check fails
