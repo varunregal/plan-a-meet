@@ -118,35 +118,58 @@ end
 ```
 
 #### Controller Implementation
+
+##### EventsController
 ```ruby
-# EventsController
 def create
-  event = build_event
+  anonymous_session_id = ensure_anonymous_session_value
+  event = build_event_with_session(anonymous_session_id)
   ActiveRecord::Base.transaction do
     event.save!
     create_time_slots(event)
   end
-  set_anonymous_session_if_needed  # Only sets for anonymous users
+  store_anonymous_session_cookie(anonymous_session_id) if anonymous_session_id
   redirect_to event_path(event)
+end
+
+def show
+  event = Event.find_by!(url: params[:url])
+  is_creator = if authenticated?
+    event.event_creator_id == Current.user&.id
+  else
+    event.anonymous_session_id.present? && 
+    event.anonymous_session_id == cookies.signed[:anonymous_session_id]
+  end
+  
+  render inertia: 'Event/Show',
+         props: { 
+           id: event.id, 
+           name: event.name,
+           time_slots: event.time_slots.as_json(only: %i[id start_time end_time]),
+           is_creator: is_creator
+         }
 end
 
 private
 
-def build_event
+def ensure_anonymous_session_value
+  return nil if authenticated?
+  cookies.signed[:anonymous_session_id] || SecureRandom.hex(16)
+end
+
+def build_event_with_session(anonymous_session_id)
   Event.new(event_params).tap do |event|
     if authenticated?
       event.event_creator = Current.user
     else
-      event.anonymous_session_id = cookies.signed[:anonymous_session_id]
+      event.anonymous_session_id = anonymous_session_id
     end
   end
 end
 
-def set_anonymous_session_if_needed
-  return if authenticated?
-  
+def store_anonymous_session_cookie(value)
   cookies.signed[:anonymous_session_id] ||= {
-    value: SecureRandom.hex(16),
+    value: value,
     expires: 30.days.from_now,
     httponly: true,
     same_site: :lax
@@ -242,6 +265,45 @@ end
 3. **Required names** - Anonymous doesn't mean "Unknown Person"
 4. **Progressive disclosure** - Only ask for info when providing clear value
 5. **Shared device support** - "Not you?" for multi-user browsers
+
+## Current Implementation Status
+
+### Completed ✅
+1. **Database Schema** - Added `anonymous_session_id` to events and availabilities tables
+2. **Anonymous Event Creation** - Anonymous users can create events with session tracking
+3. **Creator Identification** - Show page identifies if viewer is the event creator
+4. **Cookie Management** - Only sets cookies when users take actions (not just viewing)
+5. **Test Coverage** - Comprehensive tests for all anonymous user scenarios
+
+### In Progress 🚧
+1. **Conversion Flow** - Converting anonymous data when users sign up/sign in
+2. **Cleanup Old Code** - Removing obsolete session-based event assignment methods
+
+### Next Steps 📋
+1. **Implement Conversion in Authentication**
+   - Add `convert_anonymous_to_authenticated` to RegistrationsController
+   - Add same conversion to SessionsController
+   - Remove old `assign_pending_event_creator` and related methods
+   
+2. **Anonymous Availability Marking**
+   - Create UI for anonymous users to mark availability
+   - Require name input for anonymous users
+   - Implement "Not you?" functionality for shared devices
+   
+3. **Availability Grid Display**
+   - Show who's available for each time slot
+   - Display names (full for authenticated, partial for anonymous)
+   - Highlight current user's selections
+   
+4. **Progressive Engagement UI**
+   - Add prompts to sign up for notifications
+   - Show benefits of creating an account
+   - Implement smooth upgrade flow
+
+### Technical Debt to Address
+- Remove `Events::Create` service file (low priority)
+- Clean up old session-based event tracking code
+- Fix typos in test descriptions ("vbiew" → "view")
 
 #### Handling Shared Browsers
 For browsers used by multiple people (family computer, work computer):

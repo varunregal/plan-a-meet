@@ -3,9 +3,17 @@ class EventsController < ApplicationController
 
   def show
     event = Event.find_by!(url: params[:url])
+    is_creator = if authenticated?
+                   event.event_creator_id == Current.user&.id
+                 else
+                   event.anonymous_session_id.present? &&
+                     event.anonymous_session_id == cookies.signed[:anonymous_session_id]
+                 end
     render inertia: 'Event/Show',
-           props: { id: event.id, name: event.name,
-                    time_slots: event.time_slots.as_json(only: %i[id start_time end_time]) }
+           props: { id: event.id, name: event.name, is_creator:,
+                    time_slots: event.time_slots.as_json(
+                      only: %i[id start_time end_time]
+                    ) }
   end
 
   def new

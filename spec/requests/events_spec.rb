@@ -166,6 +166,46 @@ RSpec.describe 'EventsController', :inertia, type: :request do
       end
     end
 
+    context 'when anonymous creator vbiew their event' do
+      it 'identifies them as the creator' do
+        post events_path, params: {
+          name: 'Team Meeting',
+          dates: ['2025-08-01'],
+          start_time: '09:00',
+          end_time: '10:00',
+          time_zone: 'America/New_York'
+        }
+
+        event = Event.last
+
+        # Step 2: View the event (same session continues)
+        get event_path(event)
+
+        expect(inertia.props[:is_creator]).to be true
+      end
+    end
+
+    context 'when different anonymous user views the event' do
+      let(:event) { create(:event, anonymous_session_id: 'abc123') }
+
+      it 'does not identify them as creator' do
+        get event_path(event)
+
+        expect(inertia.props[:is_creator]).to be false
+      end
+    end
+
+    context 'when authenticated creator views their event' do
+      let(:user) { create(:user) }
+      let(:event) { create(:event, event_creator: user) }
+
+      it 'identifies them as the creator' do
+        sign_in_as(user)
+        get event_path(event)
+        expect(inertia.props[:is_creator]).to be true
+      end
+    end
+
     context 'when event does not exist' do
       it 'returns 404 not found' do
         get event_path('nonexistent')
