@@ -3,6 +3,7 @@ import EventHeader from "./components/EventHeader";
 import InvitePeopleDialog from "./components/InvitePeopleDialog";
 import { EventProps, InvitationProps, TimeSlotProps } from "./event.types";
 import { AuthAlert } from "./components/AuthAlert";
+import CalendarImportSection from "./components/CalendarImportSection";
 
 function EventShow({
   event,
@@ -21,13 +22,20 @@ function EventShow({
   return (
     <div className="min-h-screen">
       <div className="max-w-5xl mx-auto">
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-6">
           <EventHeader
             event={event}
             creatorName={event_creator}
             invitations={invitations}
           />
           <AuthAlert />
+
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <div className="lg:col-span-3">
+              <CalendarImportSection />
+            </div>
+            <div className="space-y-6">{/* TODO: Side bar Component  */}</div>
+          </div>
         </div>
       </div>
     </div>

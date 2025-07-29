@@ -28,7 +28,7 @@ function EventHeader({
   };
   return (
     <>
-      <div className="border border-purple-200 rounded-lg p-6">
+      <div className="border border-gray-200 rounded-lg p-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex-1">
             <h1 className="text-2xl font-semibold text-gray-900">

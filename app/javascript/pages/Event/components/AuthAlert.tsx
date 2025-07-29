@@ -13,17 +13,20 @@ export function AuthAlert() {
 
   return (
     <>
-      <div className="border border-purple-200 rounded-lg p-4 flex gap-3">
+      <div className="border border-gray-200 rounded-lg p-4 flex gap-3">
         <Info className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
-        <div className="flex flex-col gap-1">
-          <p className="font-medium text-gray-900">
-            Save your availability and get notified
-          </p>
-          <p className="text-sm text-muted-foreground">
-            Sign up or log in to save your availability, get email notifications
-            when the meeting scheduled, and sync with your calendar.
-          </p>
-          <div className="flex items-center gap-3 mt-3">
+        <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-2">
+            <p className="font-medium text-gray-900">
+              Save your availability and get notified
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Sign up or log in to save your availability, get email
+              notifications when the meeting scheduled, and sync with your
+              calendar.
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
             <Button
               onClick={() => {
                 setShowAuthModal(true);
