@@ -65,4 +65,27 @@ RSpec.describe Availability, type: :model do
       end
     end
   end
+
+  describe 'uniqueness for anonymous users' do
+    let(:event) { create(:event) }
+    let(:time_slot) { create(:time_slot, event:) }
+    let(:anonymous_session_id) { 'abc123' }
+
+    it 'prevents anonymous user from marking the same time slot twice' do
+      create(:availability, user: nil, anonymous_session_id:, participant_name: 'John Doe', time_slot:)
+      duplicate = build(:availability, user: nil, anonymous_session_id:, participant_name: 'John Doe', time_slot:)
+
+      expect(duplicate).not_to be_valid
+      expect(duplicate.errors[:time_slot_id]).to include('has already been taken')
+    end
+
+    it 'allows different anonymous sessions to mark the same time slot' do
+      create(:availability, user: nil, anonymous_session_id: 'session1', participant_name: 'John Doe', time_slot:)
+
+      different_session = build(:availability, user: nil, anonymous_session_id: 'session2',
+                                               participant_name: 'Jane Smith', time_slot:)
+
+      expect(different_session).to be_valid
+    end
+  end
 end
