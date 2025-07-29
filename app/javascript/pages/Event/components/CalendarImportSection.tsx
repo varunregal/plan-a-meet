@@ -1,52 +1,80 @@
-import { useState } from "react";
+import { memo, useCallback } from "react";
 import { TimeSlotProps } from "../event.types";
 import { CalendarImportButtons } from "./CalendarImportButtons";
 import { AvailabilityControls } from "./AvailabilityControls";
-import { AvailabilityGrid } from "./AvailabilityGrid";
+import { CalendarImportHeader } from "./CalendarImportHeader";
+import { AvailabilitySection } from "./AvailabilitySection";
+import { useAvailabilitySelection } from "../hooks/useAvailabilitySelection";
+import { AVAILABILITY_CONSTANTS } from "../constants/availability";
 
-export default function CalendarImportSection({
-  timeSlots,
-}: {
+interface CalendarImportSectionProps {
   timeSlots: TimeSlotProps[];
-}) {
-  const [showGroupAvailability, setShowGroupAvailability] = useState(true);
-  const [selectedSlots, setSelectedSlots] = useState<Set<number>>(new Set());
+  availabilityData?: { [key: string]: string[] };
+  onSelectionChange?: (selectedSlots: Set<number>) => void;
+  onImportCalendar?: (provider: 'google' | 'outlook') => void;
+}
 
-  const handleSlotClick = (slotId: number) => {
-    setSelectedSlots((prev) => {
-      const newSet = new Set(prev);
+function CalendarImportSectionComponent({
+  timeSlots,
+  availabilityData,
+  onSelectionChange,
+  onImportCalendar,
+}: CalendarImportSectionProps) {
+  const {
+    selectedSlots,
+    showGroupAvailability,
+    handleSlotClick,
+    clearSelection,
+    toggleGroupAvailability,
+    hasSelection,
+  } = useAvailabilitySelection();
+
+  // Notify parent of selection changes
+  const handleSlotClickWithCallback = useCallback((slotId: number) => {
+    handleSlotClick(slotId);
+    if (onSelectionChange) {
+      // Create new set to trigger change detection
+      const newSet = new Set(selectedSlots);
       if (newSet.has(slotId)) {
         newSet.delete(slotId);
       } else {
         newSet.add(slotId);
       }
-      return newSet;
-    });
-  };
+      onSelectionChange(newSet);
+    }
+  }, [handleSlotClick, selectedSlots, onSelectionChange]);
+
+  const handleSelectBestTimes = useCallback(() => {
+    // TODO: Implement smart selection based on group availability
+    console.log("Select best times - to be implemented");
+  }, []);
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-6">
-      <h2 className="text-lg font-semibold text-gray-900 mb-4">
-        Add Your Availavility
-      </h2>
-      <CalendarImportButtons />
-      <div className="my-8 border-t border-gray-200" />
+    <div className={AVAILABILITY_CONSTANTS.CONTAINER_CLASSES}>
+      <CalendarImportHeader />
+      
+      <CalendarImportButtons onImport={onImportCalendar} />
+      
+      <div className={AVAILABILITY_CONSTANTS.DIVIDER_CLASSES} />
 
       <AvailabilityControls
         showGroupAvailability={showGroupAvailability}
-        onToggleGroupAvailability={() =>
-          setShowGroupAvailability(!showGroupAvailability)
-        }
-        onSelectBestTimes={() => {}}
-        onClearSelection={() => setSelectedSlots(new Set())}
-        hasSelection={selectedSlots.size > 0}
+        onToggleGroupAvailability={toggleGroupAvailability}
+        onSelectBestTimes={handleSelectBestTimes}
+        onClearSelection={clearSelection}
+        hasSelection={hasSelection}
       />
-      <AvailabilityGrid
+      
+      <AvailabilitySection
         timeSlots={timeSlots}
         selectedSlots={selectedSlots}
-        onSlotClick={handleSlotClick}
+        onSlotClick={handleSlotClickWithCallback}
         showGroupAvailability={showGroupAvailability}
+        availabilityData={availabilityData}
       />
     </div>
   );
 }
+
+// Export memoized component to prevent unnecessary re-renders
+export default memo(CalendarImportSectionComponent);
