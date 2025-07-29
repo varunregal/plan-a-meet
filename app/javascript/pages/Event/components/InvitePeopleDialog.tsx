@@ -1,4 +1,4 @@
-import { EventProps } from "../event.types";
+import { EventProps, InvitationProps } from "../event.types";
 import {
   Dialog,
   DialogContent,
@@ -16,12 +16,14 @@ import { useForm } from "@inertiajs/react";
 
 interface InvitePeopleDialogProps {
   event: EventProps;
+  invitations: InvitationProps[];
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
 function InvitePeopleDialog({
   event,
+  invitations,
   open,
   onOpenChange,
 }: InvitePeopleDialogProps) {
@@ -68,12 +70,12 @@ function InvitePeopleDialog({
           </DialogDescription>
         </DialogHeader>
         <Separator />
-        {event.invitations && event.invitations.length > 0 && (
+        {invitations && invitations.length > 0 && (
           <>
             <div className="space-y-2">
-              <Label>Already Invited ({event.invitations.length})</Label>
+              <Label>Already Invited ({invitations.length})</Label>
               <div className="space-y-1">
-                {event.invitations.map((invitation) => (
+                {invitations.map((invitation) => (
                   <div
                     key={invitation.id}
                     className="flex items-center justify-between text-sm py-2 px-3

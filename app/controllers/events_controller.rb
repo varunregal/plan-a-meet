@@ -2,7 +2,7 @@ class EventsController < ApplicationController
   allow_unauthenticated_access only: %i[new create show]
 
   def show
-    event = Event.find_by!(url: params[:url])
+    event = Event.includes(:invitations, :time_slots, :event_creator).find_by!(url: params[:url])
     is_creator = if authenticated?
                    event.event_creator_id == Current.user&.id
                  else
@@ -11,7 +11,8 @@ class EventsController < ApplicationController
                  end
     render inertia: 'Event/Show',
            props: { event: event.as_json(only: %i[id name url]), is_creator:,
-                    event_creator: Current.user.name,
+                    event_creator: event.event_creator&.name,
+                    invitations: event.invitations.as_json(only: %i[id email_address status created_at]),
                     time_slots: event.time_slots.as_json(
                       only: %i[id start_time end_time]
                     ) }

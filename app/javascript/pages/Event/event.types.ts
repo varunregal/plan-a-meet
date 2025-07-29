@@ -44,7 +44,7 @@ export type EventProps = {
   name: string;
   url: string;
   time_slots: TimeSlotProps[];
-  event_creator_id?: number;
+  event_creator?: UserProps;
   invitations?: InvitationProps[];
 };
 export type InvitationProps = {
