@@ -1,30 +1,52 @@
-import { Calendar } from "lucide-react";
+import { useState } from "react";
+import { TimeSlotProps } from "../event.types";
+import { CalendarImportButtons } from "./CalendarImportButtons";
+import { AvailabilityControls } from "./AvailabilityControls";
+import { AvailabilityGrid } from "./AvailabilityGrid";
 
-export default function CalendarImportSection() {
+export default function CalendarImportSection({
+  timeSlots,
+}: {
+  timeSlots: TimeSlotProps[];
+}) {
+  const [showGroupAvailability, setShowGroupAvailability] = useState(true);
+  const [selectedSlots, setSelectedSlots] = useState<Set<number>>(new Set());
+
+  const handleSlotClick = (slotId: number) => {
+    setSelectedSlots((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(slotId)) {
+        newSet.delete(slotId);
+      } else {
+        newSet.add(slotId);
+      }
+      return newSet;
+    });
+  };
+
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-6">
       <h2 className="text-lg font-semibold text-gray-900 mb-4">
         Add Your Availavility
       </h2>
-      <div className="grid grid-cols-2 gap-4">
-        <button className="flex flex-col gap-1 border-2 border-dashed border-gray-300 rounded-lg p-4 hover:border-gray-400 hover:bg-purple-50 transition-colors text-center">
-          <Calendar className="mx-auto text-gray-400" />
-          <p className="text-sm font-medium text-gray-900">
-            Import from Google Calendar
-          </p>
-          <p className="text-xs text-gray-600">See your busy times</p>
-        </button>
-        <button
-          className="flex flex-col gap-1 border-2 border-dashed border-gray-300 rounded-lg p-4
-          hover:border-gray-400 hover:bg-purple-50 transition-colors text-center"
-        >
-          <Calendar className="w-6 h-6 mx-auto text-gray-400" />
-          <p className="text-sm font-medium text-gray-900">
-            Import from Outlook
-          </p>
-          <p className="text-xs text-gray-600">Sync your calendar</p>
-        </button>
-      </div>
+      <CalendarImportButtons />
+      <div className="my-8 border-t border-gray-200" />
+
+      <AvailabilityControls
+        showGroupAvailability={showGroupAvailability}
+        onToggleGroupAvailability={() =>
+          setShowGroupAvailability(!showGroupAvailability)
+        }
+        onSelectBestTimes={() => {}}
+        onClearSelection={() => setSelectedSlots(new Set())}
+        hasSelection={selectedSlots.size > 0}
+      />
+      <AvailabilityGrid
+        timeSlots={timeSlots}
+        selectedSlots={selectedSlots}
+        onSlotClick={handleSlotClick}
+        showGroupAvailability={showGroupAvailability}
+      />
     </div>
   );
 }
