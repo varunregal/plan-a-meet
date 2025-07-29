@@ -37,7 +37,7 @@ export function Navbar() {
   };
 
   return (
-    <header className="w-full px-5 md:px-10 mb-20">
+    <header className="w-full px-5 md:px-10 mb-10">
       <div className="container mx-auto flex h-16 items-center">
         <div className="flex-1">
           <Link href="/" className="flex items-center space-x-2">

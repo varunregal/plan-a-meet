@@ -11,7 +11,7 @@ interface CalendarImportSectionProps {
   timeSlots: TimeSlotProps[];
   availabilityData?: { [key: string]: string[] };
   onSelectionChange?: (selectedSlots: Set<number>) => void;
-  onImportCalendar?: (provider: 'google' | 'outlook') => void;
+  onImportCalendar?: (provider: "google" | "outlook") => void;
 }
 
 function CalendarImportSectionComponent({
@@ -29,20 +29,21 @@ function CalendarImportSectionComponent({
     hasSelection,
   } = useAvailabilitySelection();
 
-  // Notify parent of selection changes
-  const handleSlotClickWithCallback = useCallback((slotId: number) => {
-    handleSlotClick(slotId);
-    if (onSelectionChange) {
-      // Create new set to trigger change detection
-      const newSet = new Set(selectedSlots);
-      if (newSet.has(slotId)) {
-        newSet.delete(slotId);
-      } else {
-        newSet.add(slotId);
+  const handleSlotClickWithCallback = useCallback(
+    (slotId: number) => {
+      handleSlotClick(slotId);
+      if (onSelectionChange) {
+        const newSet = new Set(selectedSlots);
+        if (newSet.has(slotId)) {
+          newSet.delete(slotId);
+        } else {
+          newSet.add(slotId);
+        }
+        onSelectionChange(newSet);
       }
-      onSelectionChange(newSet);
-    }
-  }, [handleSlotClick, selectedSlots, onSelectionChange]);
+    },
+    [handleSlotClick, selectedSlots, onSelectionChange],
+  );
 
   const handleSelectBestTimes = useCallback(() => {
     // TODO: Implement smart selection based on group availability
@@ -52,9 +53,9 @@ function CalendarImportSectionComponent({
   return (
     <div className={AVAILABILITY_CONSTANTS.CONTAINER_CLASSES}>
       <CalendarImportHeader />
-      
+
       <CalendarImportButtons onImport={onImportCalendar} />
-      
+
       <div className={AVAILABILITY_CONSTANTS.DIVIDER_CLASSES} />
 
       <AvailabilityControls
@@ -64,7 +65,7 @@ function CalendarImportSectionComponent({
         onClearSelection={clearSelection}
         hasSelection={hasSelection}
       />
-      
+
       <AvailabilitySection
         timeSlots={timeSlots}
         selectedSlots={selectedSlots}
@@ -76,5 +77,4 @@ function CalendarImportSectionComponent({
   );
 }
 
-// Export memoized component to prevent unnecessary re-renders
 export default memo(CalendarImportSectionComponent);

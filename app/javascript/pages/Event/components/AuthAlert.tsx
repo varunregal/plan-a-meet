@@ -14,8 +14,8 @@ export function AuthAlert() {
   return (
     <>
       <div className="border border-gray-200 rounded-lg p-4 flex gap-3">
-        <Info className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
-        <div className="flex items-center justify-between">
+        <Info className="h-5 w-5 text-primary mt-0.5" />
+        <div className="flex-1 flex flex-col md:flex-row gap-2 md:gap-0 justify-between items-start md:items-center">
           <div className="flex flex-col gap-2">
             <p className="font-medium text-gray-900">
               Save your availability and get notified
@@ -28,6 +28,7 @@ export function AuthAlert() {
           </div>
           <div className="flex items-center gap-3">
             <Button
+              variant={"secondary"}
               onClick={() => {
                 setShowAuthModal(true);
                 setDefaultTab("signup");

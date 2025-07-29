@@ -78,8 +78,7 @@ function InvitePeopleDialog({
                 {invitations.map((invitation) => (
                   <div
                     key={invitation.id}
-                    className="flex items-center justify-between text-sm py-2 px-3
-              bg-muted/50 rounded-md"
+                    className="flex items-center justify-between text-sm py-2 px-3 bg-muted/50 rounded-md"
                   >
                     <span className="text-muted-foreground">
                       {invitation.email_address}

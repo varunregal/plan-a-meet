@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { EventProps } from "../event.types";
 import { useState } from "react";
 import InvitePeopleDialog from "./InvitePeopleDialog";
-import { router } from "@inertiajs/react";
 
 function InvitePeople({ event }: { event: EventProps }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -12,7 +11,7 @@ function InvitePeople({ event }: { event: EventProps }) {
   return (
     <>
       <Button
-        variant={"default"}
+        variant="secondary"
         className="cursor-pointer"
         onClick={handleInvitePeopleClick}
         disabled={isDialogOpen}
@@ -21,6 +20,7 @@ function InvitePeople({ event }: { event: EventProps }) {
       </Button>
       <InvitePeopleDialog
         event={event}
+        invitations={event.invitations || []}
         open={isDialogOpen}
         onOpenChange={setIsDialogOpen}
       />

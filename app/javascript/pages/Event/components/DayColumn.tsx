@@ -6,10 +6,7 @@ interface DayColumnProps {
   hours: number[];
 }
 
-export function DayColumn({
-  dateStr,
-  hours,
-}: DayColumnProps) {
+export function DayColumn({ dateStr, hours }: DayColumnProps) {
   const {
     selectedSlots,
     hoveredSlot,
@@ -26,7 +23,6 @@ export function DayColumn({
 
   return (
     <div className="flex-1 border-r border-gray-200 last:border-r-0">
-      {/* Day header */}
       <div className="h-16 border-b border-gray-200 flex flex-col items-center justify-center bg-gray-50">
         <div className="text-xs text-gray-500">{dayName}</div>
         <div className="text-sm font-medium text-gray-900">
@@ -34,7 +30,6 @@ export function DayColumn({
         </div>
       </div>
 
-      {/* Time slots for this day */}
       {hours.map((hour) => {
         const hourSlots = [0, 15, 30, 45].map((minute) => ({
           minute,
@@ -45,7 +40,6 @@ export function DayColumn({
         return (
           <div key={hour} className="h-20 border-b border-gray-200">
             <div className="grid grid-cols-1 grid-rows-4 h-full relative">
-              {/* Dashed line to show 30-minute division */}
               <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[1px] border-t border-dashed border-gray-300 pointer-events-none z-10" />
 
               {hourSlots.map(({ minute, slot, key }) => {
@@ -67,8 +61,12 @@ export function DayColumn({
                     availabilityCount={count}
                     showGroupAvailability={showGroupAvailability}
                     opacity={style.opacity}
-                    onMouseDown={(e) => handleSlotInteraction.onMouseDown(e, slot.id, isSelected)}
-                    onMouseEnter={() => handleSlotInteraction.onMouseEnter(slot.id, key)}
+                    onMouseDown={(e) =>
+                      handleSlotInteraction.onMouseDown(e, slot.id, isSelected)
+                    }
+                    onMouseEnter={() =>
+                      handleSlotInteraction.onMouseEnter(slot.id, key)
+                    }
                     onMouseLeave={handleSlotInteraction.onMouseLeave}
                   />
                 );

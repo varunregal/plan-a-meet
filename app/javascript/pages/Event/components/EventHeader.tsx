@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
-import { Check, Copy, UserPlus } from "lucide-react";
+import { UserPlus } from "lucide-react";
 import { useState } from "react";
 import { EventProps, InvitationProps } from "../event.types";
 import InvitePeopleDialog from "./InvitePeopleDialog";
+import CopyEventLink from "./CopyEventLink";
 
 function EventHeader({
   event,
@@ -14,18 +14,8 @@ function EventHeader({
   creatorName?: string;
   invitations: InvitationProps[];
 }) {
-  const [copied, setCopied] = useState(false);
   const [showInviteDialog, setShowInviteDialog] = useState(false);
-  const handleCopyLink = () => {
-    const isDev = import.meta.env.DEV;
-    const baseUrl = isDev ? "http://localhost:3000" : "https://planameet.app";
-    const fulUrl = `${baseUrl}/events/${event.url}`;
-    navigator.clipboard.writeText(fulUrl).then(() => {
-      setCopied(true);
-      toast.success("Copied the event link!");
-      setTimeout(() => setCopied(false), 2000);
-    });
-  };
+
   return (
     <>
       <div className="border border-gray-200 rounded-lg p-6">
@@ -42,29 +32,13 @@ function EventHeader({
           </div>
 
           <div className="flex items-center gap-3">
-            <Button variant={"outline"} onClick={handleCopyLink}>
-              <span
-                className={`flex items-center transition-all duration-200 ${
-                  copied ? "scale-105" : "scale-100"
-                }`}
-              >
-                {copied ? (
-                  <>
-                    <Check className="mr-1 h-4 w-4 transition-transform duration-200" />
-                    Copied!
-                  </>
-                ) : (
-                  <>
-                    <Copy className="mr-1 h-4 w-4" />
-                    Copy Link
-                  </>
-                )}
-              </span>
-            </Button>
+            <CopyEventLink event={event} />
             <div className="relative">
               {" "}
-              {/* Add relative positioning here */}
-              <Button onClick={() => setShowInviteDialog(true)}>
+              <Button
+                variant={"outline"}
+                onClick={() => setShowInviteDialog(true)}
+              >
                 <UserPlus className="mr-1" /> Invite People
               </Button>
               {invitations.length > 0 && (

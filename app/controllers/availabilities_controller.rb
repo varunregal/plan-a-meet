@@ -1,7 +1,6 @@
-require "pry"
 class AvailabilitiesController < ApplicationController
   before_action :require_authentication
-  before_action :set_time_slot!, only: [ :create, :destroy ]
+  before_action :set_time_slot!, only: %i[create destroy]
 
   def index
     event = Event.find_by(url: params[:event_url])
@@ -12,8 +11,8 @@ class AvailabilitiesController < ApplicationController
     render json: {
       success: true,
       data: {
-        availabilities: ActiveModelSerializers::SerializableResource.new(availabilities, each_serializer: AvailabilitySerializer, include: [ "user" ]),
-        current_user_availabilities: ActiveModelSerializers::SerializableResource.new(current_user_availabilities, each_serializer: AvailabilitySerializer, include: [ "user" ]), participants: ActiveModelSerializers::SerializableResource.new(users, each_serializer: UserSerializer)
+        availabilities: ActiveModelSerializers::SerializableResource.new(availabilities, each_serializer: AvailabilitySerializer, include: ['user']),
+        current_user_availabilities: ActiveModelSerializers::SerializableResource.new(current_user_availabilities, each_serializer: AvailabilitySerializer, include: ['user']), participants: ActiveModelSerializers::SerializableResource.new(users, each_serializer: UserSerializer)
       }
     }
   end
@@ -23,10 +22,10 @@ class AvailabilitiesController < ApplicationController
     if availability.save!
       render json: { success: true, data: { availability: AvailabilitySerializer.new(availability) } }, status: :created
     end
-  rescue ActiveRecord::RecordNotFound => exception
-    render json: { success: false, errors: exception.message }, status: :not_found
-  rescue ActiveRecord::RecordInvalid => exception
-    render json: { success: false, errors: exception.message }, status: :unprocessable_entity
+  rescue ActiveRecord::RecordNotFound => e
+    render json: { success: false, errors: e.message }, status: :not_found
+  rescue ActiveRecord::RecordInvalid => e
+    render json: { success: false, errors: e.message }, status: :unprocessable_entity
   end
 
   def destroy
@@ -34,14 +33,15 @@ class AvailabilitiesController < ApplicationController
     if availability.destroy!
       render json: { success: true, data: { availability: AvailabilitySerializer.new(availability) } }, status: :ok
     end
-  rescue ActiveRecord::RecordNotFound => exception
-    render json: { success: false, errors: exception.message }, status: :not_found
+  rescue ActiveRecord::RecordNotFound => e
+    render json: { success: false, errors: e.message }, status: :not_found
   end
 
   private
+
   def set_time_slot!
     @time_slot = TimeSlot.find(params[:time_slot_id])
-  rescue ActiveRecord::RecordNotFound => exception
-    render json: { success: false, errors: exception.message }, status: :unprocessable_entity
+  rescue ActiveRecord::RecordNotFound => e
+    render json: { success: false, errors: e.message }, status: :unprocessable_entity
   end
 end

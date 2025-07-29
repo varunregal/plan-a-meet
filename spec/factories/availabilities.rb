@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :availability do
-    user { nil }
-    time_slot { nil }
+    association :user
+    association :time_slot
   end
 end

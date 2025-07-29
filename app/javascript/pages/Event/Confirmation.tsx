@@ -9,7 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { CheckCircle } from "lucide-react";
 import { Link } from "@inertiajs/react";
-import ShareEvent from "./components/ShareEvent";
+// import ShareEvent from "./components/CopyEventLink";
 import { EventProps } from "./event.types";
 
 const Confirmation = ({ event }: { event: EventProps }) => {
@@ -48,7 +48,7 @@ const Confirmation = ({ event }: { event: EventProps }) => {
           <Button asChild variant="outline">
             <Link href={editSlotsUrl}>View or Change Availability</Link>
           </Button>
-          <ShareEvent event={event} />
+          {/* <ShareEvent event={event} /> */}
         </CardFooter>
       </Card>
     </div>

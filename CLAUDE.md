@@ -55,6 +55,18 @@ This enhancement should be implemented after the core availability marking featu
   - InvitationMailer sending emails when invitations are created (completed)
   - Consistent email templates matching app design system (completed)
 
+### Frontend Architecture Refactoring (Completed)
+- **Component-Based Architecture**: Refactored large components into smaller, focused components
+- **React Context for State Management**: Implemented GridContext for shared grid state
+- **Custom Hooks**: Created reusable hooks for business logic:
+  - `useGridData`: Processes and structures time slot data
+  - `useDragSelection`: Handles drag-and-drop slot selection
+  - `useAvailabilitySelection`: Manages availability selection state
+- **Utility Functions**: Extracted date formatting and availability helpers
+- **TypeScript Types**: Added proper type definitions for better type safety
+- **Performance Optimizations**: Used React.memo for preventing unnecessary re-renders
+- **Time Slot Display**: Fixed date ordering to show in ascending order (earliest first)
+
 ### Code Quality & Testing
 - Comprehensive test coverage for registrations and core functionality
 - Fixed factory patterns to match actual model structures
@@ -63,6 +75,15 @@ This enhancement should be implemented after the core availability marking featu
 - TDD approach for invitation feature with request specs
 
 ## Phase One Roadmap
+
+### Availability Marking Implementation (IN PROGRESS)
+**Next Steps:**
+- Create backend API endpoint to save user availability
+- Add authentication to identify users marking availability
+- Create or update availability records in the database
+- Connect frontend selection to API calls
+- Add loading states and error handling
+- Handle optimistic updates for better UX
 
 ### Invitation Acceptance/Decline Flow (TODO)
 **Next Steps:**
@@ -437,10 +458,23 @@ Key design elements:
    - Sticky save button
    - Participant list with avatars and response times
    - Schedule action with gradient background
-3. **Availability Grid** - Week view with 30-minute slots, heat map for group availability
+3. **Availability Grid** - Week view with 15-minute slots (updated from 30-minute), heat map for group availability
 4. **Calendar Import Section** - Visual buttons for Google Calendar and Outlook import
 
 The design follows shadcn principles with no gradients (except subtle accent on schedule card), clean typography, and intuitive interaction patterns.
+
+### Component Structure
+- **AvailabilityGrid**: Main grid component with refactored architecture
+  - `AvailabilityGridHeader`: Column headers with dates
+  - `DayColumn`: Individual day columns with time slots
+  - `TimeColumn`: Time labels on the left
+  - `TimeSlot`: Individual 15-minute slot with hover effects
+  - `AvailabilityLegend`: Legend showing availability levels
+- **CalendarImportSection**: Refactored into smaller components
+  - `CalendarImportHeader`: Section header
+  - `CalendarImportButtons`: Google/Outlook import buttons
+  - `AvailabilityControls`: Control buttons for selection
+  - `AvailabilitySection`: Wrapper for the grid
 
 ## Claude Code Guidelines
 
