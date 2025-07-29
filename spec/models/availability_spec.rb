@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Availability, type: :model do
   describe 'associations' do
-    it { is_expected.to belong_to(:user) }
+    it { is_expected.to belong_to(:user).optional }
     it { is_expected.to belong_to(:time_slot) }
   end
 
@@ -29,6 +29,40 @@ RSpec.describe Availability, type: :model do
       create(:availability, user:, time_slot:)
       availability2 = create(:availability, user: user2, time_slot:)
       expect(availability2).to be_valid
+    end
+  end
+
+  describe 'anonymous user validations' do
+    let(:event) { create(:event) }
+    let(:time_slot) { create(:time_slot, event:) }
+
+    context 'when neither user nor anonymous_session_id is present' do
+      it 'is invalid' do
+        availability = build(:availability, user: nil, anonymous_session_id: nil, time_slot:)
+        expect(availability).not_to be_valid
+        expect(availability.errors[:base]).to include 'Either user or anonymous session must be present'
+      end
+    end
+
+    context 'when anonymous_session_id is present' do
+      it 'requires participant_name' do
+        availability = build(:availability,
+                             user: nil,
+                             anonymous_session_id: 'abc123',
+                             participant_name: nil,
+                             time_slot:)
+        expect(availability).not_to be_valid
+        expect(availability.errors[:participant_name]).to include 'is required for anonymous users'
+      end
+
+      it 'is valid with participant_name' do
+        availability = build(:availability,
+                             user: nil,
+                             anonymous_session_id: 'abc123',
+                             participant_name: 'John Doe',
+                             time_slot:)
+        expect(availability).to be_valid
+      end
     end
   end
 end

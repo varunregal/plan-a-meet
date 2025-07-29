@@ -10,20 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_27_221310) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_29_202946) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
   create_table "availabilities", force: :cascade do |t|
-    t.bigint "user_id", null: false
+    t.bigint "user_id"
     t.bigint "time_slot_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "anonymous_session_id"
     t.string "participant_name"
+    t.index ["anonymous_session_id", "time_slot_id"], name: "index_anonymous_and_time_slot_on_availability", unique: true, where: "(anonymous_session_id IS NOT NULL)"
     t.index ["anonymous_session_id"], name: "index_availabilities_on_anonymous_session_id"
     t.index ["time_slot_id"], name: "index_availabilities_on_time_slot_id"
-    t.index ["user_id", "time_slot_id"], name: "index_user_and_time_slot_on_availability", unique: true
+    t.index ["user_id", "time_slot_id"], name: "index_user_and_time_slot_on_availability", unique: true, where: "(user_id IS NOT NULL)"
     t.index ["user_id"], name: "index_availabilities_on_user_id"
   end
 

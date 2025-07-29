@@ -152,8 +152,7 @@ RSpec.describe 'EventsController', :inertia, type: :request do
         get event_path(event)
         expect(response).to have_http_status(:success)
         expect(inertia.component).to eq 'Event/Show'
-        expect(inertia.props[:id]).to eq event.id
-        expect(inertia.props[:name]).to eq event.name
+        expect(inertia.props[:event]['id']).to eq event.id
       end
 
       it 'includes time slots data' do
