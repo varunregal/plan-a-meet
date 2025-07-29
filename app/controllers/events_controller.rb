@@ -11,6 +11,7 @@ class EventsController < ApplicationController
                  end
     render inertia: 'Event/Show',
            props: { id: event.id, name: event.name, is_creator:,
+                    event_creator: Current.user,
                     time_slots: event.time_slots.as_json(
                       only: %i[id start_time end_time]
                     ) }

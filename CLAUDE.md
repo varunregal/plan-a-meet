@@ -425,6 +425,23 @@ We're implementing anonymous user functionality carefully to integrate with Rail
 - Email delivery is enabled in development for testing
 - All email templates are tested and verified to work across different email clients
 
+## Event Page UI Design
+
+### Design Reference
+The Event page UI design has been finalized and can be viewed at: `/tmp/event-page-refined.html`
+
+Key design elements:
+1. **Event Header Card** - Purple-tinted card similar to auth alert with event name, description, and action buttons
+2. **Modern Sidebar** - Clean design without heavy card borders, featuring:
+   - Stats section with slots/hours count
+   - Sticky save button
+   - Participant list with avatars and response times
+   - Schedule action with gradient background
+3. **Availability Grid** - Week view with 30-minute slots, heat map for group availability
+4. **Calendar Import Section** - Visual buttons for Google Calendar and Outlook import
+
+The design follows shadcn principles with no gradients (except subtle accent on schedule card), clean typography, and intuitive interaction patterns.
+
 ## Claude Code Guidelines
 
 ### Development Principles
