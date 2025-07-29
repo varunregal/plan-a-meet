@@ -10,8 +10,8 @@ class EventsController < ApplicationController
                      event.anonymous_session_id == cookies.signed[:anonymous_session_id]
                  end
     render inertia: 'Event/Show',
-           props: { id: event.id, name: event.name, is_creator:,
-                    event_creator: Current.user,
+           props: { event: event.as_json(only: %i[id name url]), is_creator:,
+                    event_creator: Current.user.name,
                     time_slots: event.time_slots.as_json(
                       only: %i[id start_time end_time]
                     ) }
