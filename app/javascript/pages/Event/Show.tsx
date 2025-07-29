@@ -2,6 +2,7 @@ import { useState } from "react";
 import EventHeader from "./components/EventHeader";
 import InvitePeopleDialog from "./components/InvitePeopleDialog";
 import { EventProps, InvitationProps, TimeSlotProps } from "./event.types";
+import { AuthAlert } from "./components/AuthAlert";
 
 function EventShow({
   event,
@@ -20,11 +21,14 @@ function EventShow({
   return (
     <div className="min-h-screen">
       <div className="max-w-5xl mx-auto">
-        <EventHeader
-          event={event}
-          creatorName={event_creator}
-          invitations={invitations}
-        />
+        <div className="flex flex-col gap-5">
+          <EventHeader
+            event={event}
+            creatorName={event_creator}
+            invitations={invitations}
+          />
+          <AuthAlert />
+        </div>
       </div>
     </div>
   );

@@ -1,9 +1,8 @@
 import { Button } from "@/components/ui/button";
-import { EventProps, TimeSlotProps, UserProps } from "./event.types";
 import { toast } from "sonner";
 import { Check, Copy, UserPlus } from "lucide-react";
 import { useState } from "react";
-import { InvitationProps } from "../event.types";
+import { EventProps, InvitationProps } from "../event.types";
 import InvitePeopleDialog from "./InvitePeopleDialog";
 
 function EventHeader({
@@ -29,7 +28,7 @@ function EventHeader({
   };
   return (
     <>
-      <div className="bg-purple-50 border border-purple-200 rounded-lg p-6">
+      <div className="border border-purple-200 rounded-lg p-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex-1">
             <h1 className="text-2xl font-semibold text-gray-900">
