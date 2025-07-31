@@ -75,7 +75,7 @@ end
 
 gem 'active_model_serializers'
 gem 'bcrypt', '~> 3.1'
-gem 'inertia_rails', '~> 3.6'
+gem 'inertia_rails', '~> 3.10'
 gem 'resend'
 gem 'vite_rails', '~> 3.0'
 
