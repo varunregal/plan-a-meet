@@ -1,4 +1,5 @@
 class AvailabilitiesController < ApplicationController
+  allow_unauthenticated_access only: %i[index]
   def index
     event = Event.find_by!(url: params[:event_url])
     availabilities = Availability.joins(:time_slot)
@@ -19,6 +20,11 @@ class AvailabilitiesController < ApplicationController
                                   .joins(:time_slot)
                                   .where(time_slots: { event_id: event.id })
                                   .pluck(:time_slot_id)
+                         elsif cookies.signed[:anonymous_session_id].present?
+                           Availability.joins(:time_slot)
+                                       .where(time_slots: { event_id: event.id })
+                                       .where(anonymous_session_id: cookies.signed[:anonymous_session_id])
+                                       .pluck(:time_slot_id)
                          else
                            []
                          end
