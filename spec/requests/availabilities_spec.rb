@@ -1,65 +1,44 @@
 require 'rails_helper'
 
-RSpec.describe "AvailabilitiesController", type: :request, inertia: true do
-  let(:event_params) do
-    {
-      name: "Bar Hopping",
-      dates: [ "2025-04-19T04:00:00.000Z", "2025-04-20T04:00:00.000Z", "2025-04-21T04:00:00.000Z" ],
-      start_time: "7",
-      end_time: "9",
-      time_zone: "America/New_York"
-    }
+RSpec.describe 'AvailabilitiesController', type: :request do
+  let(:user) { create(:user) }
+  let(:event) { create(:event) }
+  let(:time_slot) do
+    create(:time_slot,
+           event: event,
+           start_time: '2024-01-15 09:00',
+           end_time: '2024-01-15 09:15')
   end
-  let (:user) { User.create!(name: "Varun", email_address: "varun@example.com", password: "password") }
-
-  before do
-    post session_path, params: { email_address: user.email_address, password: "password" }
-    allow(Current).to receive(:user).and_return(user)
-    post events_path, params: { event: event_params }
-    @time_slot = Event.last.time_slots.first
-    @second_time_slot = Event.last.time_slots.second
+  let(:time_slot2) do
+    create(:time_slot,
+           event: event,
+           start_time: '2024-01-15 09:15',
+           end_time: '2024-01-15 09:30')
   end
 
-  describe "GET /index" do
-    it "get current user availabilities and group availabilities" do
-      expect { post time_slot_availability_path(@time_slot) }.to change(Availability, :count).by(1)
-      expect { post time_slot_availability_path(@second_time_slot) }.to change(Availability, :count).by(1)
+  describe 'GET /events/:url/availabilities' do
+    context 'when authenticated' do
+      before { sign_in_as(user) }
 
-      get event_availabilities_path(Event.last)
-      expect(response.parsed_body["data"]["availabilities"][0]["time_slot_id"]).to eq(@time_slot.id)
-      expect(response.parsed_body["data"]["availabilities"][1]["time_slot_id"]).to eq(@second_time_slot.id)
-      expect(response.parsed_body["data"]["current_user_availabilities"][0]["time_slot_id"]).to eq(@time_slot.id)
-      expect(response.parsed_body["data"]["current_user_availabilities"][1]["time_slot_id"]).to eq(@second_time_slot.id)
-    end
-  end
+      it 'returns availability data for the event' do
+        user2 = create(:user, name: 'Jane Doe')
+        create(:availability, user: user, time_slot: time_slot)
+        create(:availability, user: user2, time_slot: time_slot)
+        create(:availability, user: user2, time_slot: time_slot2)
 
-  describe "POST /availabilities" do
-    it "create availability with valid params" do
-      expect { post time_slot_availability_path(@time_slot) }.to change(Availability, :count).by(1)
-      expect(response.parsed_body["data"]["availability"]["time_slot_id"]).to eq(@time_slot.id)
-    end
-    it "cannot create availability with invalid params" do
-      expect { post time_slot_availability_path(305) }.to change(Availability, :count).by(0)
-      expect(response.parsed_body["errors"]).to eq("Couldn't find TimeSlot with 'id'=#{305}")
-    end
+        get event_availabilities_path(event_url: event.url)
+        expect(response).to have_http_status(:success)
+        json = response.parsed_body
 
-    it "cannot create availability with duplicate time slots" do
-      expect { post time_slot_availability_path(@time_slot) }.to change(Availability, :count).by(1)
-      expect { post time_slot_availability_path(@time_slot) }.to change(Availability, :count).by(0)
-      expect(response.parsed_body["errors"]).to eq("Validation failed: Time slot has already been taken")
-    end
-  end
+        # Check the date-hour-minute key format
+        date_key = time_slot.start_time.strftime('%a %b %d %Y') # "Tue Jan 15 2024"
+        key1 = "#{date_key}-9-0"
+        key2 = "#{date_key}-9-15"
 
-  describe "DELETE /availabilities" do
-    it "delete availability with valid params" do
-      post time_slot_availability_path(@time_slot)
-      expect { delete time_slot_availability_path(@time_slot) }.to change(Availability, :count).by(-1)
-      expect(response.parsed_body["data"]["availability"]["time_slot_id"]).to eq(@time_slot.id)
-    end
-
-    it "delete availability with invalid params" do
-      expect { delete time_slot_availability_path(305) }.to change(Availability, :count).by(0)
-      expect(response.parsed_body["errors"]).to eq("Couldn't find TimeSlot with 'id'=#{305}")
+        expect(json['availability_data'][key1]).to contain_exactly(user.name, user2.name)
+        expect(json['availability_data'][key2]).to contain_exactly(user2.name)
+        expect(json['current_user_slots']).to contain_exactly(time_slot.id)
+      end
     end
   end
 end

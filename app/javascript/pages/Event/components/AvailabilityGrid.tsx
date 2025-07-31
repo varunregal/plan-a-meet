@@ -60,7 +60,7 @@ function AvailabilityGridComponent({
       handleMouseEnter,
     ],
   );
-
+  console.log({ availabilityData, selectedSlots, grid });
   return (
     <GridContext.Provider value={contextValue}>
       <div className="h-full flex flex-col">

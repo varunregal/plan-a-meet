@@ -1,47 +1,31 @@
 class AvailabilitiesController < ApplicationController
-  before_action :require_authentication
-  before_action :set_time_slot!, only: %i[create destroy]
-
   def index
-    event = Event.find_by(url: params[:event_url])
-    time_slots = event.time_slots
-    availabilities = Availability.where(time_slot: time_slots).includes(:user, :time_slot)
-    current_user_availabilities = Availability.where(user: Current.user).includes(:user)
-    users = event.users.distinct
+    event = Event.find_by!(url: params[:event_url])
+    availabilities = Availability.joins(:time_slot)
+                                 .where(time_slots: { event_id: event.id })
+                                 .includes(:user, :time_slot)
+    availability_data = availabilities.each_with_object({}) do |availability, hash|
+      slot = availability.time_slot
+      date_key = slot.start_time.strftime('%a %b %d %Y')
+      hour = slot.start_time.hour
+      minute = slot.start_time.min
+      key = "#{date_key}-#{hour}-#{minute}"
+      name = availability.user ? availability.user.name : availability.participant_name
+      hash[key] ||= []
+      hash[key] << name
+    end
+    current_user_slots = if authenticated?
+                           Current.user.availabilities
+                                  .joins(:time_slot)
+                                  .where(time_slots: { event_id: event.id })
+                                  .pluck(:time_slot_id)
+                         else
+                           []
+                         end
+
     render json: {
-      success: true,
-      data: {
-        availabilities: ActiveModelSerializers::SerializableResource.new(availabilities, each_serializer: AvailabilitySerializer, include: ['user']),
-        current_user_availabilities: ActiveModelSerializers::SerializableResource.new(current_user_availabilities, each_serializer: AvailabilitySerializer, include: ['user']), participants: ActiveModelSerializers::SerializableResource.new(users, each_serializer: UserSerializer)
-      }
+      availability_data: availability_data,
+      current_user_slots: current_user_slots
     }
-  end
-
-  def create
-    availability = Current.user.availabilities.build(time_slot: @time_slot)
-    if availability.save!
-      render json: { success: true, data: { availability: AvailabilitySerializer.new(availability) } }, status: :created
-    end
-  rescue ActiveRecord::RecordNotFound => e
-    render json: { success: false, errors: e.message }, status: :not_found
-  rescue ActiveRecord::RecordInvalid => e
-    render json: { success: false, errors: e.message }, status: :unprocessable_entity
-  end
-
-  def destroy
-    availability = Current.user.availabilities.find_by(time_slot: @time_slot)
-    if availability.destroy!
-      render json: { success: true, data: { availability: AvailabilitySerializer.new(availability) } }, status: :ok
-    end
-  rescue ActiveRecord::RecordNotFound => e
-    render json: { success: false, errors: e.message }, status: :not_found
-  end
-
-  private
-
-  def set_time_slot!
-    @time_slot = TimeSlot.find(params[:time_slot_id])
-  rescue ActiveRecord::RecordNotFound => e
-    render json: { success: false, errors: e.message }, status: :unprocessable_entity
   end
 end

@@ -1,10 +1,14 @@
-import { useMemo } from 'react';
-import { TimeSlotProps } from '../event.types';
+import { useMemo } from "react";
+import { TimeSlotProps } from "../event.types";
 
 export interface GridData {
   dates: string[];
   hours: number[];
-  getSlot: (date: string, hour: number, minute?: number) => TimeSlotProps | null;
+  getSlot: (
+    date: string,
+    hour: number,
+    minute?: number,
+  ) => TimeSlotProps | null;
 }
 
 export function useGridData(timeSlots: TimeSlotProps[]): GridData {
@@ -27,7 +31,6 @@ export function useGridData(timeSlots: TimeSlotProps[]): GridData {
 
     return {
       dates: Array.from(dates).sort((a, b) => {
-        // Sort dates in ascending order (earliest first)
         return new Date(a).getTime() - new Date(b).getTime();
       }),
       hours: Array.from(hours).sort((a, b) => a - b),
