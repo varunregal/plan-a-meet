@@ -9,14 +9,16 @@ class UserAvailabilities::Create
     user = find_user
     availability = create_availabilities(user)
     Result.success({ availability: UserAvailabilitySerializer.new(availability) })
-  rescue => e
+  rescue StandardError => e
     Result.failure(e)
   end
 
   private
+
   def find_user
     User.find(@user_id)
   end
+
   def create_availabilities(user)
     UserAvailability.transaction do
       time_slot = @event.time_slots.find(@time_slot)

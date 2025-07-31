@@ -3,8 +3,10 @@ class UserAvailabilitiesController < ApplicationController
   def index
     availabilities = UserAvailability.includes(:user, :event, :time_slot).where(event: @event)
     users = @event.users.distinct
-    render json: { availabilities: ActiveModelSerializers::SerializableResource.new(availabilities), users: ActiveModelSerializers::SerializableResource.new(users) }
+    render json: { availabilities: ActiveModelSerializers::SerializableResource.new(availabilities),
+                   users: ActiveModelSerializers::SerializableResource.new(users) }
   end
+
   def create
     response = UserAvailabilities::Create.new(@event, user_availabilities_params).perform
     if response.success?
@@ -18,16 +20,17 @@ class UserAvailabilitiesController < ApplicationController
     availability = UserAvailability.find(params[:id])
     availability.destroy!
     render json: availability
-  rescue => e
+  rescue StandardError => e
     handle_error(e)
   end
 
-
   private
+
   def find_event
     @event = Event.find_by(url: params[:event_url])
   end
+
   def user_availabilities_params
-    params.expect(user_availabilities: [ :user_id, :time_slot ])
+    params.expect(user_availabilities: %i[user_id time_slot])
   end
 end

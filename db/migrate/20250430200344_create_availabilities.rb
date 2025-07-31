@@ -6,6 +6,7 @@ class CreateAvailabilities < ActiveRecord::Migration[8.0]
 
       t.timestamps
     end
-    add_index :availabilities, [ :user_id, :time_slot_id ], unique: true, name: "index_user_and_time_slot_on_availability"
+    add_index :availabilities, %i[user_id time_slot_id], unique: true,
+                                                         name: 'index_user_and_time_slot_on_availability'
   end
 end

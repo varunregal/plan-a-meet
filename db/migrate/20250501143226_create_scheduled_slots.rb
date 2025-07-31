@@ -6,6 +6,7 @@ class CreateScheduledSlots < ActiveRecord::Migration[8.0]
 
       t.timestamps
     end
-    add_index :scheduled_slots, [ :event_id, :time_slot_id ], unique: true, name: "index_scheduled_slot_on_event_and_time_slot"
+    add_index :scheduled_slots, %i[event_id time_slot_id], unique: true,
+                                                           name: 'index_scheduled_slot_on_event_and_time_slot'
   end
 end

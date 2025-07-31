@@ -15,7 +15,7 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   resources :events, param: :url do
-    resources :availabilities, only: [:index]
+    resources :availabilities, only: %i[index create]
     resources :scheduled_slots, only: %i[index create destroy]
     member do
       patch :schedule
@@ -28,8 +28,5 @@ Rails.application.routes.draw do
   end
   resource :profile, only: [:show]
 
-  resources :time_slots, only: [] do
-    resource :availability, only: %i[create destroy]
-  end
   root 'events#new'
 end

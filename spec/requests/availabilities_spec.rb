@@ -75,4 +75,6 @@ RSpec.describe 'AvailabilitiesController', type: :request do
       end
     end
   end
+
+  describe 'POST /time_slots/:time_slot_id/availability'
 end

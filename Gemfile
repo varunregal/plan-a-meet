@@ -79,4 +79,4 @@ gem 'inertia_rails', '~> 3.6'
 gem 'resend'
 gem 'vite_rails', '~> 3.0'
 
-gem "erb-formatter", "~> 0.7.3"
+gem 'erb-formatter', '~> 0.7.3'

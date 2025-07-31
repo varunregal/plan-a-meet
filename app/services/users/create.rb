@@ -11,29 +11,29 @@ class Users::Create
       user = find_and_create_user(event)
       availability = find_and_create_user_availability(event, user)
       users = event.users.reload.distinct
-      Result.success({ availability: ActiveModelSerializers::SerializableResource.new(availability, each_serializer: UserAvailabilitySerializer), user: UserSerializer.new(user), users: })
-    rescue => e
+      Result.success({
+                       availability: ActiveModelSerializers::SerializableResource.new(availability,
+                                                                                      each_serializer: UserAvailabilitySerializer), user: UserSerializer.new(user), users:
+                     })
+    rescue StandardError => e
       Result.failure(e)
     end
   end
 
   private
+
   def find_event
     Event.find_by(url: @url)
   end
 
-  def find_and_create_user(event)
+  def find_and_create_user(_event)
     user = User.find_by(name: @name)
-    if !user
-      User.create!(name: @name, password: @password || nil)
-    else
-      user
-    end
+    user || User.create!(name: @name, password: @password || nil)
   end
 
   def find_and_create_user_availability(event, user)
     availability = UserAvailability.includes(:user, :event).where(event: event, user: user)
-    if availability.count == 0
+    if availability.count.zero?
       UserAvailability.create!(event: event, user: user)
     else
       availability
