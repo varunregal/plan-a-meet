@@ -17,6 +17,7 @@ class Event < ApplicationRecord
 
   validates :name, presence: true
   validates :url, uniqueness: true
+  validates :time_zone, presence: true
   before_validation :generate_url_token, on: :create
 
   def to_param

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_29_202946) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_01_053852) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -36,6 +36,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_29_202946) do
     t.bigint "event_creator_id"
     t.string "status", default: "created", null: false
     t.string "anonymous_session_id"
+    t.string "time_zone", default: "UTC"
     t.index ["anonymous_session_id"], name: "index_events_on_anonymous_session_id"
     t.index ["event_creator_id"], name: "index_events_on_event_creator_id"
     t.index ["url"], name: "index_events_on_url", unique: true

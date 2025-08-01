@@ -1,4 +1,4 @@
-import { memo, useCallback, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import { TimeSlotProps } from "../event.types";
 import { CalendarImportButtons } from "./CalendarImportButtons";
 import { AvailabilityControls } from "./AvailabilityControls";
@@ -15,12 +15,14 @@ interface CalendarImportSectionProps {
   onSelectionChange?: (selectedSlots: Set<number>) => void;
   onImportCalendar?: (provider: "google" | "outlook") => void;
   eventUrl: string;
+  currentUserSlots?: number[];
 }
 
 function CalendarImportSectionComponent({
   timeSlots,
   availabilityData,
   onSelectionChange,
+  currentUserSlots,
   onImportCalendar,
   eventUrl,
 }: CalendarImportSectionProps) {
@@ -33,8 +35,13 @@ function CalendarImportSectionComponent({
     clearSelection,
     toggleGroupAvailability,
     hasSelection,
+    setSelectedSlots,
   } = useAvailabilitySelection();
-
+  useEffect(() => {
+    if (currentUserSlots && currentUserSlots.length > 1) {
+      setSelectedSlots(new Set(currentUserSlots));
+    }
+  }, [currentUserSlots, setSelectedSlots]);
   const handleSlotClickWithCallback = useCallback(
     (slotId: number) => {
       handleSlotClick(slotId);

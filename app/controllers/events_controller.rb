@@ -31,7 +31,7 @@ class EventsController < ApplicationController
   private
 
   def event_params
-    params.permit(:name)
+    params.permit(:name, :time_zone)
   end
 
   def time_slot_params

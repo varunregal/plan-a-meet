@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback } from "react";
 
 export function useAvailabilitySelection() {
   const [selectedSlots, setSelectedSlots] = useState<Set<number>>(new Set());
@@ -31,5 +31,6 @@ export function useAvailabilitySelection() {
     clearSelection,
     toggleGroupAvailability,
     hasSelection: selectedSlots.size > 0,
+    setSelectedSlots,
   };
 }

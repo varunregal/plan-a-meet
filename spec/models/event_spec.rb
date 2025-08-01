@@ -10,6 +10,7 @@ RSpec.describe Event, type: :model do
 
   describe 'validations' do
     it { is_expected.to validate_presence_of(:name) }
+    it { is_expected.to validate_presence_of(:time_zone) }
 
     context 'with uniqueness' do
       subject { create(:event) }

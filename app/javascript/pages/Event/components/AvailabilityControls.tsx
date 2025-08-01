@@ -18,7 +18,7 @@ export function AvailabilityControls({
   return (
     <div className="flex justify-between mb-4">
       <div className="flex items-center gap-2">
-        <Button variant="outline" size="sm">
+        <Button variant="outline" size="sm" onClick={onToggleGroupAvailability}>
           <Users className="mr-2" />
           {showGroupAvailability ? "Hide" : "Show"} group availability
         </Button>

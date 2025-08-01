@@ -36,9 +36,11 @@ class AvailabilitiesController < ApplicationController
   end
 
   def time_slot_key(slot)
-    date_key = slot.start_time.strftime('%a %b %d %Y')
-    hour = slot.start_time.hour
-    minute = slot.start_time.min
+    event_timezone = slot.event.time_zone || 'UTC' # TODO: add test cases for time zone
+    time_in_zone = slot.start_time.in_time_zone(event_timezone)
+    date_key = time_in_zone.strftime('%a %b %d %Y')
+    hour = time_in_zone.hour
+    minute = time_in_zone.min
     "#{date_key}-#{hour}-#{minute}"
   end
 
