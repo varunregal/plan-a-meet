@@ -1,7 +1,6 @@
 import { Navbar } from "@/pages/Navbar";
 
 import { ReactNode, useEffect } from "react";
-import { AvailabilityProvider } from "@/pages/Availability/context/AvailabilityContext";
 import { usePage } from "@inertiajs/react";
 import { toast, Toaster } from "sonner";
 
@@ -13,13 +12,11 @@ function RootLayout({ children }: { children: ReactNode }) {
     if (flash?.alert) toast.error(flash.alert);
   }, [flash]);
   return (
-    <AvailabilityProvider>
-      <main className="max-w-[1380px] mx-auto h-screen flex flex-col">
-        <Navbar />
-        <div className="flex-1">{children}</div>
-        <Toaster richColors position="top-center" />
-      </main>
-    </AvailabilityProvider>
+    <main className="max-w-[1380px] mx-auto h-screen flex flex-col">
+      <Navbar />
+      <div className="flex-1">{children}</div>
+      <Toaster richColors position="top-center" />
+    </main>
   );
 }
 export default RootLayout;

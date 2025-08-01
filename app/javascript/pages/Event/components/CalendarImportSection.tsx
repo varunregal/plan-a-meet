@@ -1,4 +1,4 @@
-import { memo, useCallback } from "react";
+import { memo, useCallback, useState } from "react";
 import { TimeSlotProps } from "../event.types";
 import { CalendarImportButtons } from "./CalendarImportButtons";
 import { AvailabilityControls } from "./AvailabilityControls";
@@ -20,6 +20,8 @@ function CalendarImportSectionComponent({
   onSelectionChange,
   onImportCalendar,
 }: CalendarImportSectionProps) {
+  const [hasUnSavedChanges, setHasUnSavedChanges] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const {
     selectedSlots,
     showGroupAvailability,
@@ -32,6 +34,8 @@ function CalendarImportSectionComponent({
   const handleSlotClickWithCallback = useCallback(
     (slotId: number) => {
       handleSlotClick(slotId);
+      setHasUnSavedChanges(true);
+
       if (onSelectionChange) {
         const newSet = new Set(selectedSlots);
         if (newSet.has(slotId)) {
@@ -45,10 +49,17 @@ function CalendarImportSectionComponent({
     [handleSlotClick, selectedSlots, onSelectionChange],
   );
 
+  const handleClearSelection = useCallback(() => {
+    clearSelection();
+    setHasUnSavedChanges(true);
+  }, [clearSelection]);
+
   const handleSelectBestTimes = useCallback(() => {
     // TODO: Implement smart selection based on group availability
     console.log("Select best times - to be implemented");
   }, []);
+
+  const handleSaveAvailability = () => {};
 
   return (
     <div className={AVAILABILITY_CONSTANTS.CONTAINER_CLASSES}>
@@ -62,7 +73,7 @@ function CalendarImportSectionComponent({
         showGroupAvailability={showGroupAvailability}
         onToggleGroupAvailability={toggleGroupAvailability}
         onSelectBestTimes={handleSelectBestTimes}
-        onClearSelection={clearSelection}
+        onClearSelection={handleClearSelection}
         hasSelection={hasSelection}
       />
 
@@ -73,6 +84,23 @@ function CalendarImportSectionComponent({
         showGroupAvailability={showGroupAvailability}
         availabilityData={availabilityData}
       />
+      {hasUnSavedChanges && (
+        <div className="sticky z-10 bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 mt-4">
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-amber-600 font-medium">
+              You have unsaved changes
+            </span>
+            <button
+              onClick={handleSaveAvailability}
+              disabled={isSaving}
+              className="px-6 py-2.5 bg-primary text-white font-medium rounded-md hover:bg-primary/90
+        disabled:opacity-50 transition-colors"
+            >
+              {isSaving ? "Saving..." : "Save Availability"}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

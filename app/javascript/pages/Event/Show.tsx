@@ -16,7 +16,6 @@ function EventShow({
   is_creator: boolean;
   time_slots: TimeSlotProps[];
 }) {
-  console.log({ event, event_creator });
   return (
     <div className="min-h-screen">
       <div className="max-w-7xl mx-auto">
