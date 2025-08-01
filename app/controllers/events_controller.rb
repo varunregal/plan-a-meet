@@ -100,12 +100,12 @@ class EventsController < ApplicationController
     end
   end
 
-  def store_anonymous_session_cookie(value)
-    cookies.signed[:anonymous_session_id] ||= {
-      value:,
-      expires: 30.days.from_now,
-      httponly: true,
-      same_site: :lax
-    }
-  end
+  # def store_anonymous_session_cookie(value)
+  #   cookies.signed[:anonymous_session_id] ||= {
+  #     value:,
+  #     expires: 30.days.from_now,
+  #     httponly: true,
+  #     same_site: :lax
+  #   }
+  # end
 end

@@ -21,4 +21,13 @@ class ApplicationController < ActionController::Base
     Availability.where(anonymous_session_id:).update_all(user_id: user.id, anonymous_session_id: nil)
     cookies.delete(:anonymous_session_id)
   end
+
+  def store_anonymous_session_cookie(value)
+    cookies.signed[:anonymous_session_id] ||= {
+      value:,
+      expires: 30.days.from_now,
+      httponly: true,
+      same_site: :lax
+    }
+  end
 end
