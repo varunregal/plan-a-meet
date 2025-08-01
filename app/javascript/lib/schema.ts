@@ -6,6 +6,7 @@ export const eventFormSchema = z
     dates: z.array(z.date()),
     start_time: z.string(),
     end_time: z.string(),
+    time_zone: z.string().min(1, "Time zone is required"),
   })
   .refine(
     (data) => {

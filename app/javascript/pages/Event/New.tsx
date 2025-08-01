@@ -17,6 +17,7 @@ import { router, usePage } from "@inertiajs/react";
 import ButtonWithLoader from "./components/ButtonWithLoader";
 import { toast } from "sonner";
 import { format } from "date-fns";
+import { TimezoneSelect } from "./components/TimeZoneSelect";
 
 function New() {
   const { flash }: any = usePage().props;
@@ -28,6 +29,7 @@ function New() {
       dates: [],
       start_time: "9",
       end_time: "17",
+      time_zone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     },
   });
 
@@ -95,6 +97,7 @@ function New() {
                 render={({ field }) => <SelectDates field={field} />}
               />
               <div className="flex flex-col gap-5">
+                <TimezoneSelect form={form} />
                 <div className="text-sm font-medium">
                   What times work for you? (Eastern Time Zone)
                 </div>
