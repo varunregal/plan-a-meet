@@ -38,7 +38,7 @@ function CalendarImportSectionComponent({
     setSelectedSlots,
   } = useAvailabilitySelection();
   useEffect(() => {
-    if (currentUserSlots && currentUserSlots.length > 1) {
+    if (currentUserSlots && currentUserSlots.length > 0) {
       setSelectedSlots(new Set(currentUserSlots));
     }
   }, [currentUserSlots, setSelectedSlots]);
