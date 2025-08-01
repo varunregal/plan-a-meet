@@ -114,7 +114,7 @@ RSpec.describe 'AvailabilitiesController', type: :request do
         post event_availabilities_path(event_url: event.url), params: { time_slot_ids: [9999] }
         expect(response).to have_http_status(:unprocessable_entity)
         json = response.parsed_body
-        expect(json['errors']).to include('Invalid time slot')
+        expect(json[:errors][:time_slot_ids]).to include('contains invalid time slot')
       end
     end
 
@@ -128,7 +128,7 @@ RSpec.describe 'AvailabilitiesController', type: :request do
         expect(response).to have_http_status(:unprocessable_entity)
 
         json = response.parsed_body
-        expect(json[:errors]).to include 'Participant name is required'
+        expect(json[:errors][:participant_name]).to include 'is required'
       end
 
       it 'updates existing anonymous user availabilities' do
@@ -166,17 +166,18 @@ RSpec.describe 'AvailabilitiesController', type: :request do
              params: { time_slot_ids: [9999], participant_name: 'John' }
         expect(response).to have_http_status(:unprocessable_entity)
         json = response.parsed_body
-        expect(json['errors']).to include('Invalid time slot')
+        expect(json[:errors][:time_slot_ids]).to include('contains invalid time slot')
       end
 
       it 'clears all availabilities for anonymous user when empty array provided' do
         post event_availabilities_path(event_url: event.url),
              params: { time_slot_ids: [time_slot.id], participant_name: 'John' }
+        anonymous_session_id = Availability.last.anonymous_session_id
         expect do
           post event_availabilities_path(event_url: event.url), params: { time_slot_ids: [], participant_name: 'John' }
         end.to change(Availability, :count).by(-1)
         expect(response).to have_http_status(:ok)
-        expect(user.availabilities.count).to eq(0)
+        expect(Availability.where(anonymous_session_id:).count).to eq(0)
       end
     end
   end
