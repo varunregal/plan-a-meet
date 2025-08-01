@@ -74,6 +74,106 @@ RSpec.describe 'AvailabilitiesController', type: :request do
         expect(response).to have_http_status(:not_found)
       end
     end
+
+    context 'with timezone handling' do
+      let(:user) { create(:user) }
+
+      context 'when event has a specific timezone' do
+        let(:event_ny) { create(:event, time_zone: 'America/New_York') }
+
+        it 'returns availability keys in the event timezone' do
+          utc_time = Time.parse('2024-01-15 14:00:00 UTC')
+          time_slot_ny = create(:time_slot, event: event_ny, start_time: utc_time, end_time: utc_time + 15.minutes)
+          create(:availability, user:, time_slot: time_slot_ny)
+
+          get event_availabilities_path(event_url: event_ny.url)
+          expect(response).to have_http_status(:success)
+          json = response.parsed_body
+          expected_key = 'Mon Jan 15 2024-9-0'
+          expect(json[:availability_data]).to have_key(expected_key)
+          expect(json[:availability_data][expected_key]).to include(user.name)
+        end
+      end
+
+      context 'when event has no timezone (defaults to UTC)' do
+        let(:event_no_tz) { create(:event) }
+
+        it 'returns availability keys in UTC' do
+          utc_time = Time.parse('2024-01-15 14:00:00 UTC')
+          time_slot_utc = create(:time_slot, event: event_no_tz, start_time: utc_time, end_time: utc_time + 15.minutes)
+          create(:availability, user:, time_slot: time_slot_utc)
+
+          get event_availabilities_path(event_url: event_no_tz.url)
+          expect(response).to have_http_status(:success)
+          json = response.parsed_body
+          expected_key = 'Mon Jan 15 2024-14-0'
+          expect(json[:availability_data]).to have_key(expected_key)
+          expect(json[:availability_data][expected_key]).to include(user.name)
+        end
+      end
+
+      context 'when handling daylight saving time' do
+        let(:event_la) { create(:event, time_zone: 'America/Los_Angeles') }
+
+        it 'correctly handles PST (winter time)' do
+          # Jan PST (UTC - 8)
+          winter_time = Time.parse('2024-01-15 20:00:00 UTC')
+          time_slot_winter = create(:time_slot, event: event_la, start_time: winter_time,
+                                                end_time: winter_time + 15.minutes)
+          create(:availability, user:, time_slot: time_slot_winter)
+          get event_availabilities_path(event_url: event_la.url)
+          json = response.parsed_body
+          expected_key = 'Mon Jan 15 2024-12-0'
+          expect(json[:availability_data]).to have_key(expected_key)
+        end
+
+        it 'correctly handles PST (summer time)' do
+          # Jan PST (UTC - 7)
+          winter_time = Time.parse('2024-07-15 20:00:00 UTC')
+          time_slot_winter = create(:time_slot, event: event_la, start_time: winter_time,
+                                                end_time: winter_time + 15.minutes)
+          create(:availability, user:, time_slot: time_slot_winter)
+          get event_availabilities_path(event_url: event_la.url)
+          json = response.parsed_body
+          expected_key = 'Mon Jul 15 2024-13-0'
+          expect(json[:availability_data]).to have_key(expected_key)
+        end
+      end
+
+      context 'when multiple time slots across midnight in event timezone' do
+        let(:event_sydney) { create(:event, time_zone: 'Australia/Sydney') }
+
+        it 'correctly handles date boundaries' do
+          # Create slots that cross midnight in Sydney but not in UTC
+          # 11 PM and 11:30 PM Sydney time on Jan 15
+          # Which is 12 PM and 12:30 PM UTC on Jan 15
+          utc_time = Time.parse('2024-01-15 12:00:00 UTC')
+          slot1 = create(:time_slot, event: event_sydney, start_time: utc_time, end_time: utc_time + 15.minutes)
+          slot2 = create(:time_slot, event: event_sydney, start_time: utc_time + 30.minutes,
+                                     end_time: utc_time + 45.minutes)
+
+          # This would be after midnight in Sydney (1 AM on Jan 16)
+          # But still Jan 15 in UTC (2 PM)
+          slot3 = create(:time_slot,
+                         event: event_sydney,
+                         start_time: utc_time + 2.hours,
+                         end_time: utc_time + 2.hours + 15.minutes)
+          create(:availability, user: user, time_slot: slot1)
+          create(:availability, user: user, time_slot: slot2)
+          create(:availability, user: user, time_slot: slot3)
+          get event_availabilities_path(event_url: event_sydney.url)
+          json = response.parsed_body
+          # Sydney is UTC+11 in January
+          # 12:00 UTC = 23:00 Sydney (Jan 15)
+          # 12:30 UTC = 23:30 Sydney (Jan 15)
+          # 14:00 UTC = 01:00 Sydney (Jan 16)
+
+          expect(json[:availability_data]).to have_key('Mon Jan 15 2024-23-0')
+          expect(json[:availability_data]).to have_key('Mon Jan 15 2024-23-30')
+          expect(json[:availability_data]).to have_key('Tue Jan 16 2024-1-0')
+        end
+      end
+    end
   end
 
   describe 'POST /events/:url/availabilities' do
