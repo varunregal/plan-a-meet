@@ -2,36 +2,9 @@ class AvailabilitiesController < ApplicationController
   allow_unauthenticated_access only: %i[index create]
   def index
     event = Event.find_by!(url: params[:event_url])
-    availabilities = Availability.joins(:time_slot)
-                                 .where(time_slots: { event_id: event.id })
-                                 .includes(:user, :time_slot)
-    availability_data = availabilities.each_with_object({}) do |availability, hash|
-      slot = availability.time_slot
-      date_key = slot.start_time.strftime('%a %b %d %Y')
-      hour = slot.start_time.hour
-      minute = slot.start_time.min
-      key = "#{date_key}-#{hour}-#{minute}"
-      name = availability.user ? availability.user.name : availability.participant_name
-      hash[key] ||= []
-      hash[key] << name
-    end
-    current_user_slots = if authenticated?
-                           Current.user.availabilities
-                                  .joins(:time_slot)
-                                  .where(time_slots: { event_id: event.id })
-                                  .pluck(:time_slot_id)
-                         elsif cookies.signed[:anonymous_session_id].present?
-                           Availability.joins(:time_slot)
-                                       .where(time_slots: { event_id: event.id })
-                                       .where(anonymous_session_id: cookies.signed[:anonymous_session_id])
-                                       .pluck(:time_slot_id)
-                         else
-                           []
-                         end
-
     render json: {
-      availability_data: availability_data,
-      current_user_slots: current_user_slots
+      availability_data: build_availability_data(event),
+      current_user_slots: current_user_time_slots(event)
     }
   end
 
@@ -49,6 +22,50 @@ class AvailabilitiesController < ApplicationController
   end
 
   private
+
+  def build_availability_data(event)
+    availabilities_for_event(event).each_with_object({}) do |availability, hash|
+      key = time_slot_key(availability.time_slot)
+      hash[key] ||= []
+      hash[key] << participant_name(availability)
+    end
+  end
+
+  def availabilities_for_event(event)
+    Availability.joins(:time_slot).where(time_slots: { event_id: event.id }).includes(:user, :time_slot)
+  end
+
+  def time_slot_key(slot)
+    date_key = slot.start_time.strftime('%a %b %d %Y')
+    hour = slot.start_time.hour
+    minute = slot.start_time.min
+    "#{date_key}-#{hour}-#{minute}"
+  end
+
+  def participant_name(availability)
+    availability.user ? availability.user.name : availability.participant_name
+  end
+
+  def current_user_time_slots(event)
+    return current_user_authenticated_slots(event) if authenticated?
+    return current_user_anonymous_slots(event) if cookies.signed[:anonymous_session_id].present?
+
+    []
+  end
+
+  def current_user_authenticated_slots(event)
+    Current.user.availabilities
+           .joins(:time_slot)
+           .where(time_slots: { event_id: event.id })
+           .pluck(:time_slot_id)
+  end
+
+  def current_user_anonymous_slots(event)
+    Availability.joins(:time_slot)
+                .where(time_slots: { event_id: event.id })
+                .where(anonymous_session_id: cookies.signed[:anonymous_session_id])
+                .pluck(:time_slot_id)
+  end
 
   def valid_create_params?
     authenticated? || params[:participant_name]
