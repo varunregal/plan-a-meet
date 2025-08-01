@@ -67,6 +67,22 @@ This enhancement should be implemented after the core availability marking featu
 - **Performance Optimizations**: Used React.memo for preventing unnecessary re-renders
 - **Time Slot Display**: Fixed date ordering to show in ascending order (earliest first)
 
+### Availability Marking System (Completed)
+- **Backend API Implementation**:
+  - RESTful endpoints at `/events/:url/availabilities` for bulk save/replace
+  - Support for both authenticated and anonymous users
+  - Anonymous users tracked via signed cookies with 30-day expiration
+  - Proper validation and error handling with field-specific errors
+  - Comprehensive test coverage for all scenarios
+- **Database Architecture**:
+  - Made `user_id` optional in availabilities table
+  - Added conditional unique indexes for authenticated/anonymous users
+  - Support for `participant_name` for anonymous users
+- **Controller Design**:
+  - Clean, refactored controller with single responsibility methods
+  - Transaction-wrapped operations for data integrity
+  - Proper error responses in consistent format
+
 ### Code Quality & Testing
 - Comprehensive test coverage for registrations and core functionality
 - Fixed factory patterns to match actual model structures
@@ -76,14 +92,20 @@ This enhancement should be implemented after the core availability marking featu
 
 ## Phase One Roadmap
 
-### Availability Marking Implementation (IN PROGRESS)
+### Frontend Availability Integration (IN PROGRESS)
+**Completed:**
+- Added unsaved changes tracking with visual indicator
+- Implemented sticky save button that appears when changes are made
+- Created save functionality using fetch API with CSRF token
+- Added loading states during save operation
+- Integrated toast notifications for success/error feedback
+
 **Next Steps:**
-- Create backend API endpoint to save user availability
-- Add authentication to identify users marking availability
-- Create or update availability records in the database
-- Connect frontend selection to API calls
-- Add loading states and error handling
-- Handle optimistic updates for better UX
+- Handle anonymous users (show name input field)
+- Load and display current user's saved selections on page load
+- Implement participant name validation for anonymous users
+- Add optimistic updates for better UX
+- Handle session creation for new anonymous users
 
 ### Invitation Acceptance/Decline Flow (TODO)
 **Next Steps:**

@@ -6,12 +6,15 @@ import { CalendarImportHeader } from "./CalendarImportHeader";
 import { AvailabilitySection } from "./AvailabilitySection";
 import { useAvailabilitySelection } from "../hooks/useAvailabilitySelection";
 import { AVAILABILITY_CONSTANTS } from "../constants/availability";
+import api from "@/lib/api";
+import { toast } from "sonner";
 
 interface CalendarImportSectionProps {
   timeSlots: TimeSlotProps[];
   availabilityData?: { [key: string]: string[] };
   onSelectionChange?: (selectedSlots: Set<number>) => void;
   onImportCalendar?: (provider: "google" | "outlook") => void;
+  eventUrl: string;
 }
 
 function CalendarImportSectionComponent({
@@ -19,6 +22,7 @@ function CalendarImportSectionComponent({
   availabilityData,
   onSelectionChange,
   onImportCalendar,
+  eventUrl,
 }: CalendarImportSectionProps) {
   const [hasUnSavedChanges, setHasUnSavedChanges] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -59,7 +63,21 @@ function CalendarImportSectionComponent({
     console.log("Select best times - to be implemented");
   }, []);
 
-  const handleSaveAvailability = () => {};
+  const handleSaveAvailability = async () => {
+    setIsSaving(true);
+    try {
+      await api.post(`/events/${eventUrl}/availabilities`, {
+        time_slot_ids: Array.from(selectedSlots),
+      });
+      setHasUnSavedChanges(false);
+      toast.success("Availability saved successfully!");
+    } catch (error) {
+      console.error("Failed to save availability", error);
+      toast.error("Failed to save availability");
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   return (
     <div className={AVAILABILITY_CONSTANTS.CONTAINER_CLASSES}>
