@@ -111,8 +111,7 @@ function CalendarImportSectionComponent({
             <button
               onClick={handleSaveAvailability}
               disabled={isSaving}
-              className="px-6 py-2.5 bg-primary text-white font-medium rounded-md hover:bg-primary/90
-        disabled:opacity-50 transition-colors"
+              className="px-6 py-2.5 bg-primary text-white font-medium rounded-md hover:bg-primary/90 disabled:opacity-50 transition-colors"
             >
               {isSaving ? "Saving..." : "Save Availability"}
             </button>

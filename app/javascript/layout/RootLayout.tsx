@@ -15,7 +15,7 @@ function RootLayout({ children }: { children: ReactNode }) {
     <main className="max-w-[1380px] mx-auto h-screen flex flex-col">
       <Navbar />
       <div className="flex-1">{children}</div>
-      <Toaster richColors position="top-center" />
+      <Toaster richColors position="top-center" closeButton />
     </main>
   );
 }

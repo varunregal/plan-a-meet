@@ -3,19 +3,8 @@ class EventsController < ApplicationController
 
   def show
     event = Event.includes(:invitations, :time_slots, :event_creator).find_by!(url: params[:url])
-    is_creator = if authenticated?
-                   event.event_creator_id == Current.user&.id
-                 else
-                   event.anonymous_session_id.present? &&
-                     event.anonymous_session_id == cookies.signed[:anonymous_session_id]
-                 end
-    render inertia: 'Event/Show',
-           props: { event: event.as_json(only: %i[id name url]), is_creator:,
-                    event_creator: event.event_creator&.name,
-                    invitations: event.invitations.as_json(only: %i[id email_address status created_at]),
-                    time_slots: event.time_slots.as_json(
-                      only: %i[id start_time end_time]
-                    ) }
+    is_creator = check_if_creator(event)
+    render inertia: 'Event/Show', props: event_show_props(event, is_creator)
   end
 
   def new
@@ -47,6 +36,22 @@ class EventsController < ApplicationController
 
   def time_slot_params
     params.permit(:start_time, :end_time, :time_zone, dates: [])
+  end
+
+  def check_if_creator(event)
+    return event.event_creator_id == Current.user&.id if authenticated?
+
+    event.anonymous_session_id == cookies.signed[:anonymous_session_id] if event.anonymous_session_id.present?
+  end
+
+  def event_show_props(event, is_creator)
+    {
+      event: event.as_json(only: %i[id name url]),
+      is_creator:,
+      event_creator: event.event_creator&.name,
+      invitations: event.invitations.as_json(only: %i[id email_address status created_at]),
+      time_slots: event.time_slots.as_json(only: %i[id start_time end_time])
+    }
   end
 
   def build_event
@@ -99,13 +104,4 @@ class EventsController < ApplicationController
       end
     end
   end
-
-  # def store_anonymous_session_cookie(value)
-  #   cookies.signed[:anonymous_session_id] ||= {
-  #     value:,
-  #     expires: 30.days.from_now,
-  #     httponly: true,
-  #     same_site: :lax
-  #   }
-  # end
 end
