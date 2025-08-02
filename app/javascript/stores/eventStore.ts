@@ -3,29 +3,29 @@ interface EventStore {
   totalParticipants: number;
   selectedSlots: Set<number>;
   hasUnsavedChanges: boolean;
-
   currentUserSlots: number[];
+  isEditMode: boolean;
 
   setTotalParticipants: (count: number) => void;
   setCurrentUserSlots: (slots: number[]) => void;
   toggleSlot: (slotId: number) => void;
   setSelectedSlots: (slots: Set<number>) => void;
   clearUnsavedChanges: () => void;
+
+  startEditing: () => void;
+  cancelEditing: () => void;
+  saveEditing: () => void;
 }
 
 export const useEventStore = create<EventStore>((set) => ({
   totalParticipants: 0,
   selectedSlots: new Set(),
   hasUnsavedChanges: false,
-
   currentUserSlots: [],
+  isEditMode: false,
 
   setTotalParticipants: (count) => set({ totalParticipants: count }),
-  setCurrentUserSlots: (slots: number[]) =>
-    set({
-      currentUserSlots: slots,
-      selectedSlots: new Set(slots),
-    }),
+  setCurrentUserSlots: (slots: number[]) => set({ currentUserSlots: slots }),
   toggleSlot: (slotId: number) =>
     set((state) => {
       const newSlots = new Set(state.selectedSlots);
@@ -50,6 +50,27 @@ export const useEventStore = create<EventStore>((set) => ({
       hasUnsavedChanges: !areSetsEqual(slots, new Set(state.currentUserSlots)),
     })),
   clearUnsavedChanges: () => set({ hasUnsavedChanges: false }),
+
+  startEditing: () =>
+    set((state) => ({
+      isEditMode: true,
+      selectedSlots: new Set(state.currentUserSlots),
+      hasUnsavedChanges: false,
+    })),
+
+  cancelEditing: () =>
+    set((state) => ({
+      isEditMode: false,
+      selectedSlots: new Set(state.currentUserSlots),
+      hasUnsavedChanges: false,
+    })),
+
+  saveEditing: () =>
+    set((state) => ({
+      isEditMode: false,
+      currentUserSlots: Array.from(state.selectedSlots),
+      hasUnsavedChanges: false,
+    })),
 }));
 
 function areSetsEqual(set1: Set<number>, set2: Set<number>): boolean {
