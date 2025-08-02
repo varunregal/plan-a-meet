@@ -35,6 +35,8 @@ function EventShow({
     (state) => state.setTotalParticipants,
   );
   const selectedSlots = useEventStore((state) => state.selectedSlots);
+  const setSelectedSlots = useEventStore((state) => state.setSelectedSlots);
+  const saveEditing = useEventStore((state) => state.saveEditing);
   const [isLoadingAvailability, setIsLoadingAvailability] = useState(false);
 
   const [participantName, setParticipantName] = useState<string>("");
@@ -60,6 +62,7 @@ function EventShow({
           total_event_participants,
         } = response.data;
         setCurrentUserSlots(current_user_slots || []);
+        setSelectedSlots(new Set(current_user_slots || []));
         setAvailabilityData(availability_data || {});
         setTotalParticipants(total_event_participants || 0);
       } catch (error) {
@@ -100,7 +103,7 @@ function EventShow({
         payload.participant_name = participantName.trim();
       }
       await api.post(`/events/${event.url}/availabilities`, payload);
-      setCurrentUserSlots(Array.from(selectedSlots));
+      saveEditing();
       toast.success("Availability saved successfully!");
       if (isAnonymous) {
         document.cookie = `participant_name=${encodeURIComponent(participantName.trim())}; max-age=${
@@ -131,6 +134,8 @@ function EventShow({
               <CalendarImportSection
                 timeSlots={time_slots}
                 availabilityData={availabilityData}
+                onSaveAvailability={handleSaveAvailability}
+                isSaving={isSaving}
               />
             </div>
             <div className="lg:sticky lg:top-4 self-start">
@@ -138,8 +143,8 @@ function EventShow({
                 <AvailabilitySidebar
                   participantName={participantName}
                   onNameChange={handleNameChange}
-                  onSaveAvailability={handleSaveAvailability}
-                  isSaving={isSaving}
+                  // onSaveAvailability={handleSaveAvailability}
+                  // isSaving={isSaving}
                   isAnonymous={isAnonymous}
                   nameError={nameError}
                 />

@@ -1,24 +1,16 @@
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useEventStore } from "@/stores/eventStore";
-import { Check } from "lucide-react";
 
 export function AvailabilitySidebar({
   participantName,
   onNameChange,
-  onSaveAvailability,
-  isSaving,
   isAnonymous,
   nameError,
 }: {
   participantName: string;
   onNameChange: (name: string) => void;
-  onSaveAvailability: () => void;
-  isSaving: boolean;
   isAnonymous: boolean;
   nameError?: string;
 }) {
-  const hasUnsavedChanges = useEventStore((state) => state.hasUnsavedChanges);
   return (
     <div className="flex flex-col gap-4">
       {isAnonymous && (
@@ -41,24 +33,6 @@ export function AvailabilitySidebar({
           )}
         </div>
       )}
-
-      <Button
-        onClick={onSaveAvailability}
-        disabled={isSaving || !hasUnsavedChanges}
-        className="w-full"
-        size="lg"
-      >
-        {isSaving ? (
-          "Saving..."
-        ) : !hasUnsavedChanges ? (
-          <span className="flex items-center gap-2">
-            <Check className="h-4 w-4" />
-            Availability Saved
-          </span>
-        ) : (
-          "Save Availability"
-        )}
-      </Button>
     </div>
   );
 }

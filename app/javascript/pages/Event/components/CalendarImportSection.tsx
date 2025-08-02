@@ -10,12 +10,16 @@ interface CalendarImportSectionProps {
   timeSlots: TimeSlotProps[];
   availabilityData: { [key: string]: string[] };
   onImportCalendar?: (provider: "google" | "outlook") => void;
+  onSaveAvailability: () => void;
+  isSaving: boolean;
 }
 
 function CalendarImportSectionComponent({
   timeSlots,
   availabilityData,
   onImportCalendar,
+  onSaveAvailability,
+  isSaving,
 }: CalendarImportSectionProps) {
   const toggleSlot = useEventStore((state) => state.toggleSlot);
   const handleSlotClick = (slotId: number) => {
@@ -23,7 +27,7 @@ function CalendarImportSectionComponent({
   };
   return (
     <div className={AVAILABILITY_CONSTANTS.CONTAINER_CLASSES}>
-      <CalendarImportHeader />
+      <CalendarImportHeader onSave={onSaveAvailability} isSaving={isSaving} />
       <CalendarImportButtons onImport={onImportCalendar} />
       <div className={AVAILABILITY_CONSTANTS.DIVIDER_CLASSES} />
 

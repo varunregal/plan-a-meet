@@ -28,6 +28,7 @@ export const useEventStore = create<EventStore>((set) => ({
   setCurrentUserSlots: (slots: number[]) => set({ currentUserSlots: slots }),
   toggleSlot: (slotId: number) =>
     set((state) => {
+      if (!state.isEditMode) return state;
       const newSlots = new Set(state.selectedSlots);
       if (newSlots.has(slotId)) {
         newSlots.delete(slotId);
