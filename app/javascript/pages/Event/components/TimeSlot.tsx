@@ -78,7 +78,7 @@ export function TimeSlot({
     BASE_CLASSES,
     availabilityStyle,
     isSelected && "ring-[2px] ring-orange-300 ring-inset",
-    isHovered && "z-10 shadow-lg border border-dashed",
+    isHovered && "z-10 shadow-lg border border-gray-400 border-dashed",
   ]
     .filter(Boolean)
     .join(" ");
@@ -90,7 +90,7 @@ export function TimeSlot({
         onMouseDown={onMouseDown}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
-        aria-label={timeRange.replace("\n", " - ")}
+        aria-label={timeRange}
       ></button>
 
       {isHovered && <Tooltip timeRange={timeRange} />}

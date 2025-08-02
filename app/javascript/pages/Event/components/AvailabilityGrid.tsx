@@ -6,7 +6,6 @@ import { GridContext } from "../contexts/GridContext";
 import { useDragSelection } from "../hooks/useDragSelection";
 import { useGridData } from "../hooks/useGridData";
 import { formatHour } from "../utils/dateFormatters";
-import { getAvailabilityStyle } from "../utils/availabilityHelpers";
 import { useEventStore } from "@/stores/eventStore";
 
 interface AvailabilityGridProps {
