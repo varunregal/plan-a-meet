@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Check } from "lucide-react";
 
 export function AvailabilitySidebar({
   participantName,
@@ -28,7 +29,7 @@ export function AvailabilitySidebar({
             value={participantName}
             onChange={(e) => onNameChange(e.target.value)}
             placeholder="Enter your name"
-            className="w-full"
+            className={`w-full ${nameError ? "border-red-500" : ""}`}
           />
           {nameError && (
             <p className="text-xs text-red-500 mt-2">{nameError}</p>
@@ -40,16 +41,24 @@ export function AvailabilitySidebar({
           )}
         </div>
       )}
-      {hasUnsavedChanges && (
-        <Button
-          onClick={onSaveAvailability}
-          disabled={isSaving}
-          className="w-full"
-          size="lg"
-        >
-          {isSaving ? "Saving..." : "Save Availability"}
-        </Button>
-      )}
+
+      <Button
+        onClick={onSaveAvailability}
+        disabled={isSaving || !hasUnsavedChanges}
+        className="w-full"
+        size="lg"
+      >
+        {isSaving ? (
+          "Saving..."
+        ) : !hasUnsavedChanges ? (
+          <span className="flex items-center gap-2">
+            <Check className="h-4 w-4" />
+            Availability Saved
+          </span>
+        ) : (
+          "Save Availability"
+        )}
+      </Button>
     </div>
   );
 }
