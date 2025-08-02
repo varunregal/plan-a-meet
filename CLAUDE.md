@@ -370,19 +370,39 @@ end
 7. **Frontend Availability Save** - Working save functionality with proper state management
 8. **Load Saved Selections** - Users see their previously saved availability when returning
 
+### Completed ✅ (Recent)
+1. **Edit/View Mode Implementation** - Clear separation between viewing and editing availability
+   - Edit mode hides heatmap and shows simple selection UI
+   - View mode shows full heatmap with everyone's availability
+   - Edit/Save buttons in header for better mobile UX
+2. **State Management with Zustand** - Centralized state management replacing prop drilling
+   - Moved selectedSlots, hasUnsavedChanges, totalParticipants to store
+   - Clean separation between saved state (currentUserSlots) and draft state (selectedSlots)
+3. **Anonymous User Name Dialog** - Modal dialog for name input instead of sidebar
+   - Matches InvitePeopleDialog styling for consistency
+   - Progressive disclosure - only shown when saving
+4. **UI/UX Improvements**
+   - Violet/primary color heatmap matching brand identity
+   - Orange selection indicators for clear visual hierarchy
+   - Shake animation + scroll to Edit button when clicking in view mode
+   - Percentage-based heatmap showing participant availability
+5. **Participants List** - Minimal design showing who has responded
+   - Clean, lightweight UI without heavy borders
+   - Shows response status with subtle indicators
+
 ### In Progress 🚧
-1. **Anonymous User Name Input** - Building sidebar component for cleaner UI
-2. **Timezone Key Mismatch** - Frontend and backend generate different key formats
+1. **Participants List Backend Integration** - Connect to real participant data from backend
+2. **Participant Hover Highlighting** - Highlight participant's slots on hover
 
 ### Next Steps 📋
-1. **Complete Anonymous User Sidebar**
-   - Finish implementing `AvailabilitySidebar` component
-   - Move save functionality from sticky bar to sidebar
-   - Add participant name validation and storage
+1. **Backend Participants API**
+   - Update availabilities controller to return participant data
+   - Include slot IDs for each participant
    
-2. **Fix Timezone Display Issues**
-   - Ensure frontend generates same timezone-based keys as backend
-   - Consider implementing timezone selector in availability grid
+2. **Interactive Participants List**
+   - Connect to real data from backend
+   - Implement hover to highlight participant's slots
+   - Add loading states
    
 3. **Conversion Flow** - Converting anonymous data when users sign up/sign in
    - Add `convert_anonymous_to_authenticated` to RegistrationsController

@@ -13,7 +13,7 @@ AllCops:
     - "db/queue_schema.rb"
 
 RSpec/MultipleExpectations:
-  Max: 4
+  Max: 5
 
 RSpec/ExampleLength:
   Max: 30

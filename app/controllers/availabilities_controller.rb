@@ -5,7 +5,9 @@ class AvailabilitiesController < ApplicationController
     render json: {
       availability_data: build_availability_data(event),
       current_user_slots: current_user_time_slots(event),
-      total_event_participants: unique_participant_count(event)
+      total_event_participants: unique_participant_count(event),
+      participants: build_participant_data(event)
+
     }
   end
 
@@ -74,6 +76,54 @@ class AvailabilitiesController < ApplicationController
     event.availabilities
          .select('DISTINCT COALESCE(user_id::text, anonymous_session_id)')
          .count
+  end
+
+  def build_participant_data(event)
+    participants = []
+    responded_emails = Set.new
+    availabilities_by_user = event.availabilities.includes(:user, :time_slot).group_by(&:user_id)
+    availabilities_by_user.each do |user_id, user_availabilities|
+      next unless user_id
+
+      user = user_availabilities.first.user
+      responded_emails.add(user.email_address) if user.email_address
+      slot_ids = user_availabilities.map(&:time_slot_id)
+      participants << {
+        id: "user_#{user.id}",
+        name: user.name,
+        responded: true,
+        slot_ids: slot_ids
+      }
+    end
+
+    anonymous_availabilities = event.availabilities
+                                    .where(user_id: nil).where.not(anonymous_session_id: nil)
+                                    .includes(:time_slot).group_by(&:anonymous_session_id)
+    anonymous_availabilities.each do |session_id, anon_availabilities|
+      participant_name = anon_availabilities.first.participant_name
+      slot_ids = anon_availabilities.map(&:time_slot_id)
+
+      participants << {
+        id: "anon_#{session_id}",
+        name: participant_name,
+        responded: true,
+        slot_ids: slot_ids
+      }
+    end
+
+    event.invitations.each do |invitation|
+      next if responded_emails.include?(invitation.email_address)
+
+      user = User.find_by(email_address: invitation.email_address)
+
+      participants << {
+        id: user ? "user_#{user.id}" : "invite_#{invitation.id}",
+        name: user ? user.name : invitation.email_address,
+        responded: false,
+        slot_ids: []
+      }
+    end
+    participants
   end
 
   def valid_create_params?

@@ -174,6 +174,93 @@ RSpec.describe 'AvailabilitiesController', type: :request do
         end
       end
     end
+
+    context 'when fetching participants data' do
+      it 'returns a participant array in the response' do
+        get "/events/#{event.url}/availabilities"
+        expect(response).to have_http_status(:success)
+        json = response.parsed_body
+        expect(json).to have_key('participants')
+        expect(json[:participants]).to be_an(Array)
+      end
+
+      it 'returns participant data for users who marked availability' do
+        user = create(:user, name: 'John Smith')
+
+        create(:availability, user:, time_slot:)
+        get "/events/#{event.url}/availabilities"
+        json = response.parsed_body
+        participants = json[:participants]
+
+        expect(participants.length).to eq(1)
+        expect(participants.first['name']).to eq('John Smith')
+        expect(participants.first['responded']).to be(true)
+        expect(participants.first['slot_ids']).to include(time_slot.id)
+      end
+
+      it 'returns participant data for anonymous users who have marked availability' do
+        create(:availability, user: nil, time_slot:, participant_name: 'Anonymous User',
+                              anonymous_session_id: 'xyz789')
+        get "/events/#{event.url}/availabilities"
+        json = response.parsed_body
+        participants = json[:participants]
+        expect(participants.length).to eq(1)
+        expect(participants.first['name']).to eq('Anonymous User')
+        expect(participants.first['responded']).to be true
+        expect(participants.first['slot_ids']).to include time_slot.id
+        expect(participants.first['id']).to eq('anon_xyz789')
+      end
+
+      it 'returns multiple participants including both authenticated and anonymous users' do
+        user1 = create(:user, name: 'Alice Smith')
+        create(:availability, user: user1, time_slot:)
+
+        user2 = create(:user, name: 'Bob James')
+        create(:availability, user: user2, time_slot:)
+        create(:availability, user: user2, time_slot: time_slot2)
+
+        create(:availability, user: nil, time_slot:, participant_name: 'Anonymous User', anonymous_session_id: 'xyz789')
+
+        get "/events/#{event.url}/availabilities"
+        json = response.parsed_body
+        participants = json[:participants]
+        expect(participants.length).to eq(3)
+
+        participants_name = participants.map { |p| p['name'] }
+        expect(participants_name).to include('Alice Smith', 'Bob James', 'Anonymous User')
+
+        bob = participants.find { |p| p['name'] == 'Bob James' }
+        expect(bob['slot_ids'].length).to eq 2
+      end
+
+      it "includes invited users who signed up but haven't marked availability" do
+        invited_user = create(:user, name: 'Jane NotResponded', email_address: 'jane@example.com')
+        create(:invitation, event:, email_address: 'jane@example.com', status: 'pending')
+
+        get "/events/#{event.url}/availabilities"
+
+        json = response.parsed_body
+        participants = json[:participants]
+        jane = participants.find { |p| p['name'] == 'Jane NotResponded' }
+        expect(jane).to be_present
+        expect(jane['responded']).to be false
+        expect(jane['slot_ids']).to eq([])
+        expect(jane['id']).to eq("user_#{invited_user.id}")
+      end
+
+      it "includes invited users who haven't signed up yet" do
+        invitation = create(:invitation, event:, email_address: 'no-account@example.com', status: 'pending')
+        get "/events/#{event.url}/availabilities"
+        json = response.parsed_body
+        participants = json['participants']
+
+        no_account = participants.find { |p| p['name'] == 'no-account@example.com' }
+        expect(no_account).to be_present
+        expect(no_account['responded']).to be false
+        expect(no_account['slot_ids']).to eq([])
+        expect(no_account['id']).to eq("invite_#{invitation.id}")
+      end
+    end
   end
 
   describe 'POST /events/:url/availabilities' do
