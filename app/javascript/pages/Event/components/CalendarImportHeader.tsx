@@ -3,13 +3,18 @@ interface CalendarImportHeaderProps {
   className?: string;
 }
 
-export function CalendarImportHeader({ 
+export function CalendarImportHeader({
   title = "Add Your Availability",
-  className = "" 
+  className = "",
 }: CalendarImportHeaderProps) {
   return (
-    <h2 className={`text-xl font-semibold text-gray-900 mb-4 ${className}`}>
-      {title}
-    </h2>
+    <div className="space-y-1 mb-2">
+      <h2 className={`text-xl font-semibold text-gray-900 ${className}`}>
+        {title}
+      </h2>
+      <p className="text-sm text-muted-foreground">
+        Click and drag to select the availabilities
+      </p>
+    </div>
   );
 }

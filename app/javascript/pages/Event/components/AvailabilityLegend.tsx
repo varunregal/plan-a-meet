@@ -1,23 +1,44 @@
-import { memo } from 'react';
+export function AvailabilityLegend() {
+  const legendItems = [
+    {
+      color: "bg-primary",
+      label: "Your selection",
+      description: "Time slots you've selected",
+    },
+    {
+      color: "bg-green-100 border-2 border-green-300",
+      label: "Group Availability",
+      description: "Others are available",
+    },
+    {
+      color: "bg-gray-100",
+      label: "No responses",
+      description: "No one has marked this slot",
+    },
+    {
+      color: "bg-primary opacity-50 border-2 border-dashed border-primary",
+      label: "Unsaved selection",
+      description: "Your pending changes",
+    },
+  ];
 
-const OPACITY_LEVELS = [0.2, 0.4, 0.6, 0.8] as const;
-
-export const AvailabilityLegend = memo(() => {
   return (
-    <div className="text-right">
-      <div className="text-sm text-gray-600 mb-2">Availability</div>
-      <div className="flex items-center gap-2 text-xs">
-        <div className="flex gap-1 items-center">
-          {OPACITY_LEVELS.map((opacity) => (
+    <div className="rounded-lg border border-gray-200 p-4">
+      <h4 className="font-medium text-gray-900 mb-3">Legend</h4>
+      <div className="space-y-4">
+        {legendItems.map((item, index) => (
+          <div key={index} className="flex items-center gap-3">
             <div
-              key={opacity}
-              className="w-4 h-4 bg-primary rounded"
-              style={{ opacity }}
+              className={`w-4 h-4 rounded flex-shrink-0 mt-0.5 ${item.color}`}
+              aria-hidden="true"
             />
-          ))}
-        </div>
-        <span className="text-gray-500">Fewer → More people</span>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-gray-900">{item.label}</p>
+              <p className="text-xs text-gray-500">{item.description}</p>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
-});
+}

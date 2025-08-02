@@ -2,12 +2,8 @@ import { createContext, useContext } from "react";
 import { TimeSlotProps } from "../event.types";
 
 export interface GridContextValue {
-  selectedSlots: Set<number>;
-  // setSelectedSlots: any;
   hoveredSlot: string | null;
-  showGroupAvailability: boolean;
   availabilityData: { [key: string]: string[] };
-  getAvailabilityStyle: (count: number) => { bg: string; opacity: string };
   getSlot: (date: string, hour: number, minute: number) => TimeSlotProps | null;
   handleSlotInteraction: {
     onMouseDown: (

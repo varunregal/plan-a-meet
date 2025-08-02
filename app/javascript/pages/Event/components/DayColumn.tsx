@@ -1,5 +1,6 @@
 import { TimeSlot } from "./TimeSlot";
 import { useGridContext } from "../contexts/GridContext";
+import { useEventStore } from "@/stores/eventStore";
 
 interface DayColumnProps {
   dateStr: string;
@@ -7,15 +8,9 @@ interface DayColumnProps {
 }
 
 export function DayColumn({ dateStr, hours }: DayColumnProps) {
-  const {
-    selectedSlots,
-    hoveredSlot,
-    showGroupAvailability,
-    availabilityData,
-    getAvailabilityStyle,
-    getSlot,
-    handleSlotInteraction,
-  } = useGridContext();
+  const { hoveredSlot, availabilityData, getSlot, handleSlotInteraction } =
+    useGridContext();
+  const selectedSlots = useEventStore((state) => state.selectedSlots);
   const date = new Date(dateStr);
   const dayName = date.toLocaleDateString("en-US", { weekday: "short" });
   const dayNum = date.getDate();
@@ -23,9 +18,9 @@ export function DayColumn({ dateStr, hours }: DayColumnProps) {
 
   return (
     <div className="flex-1 border-r border-gray-200 last:border-r-0">
-      <div className="h-16 border-b border-gray-200 flex flex-col items-center justify-center bg-gray-50">
+      <div className="h-16 font-semibold border-b border-gray-200 flex flex-col items-center justify-center">
         <div className="text-xs text-gray-500">{dayName}</div>
-        <div className="text-sm font-medium text-gray-900">
+        <div className="text-sm text-gray-900">
           {monthName} {dayNum}
         </div>
       </div>
@@ -49,7 +44,6 @@ export function DayColumn({ dateStr, hours }: DayColumnProps) {
                 const availability = availabilityData[key] || [];
                 const count = availability.length;
                 const isHovered = hoveredSlot === key;
-                const style = getAvailabilityStyle(count);
 
                 return (
                   <TimeSlot
@@ -59,8 +53,6 @@ export function DayColumn({ dateStr, hours }: DayColumnProps) {
                     isSelected={isSelected}
                     isHovered={isHovered}
                     availabilityCount={count}
-                    showGroupAvailability={showGroupAvailability}
-                    opacity={style.opacity}
                     onMouseDown={(e) =>
                       handleSlotInteraction.onMouseDown(e, slot.id, isSelected)
                     }

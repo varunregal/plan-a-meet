@@ -7,6 +7,8 @@ import api from "@/lib/api";
 import { toast } from "sonner";
 import { AvailabilitySidebar } from "./components/AvailabilitySidebar";
 import { usePage } from "@inertiajs/react";
+import { AvailabilityLegend } from "./components/AvailabilityLegend";
+import { useEventStore } from "@/stores/eventStore";
 
 function EventShow({
   event,
@@ -25,13 +27,20 @@ function EventShow({
   const [availabilityData, setAvailabilityData] = useState<{
     [key: string]: string[];
   }>({});
-  const [currentUserSlots, setCurrentUserSlots] = useState<number[]>([]);
+
+  const setCurrentUserSlots = useEventStore(
+    (state) => state.setCurrentUserSlots,
+  );
+  const setTotalParticipants = useEventStore(
+    (state) => state.setTotalParticipants,
+  );
+  const selectedSlots = useEventStore((state) => state.selectedSlots);
   const [isLoadingAvailability, setIsLoadingAvailability] = useState(false);
+
   const [participantName, setParticipantName] = useState<string>("");
   const [nameError, setNameError] = useState<string>("");
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+
   const [isSaving, setIsSaving] = useState(false);
-  const [selectedSlots, setSelectedSlots] = useState<Set<number>>(new Set());
 
   const isAnonymous = !current_user;
 
@@ -45,9 +54,14 @@ function EventShow({
     const fetchAvailability = async () => {
       try {
         const response = await api.get(`/events/${event.url}/availabilities`);
-        const { current_user_slots, availability_data } = response.data;
+        const {
+          current_user_slots,
+          availability_data,
+          total_event_participants,
+        } = response.data;
         setCurrentUserSlots(current_user_slots || []);
         setAvailabilityData(availability_data || {});
+        setTotalParticipants(total_event_participants || 0);
       } catch (error) {
         console.error("Failed to fetch availability data", error);
         toast.error("Failed to fetch users availability for this event");
@@ -86,7 +100,7 @@ function EventShow({
         payload.participant_name = participantName.trim();
       }
       await api.post(`/events/${event.url}/availabilities`, payload);
-      setHasUnsavedChanges(false);
+      setCurrentUserSlots(Array.from(selectedSlots));
       toast.success("Availability saved successfully!");
       if (isAnonymous) {
         document.cookie = `participant_name=${encodeURIComponent(participantName.trim())}; max-age=${
@@ -101,10 +115,6 @@ function EventShow({
     }
   };
 
-  const handleSelectionChange = (newSelectedSlots: Set<number>) => {
-    setSelectedSlots(newSelectedSlots);
-    setHasUnsavedChanges(true);
-  };
   return (
     <div className="min-h-screen">
       <div className="max-w-7xl mx-auto">
@@ -120,24 +130,21 @@ function EventShow({
             <div className="lg:col-span-3">
               <CalendarImportSection
                 timeSlots={time_slots}
-                eventUrl={event.url}
-                currentUserSlots={currentUserSlots}
                 availabilityData={availabilityData}
-                setHasUnsavedChanges={setHasUnsavedChanges}
-                // isLoading={isLoadingAvailability}
-                onSelectionChange={handleSelectionChange}
               />
             </div>
             <div className="lg:sticky lg:top-4 self-start">
-              <AvailabilitySidebar
-                participantName={participantName}
-                onNameChange={handleNameChange}
-                onSaveAvailability={handleSaveAvailability}
-                hasUnsavedChanges={hasUnsavedChanges}
-                isSaving={isSaving}
-                isAnonymous={isAnonymous}
-                nameError={nameError}
-              />
+              <div className="space-y-4">
+                <AvailabilitySidebar
+                  participantName={participantName}
+                  onNameChange={handleNameChange}
+                  onSaveAvailability={handleSaveAvailability}
+                  isSaving={isSaving}
+                  isAnonymous={isAnonymous}
+                  nameError={nameError}
+                />
+                <AvailabilityLegend />
+              </div>
             </div>
           </div>
         </div>

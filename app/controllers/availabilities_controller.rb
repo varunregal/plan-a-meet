@@ -4,7 +4,8 @@ class AvailabilitiesController < ApplicationController
     event = Event.find_by!(url: params[:event_url])
     render json: {
       availability_data: build_availability_data(event),
-      current_user_slots: current_user_time_slots(event)
+      current_user_slots: current_user_time_slots(event),
+      total_event_participants: unique_participant_count(event)
     }
   end
 
@@ -67,6 +68,12 @@ class AvailabilitiesController < ApplicationController
                 .where(time_slots: { event_id: event.id })
                 .where(anonymous_session_id: cookies.signed[:anonymous_session_id])
                 .pluck(:time_slot_id)
+  end
+
+  def unique_participant_count(event)
+    event.availabilities
+         .select('DISTINCT COALESCE(user_id::text, anonymous_session_id)')
+         .count
   end
 
   def valid_create_params?
