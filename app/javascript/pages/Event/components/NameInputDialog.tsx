@@ -7,6 +7,9 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { UserIcon } from "lucide-react";
 
 export function NameInputDialog({
   open,
@@ -31,25 +34,27 @@ export function NameInputDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Enter Your Name</DialogTitle>
+          <DialogTitle>Save Your Availability</DialogTitle>
           <DialogDescription>
-            Please enter your name to save your availability. This helps others
-            know who's available.
+            Enter your name so others know who's available
           </DialogDescription>
         </DialogHeader>
+        <Separator />
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <Input
-              type="text"
-              value={participantName}
-              onChange={(e) => onNameChange(e.target.value)}
-              placeholder="Your name"
-              className={nameError ? "border-red-500" : ""}
-              autoFocus
-            />
-            {nameError && (
-              <p className="text-xs text-red-500 mt-2">{nameError}</p>
-            )}
+          <div className="space-y-2">
+            <Label>Your Name</Label>
+            <div className="relative">
+              <UserIcon className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="text"
+                value={participantName}
+                onChange={(e) => onNameChange(e.target.value)}
+                placeholder="Enter your name"
+                className={`pl-9 ${nameError ? "border-red-500" : ""}`}
+                autoFocus
+              />
+            </div>
+            {nameError && <p className="text-sm text-red-500">{nameError}</p>}
           </div>
           <div className="flex gap-2 justify-end">
             <Button
@@ -59,7 +64,7 @@ export function NameInputDialog({
             >
               Cancel
             </Button>
-            <Button type="submit">Continue</Button>
+            <Button type="submit">Save Availability</Button>
           </div>
         </form>
       </DialogContent>

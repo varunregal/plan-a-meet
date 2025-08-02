@@ -9,6 +9,7 @@ import { AvailabilitySidebar } from "./components/AvailabilitySidebar";
 import { usePage } from "@inertiajs/react";
 import { AvailabilityLegend } from "./components/AvailabilityLegend";
 import { useEventStore } from "@/stores/eventStore";
+import { NameInputDialog } from "./components/NameInputDialog";
 
 function EventShow({
   event,
@@ -24,25 +25,23 @@ function EventShow({
   time_slots: TimeSlotProps[];
 }) {
   const { current_user } = usePage().props;
+
+  const {
+    selectedSlots,
+    setSelectedSlots,
+    saveEditing,
+    setTotalParticipants,
+    setCurrentUserSlots,
+  } = useEventStore();
+
   const [availabilityData, setAvailabilityData] = useState<{
     [key: string]: string[];
   }>({});
-
-  const setCurrentUserSlots = useEventStore(
-    (state) => state.setCurrentUserSlots,
-  );
-  const setTotalParticipants = useEventStore(
-    (state) => state.setTotalParticipants,
-  );
-  const selectedSlots = useEventStore((state) => state.selectedSlots);
-  const setSelectedSlots = useEventStore((state) => state.setSelectedSlots);
-  const saveEditing = useEventStore((state) => state.saveEditing);
   const [isLoadingAvailability, setIsLoadingAvailability] = useState(false);
-
   const [participantName, setParticipantName] = useState<string>("");
   const [nameError, setNameError] = useState<string>("");
-
   const [isSaving, setIsSaving] = useState(false);
+  const [showNameDialog, setShowNameDialog] = useState(false);
 
   const isAnonymous = !current_user;
 
@@ -89,6 +88,14 @@ function EventShow({
     }
   }, [isAnonymous]);
 
+  const handleSaveClick = () => {
+    if (isAnonymous && !participantName.trim()) {
+      setShowNameDialog(true);
+    } else {
+      handleSaveAvailability();
+    }
+  };
+
   const handleSaveAvailability = async () => {
     if (isAnonymous && !participantName.trim()) {
       setNameError("Please enter your name to save");
@@ -120,43 +127,55 @@ function EventShow({
     }
   };
 
-  return (
-    <div className="min-h-screen">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col gap-6">
-          <EventHeader
-            event={event}
-            creatorName={event_creator}
-            invitations={invitations}
-          />
-          <AuthAlert />
+  const handleNameConfirm = () => {
+    if (participantName.trim()) {
+      setShowNameDialog(false);
+      setNameError("");
+      handleSaveAvailability();
+    } else {
+      setNameError("Please enter your name");
+    }
+  };
 
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
-            <div className="lg:col-span-3">
-              <CalendarImportSection
-                timeSlots={time_slots}
-                availabilityData={availabilityData}
-                onSaveAvailability={handleSaveAvailability}
-                isSaving={isSaving}
-              />
-            </div>
-            <div className="lg:sticky lg:top-4 self-start">
-              <div className="space-y-4">
-                <AvailabilitySidebar
-                  participantName={participantName}
-                  onNameChange={handleNameChange}
-                  // onSaveAvailability={handleSaveAvailability}
-                  // isSaving={isSaving}
-                  isAnonymous={isAnonymous}
-                  nameError={nameError}
+  return (
+    <>
+      <div className="min-h-screen">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col gap-6">
+            <EventHeader
+              event={event}
+              creatorName={event_creator}
+              invitations={invitations}
+            />
+            <AuthAlert />
+
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
+              <div className="lg:col-span-3">
+                <CalendarImportSection
+                  timeSlots={time_slots}
+                  availabilityData={availabilityData}
+                  onSaveAvailability={handleSaveClick}
+                  isSaving={isSaving}
                 />
-                <AvailabilityLegend />
+              </div>
+              <div className="lg:sticky lg:top-4 self-start">
+                <div className="space-y-4">
+                  <AvailabilityLegend />
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+      <NameInputDialog
+        open={showNameDialog}
+        onOpenChange={setShowNameDialog}
+        participantName={participantName}
+        onNameChange={handleNameChange}
+        onConfirm={handleNameConfirm}
+        nameError={nameError}
+      />
+    </>
   );
 }
 
