@@ -82,6 +82,24 @@ This enhancement should be implemented after the core availability marking featu
   - Clean, refactored controller with single responsibility methods
   - Transaction-wrapped operations for data integrity
   - Proper error responses in consistent format
+- **Frontend Save Functionality**:
+  - Created axios API wrapper with CSRF token support
+  - Implemented save button with unsaved changes tracking
+  - Added loading states and toast notifications
+  - Fixed initialization bug (changed `> 1` to `> 0` for loading saved selections)
+
+### Timezone Support (Completed)
+- **Database Changes**:
+  - Added `time_zone` column to events table via migration
+  - Events now store the timezone selected during creation
+- **Backend Implementation**:
+  - Event model validates and stores timezone
+  - Time slots created in the event's timezone but stored as UTC
+  - Availability keys generated using event's timezone for consistency
+- **Frontend Components**:
+  - Created `TimezoneSelect` component with comprehensive timezone list
+  - Integrated timezone selection in event creation form
+  - Auto-detects user's timezone as default
 
 ### Code Quality & Testing
 - Comprehensive test coverage for registrations and core functionality
@@ -95,17 +113,21 @@ This enhancement should be implemented after the core availability marking featu
 ### Frontend Availability Integration (IN PROGRESS)
 **Completed:**
 - Added unsaved changes tracking with visual indicator
-- Implemented sticky save button that appears when changes are made
-- Created save functionality using fetch API with CSRF token
+- Implemented save functionality using axios API with CSRF token
 - Added loading states during save operation
 - Integrated toast notifications for success/error feedback
+- Load and display current user's saved selections on page load
+- Fixed initialization bug for single saved slot (changed `> 1` to `> 0`)
+
+**In Progress:**
+- Creating sidebar component for anonymous user name input
+- Moving save functionality to dedicated sidebar for cleaner UI
 
 **Next Steps:**
-- Handle anonymous users (show name input field)
-- Load and display current user's saved selections on page load
-- Implement participant name validation for anonymous users
-- Add optimistic updates for better UX
+- Complete anonymous user handling with name input in sidebar
+- Add stats display (selected slots, total hours) in sidebar
 - Handle session creation for new anonymous users
+- Fix timezone key mismatch between frontend and backend
 
 ### Invitation Acceptance/Decline Flow (TODO)
 **Next Steps:**
@@ -317,26 +339,27 @@ end
 3. **Creator Identification** - Show page identifies if viewer is the event creator
 4. **Cookie Management** - Only sets cookies when users take actions (not just viewing)
 5. **Test Coverage** - Comprehensive tests for all anonymous user scenarios
+6. **Timezone Support** - Added timezone to events table and selection in event creation
+7. **Frontend Availability Save** - Working save functionality with proper state management
+8. **Load Saved Selections** - Users see their previously saved availability when returning
 
 ### In Progress 🚧
-1. **Conversion Flow** - Converting anonymous data when users sign up/sign in
-2. **Cleanup Old Code** - Removing obsolete session-based event assignment methods
+1. **Anonymous User Name Input** - Building sidebar component for cleaner UI
+2. **Timezone Key Mismatch** - Frontend and backend generate different key formats
 
 ### Next Steps 📋
-1. **Implement Conversion in Authentication**
+1. **Complete Anonymous User Sidebar**
+   - Finish implementing `AvailabilitySidebar` component
+   - Move save functionality from sticky bar to sidebar
+   - Add participant name validation and storage
+   
+2. **Fix Timezone Display Issues**
+   - Ensure frontend generates same timezone-based keys as backend
+   - Consider implementing timezone selector in availability grid
+   
+3. **Conversion Flow** - Converting anonymous data when users sign up/sign in
    - Add `convert_anonymous_to_authenticated` to RegistrationsController
    - Add same conversion to SessionsController
-   - Remove old `assign_pending_event_creator` and related methods
-   
-2. **Anonymous Availability Marking**
-   - Create UI for anonymous users to mark availability
-   - Require name input for anonymous users
-   - Implement "Not you?" functionality for shared devices
-   
-3. **Availability Grid Display**
-   - Show who's available for each time slot
-   - Display names (full for authenticated, partial for anonymous)
-   - Highlight current user's selections
    
 4. **Progressive Engagement UI**
    - Add prompts to sign up for notifications
@@ -346,7 +369,7 @@ end
 ### Technical Debt to Address
 - Remove `Events::Create` service file (low priority)
 - Clean up old session-based event tracking code
-- Fix typos in test descriptions ("vbiew" → "view")
+- Add timezone tests for availabilities controller
 
 #### Handling Shared Browsers
 For browsers used by multiple people (family computer, work computer):

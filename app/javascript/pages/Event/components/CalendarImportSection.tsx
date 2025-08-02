@@ -16,6 +16,7 @@ interface CalendarImportSectionProps {
   onImportCalendar?: (provider: "google" | "outlook") => void;
   eventUrl: string;
   currentUserSlots?: number[];
+  setHasUnsavedChanges: (bool: boolean) => void;
 }
 
 function CalendarImportSectionComponent({
@@ -25,9 +26,10 @@ function CalendarImportSectionComponent({
   currentUserSlots,
   onImportCalendar,
   eventUrl,
+  setHasUnsavedChanges,
 }: CalendarImportSectionProps) {
-  const [hasUnSavedChanges, setHasUnSavedChanges] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
+  // const [hasUnSavedChanges, setHasUnSavedChanges] = useState(false);
+  // const [isSaving, setIsSaving] = useState(false);
   const {
     selectedSlots,
     showGroupAvailability,
@@ -45,7 +47,7 @@ function CalendarImportSectionComponent({
   const handleSlotClickWithCallback = useCallback(
     (slotId: number) => {
       handleSlotClick(slotId);
-      setHasUnSavedChanges(true);
+      setHasUnsavedChanges(true);
 
       if (onSelectionChange) {
         const newSet = new Set(selectedSlots);
@@ -62,7 +64,7 @@ function CalendarImportSectionComponent({
 
   const handleClearSelection = useCallback(() => {
     clearSelection();
-    setHasUnSavedChanges(true);
+    setHasUnsavedChanges(true);
   }, [clearSelection]);
 
   const handleSelectBestTimes = useCallback(() => {
@@ -70,21 +72,21 @@ function CalendarImportSectionComponent({
     console.log("Select best times - to be implemented");
   }, []);
 
-  const handleSaveAvailability = async () => {
-    setIsSaving(true);
-    try {
-      await api.post(`/events/${eventUrl}/availabilities`, {
-        time_slot_ids: Array.from(selectedSlots),
-      });
-      setHasUnSavedChanges(false);
-      toast.success("Availability saved successfully!");
-    } catch (error) {
-      console.error("Failed to save availability", error);
-      toast.error("Failed to save availability");
-    } finally {
-      setIsSaving(false);
-    }
-  };
+  // const handleSaveAvailability = async () => {
+  //   setIsSaving(true);
+  //   try {
+  //     await api.post(`/events/${eventUrl}/availabilities`, {
+  //       time_slot_ids: Array.from(selectedSlots),
+  //     });
+  //     setHasUnSavedChanges(false);
+  //     toast.success("Availability saved successfully!");
+  //   } catch (error) {
+  //     console.error("Failed to save availability", error);
+  //     toast.error("Failed to save availability");
+  //   } finally {
+  //     setIsSaving(false);
+  //   }
+  // };
 
   return (
     <div className={AVAILABILITY_CONSTANTS.CONTAINER_CLASSES}>
@@ -109,7 +111,7 @@ function CalendarImportSectionComponent({
         showGroupAvailability={showGroupAvailability}
         availabilityData={availabilityData}
       />
-      {hasUnSavedChanges && (
+      {/*{hasUnSavedChanges && (
         <div className="sticky z-10 bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 mt-4">
           <div className="flex items-center justify-between">
             <span className="text-sm text-amber-600 font-medium">
@@ -124,7 +126,7 @@ function CalendarImportSectionComponent({
             </button>
           </div>
         </div>
-      )}
+      )}*/}
     </div>
   );
 }
