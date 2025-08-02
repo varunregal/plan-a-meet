@@ -6,7 +6,7 @@ class AvailabilitiesController < ApplicationController
       availability_data: build_availability_data(event),
       current_user_slots: current_user_time_slots(event),
       total_event_participants: unique_participant_count(event),
-      participants: build_participant_data(event)
+      participants: build_participants_data(event)
 
     }
   end
@@ -78,9 +78,17 @@ class AvailabilitiesController < ApplicationController
          .count
   end
 
-  def build_participant_data(event)
+  def build_participants_data(event)
     participants = []
     responded_emails = Set.new
+    participants.concat(build_authenticated_participants(event, responded_emails))
+    participants.concat(build_anonymous_participants(event))
+    participants.concat(build_invited_participants(event, responded_emails))
+    participants
+  end
+
+  def build_authenticated_participants(event, responded_emails)
+    participants = []
     availabilities_by_user = event.availabilities.includes(:user, :time_slot).group_by(&:user_id)
     availabilities_by_user.each do |user_id, user_availabilities|
       next unless user_id
@@ -95,7 +103,11 @@ class AvailabilitiesController < ApplicationController
         slot_ids: slot_ids
       }
     end
+    participants
+  end
 
+  def build_anonymous_participants(event)
+    participants = []
     anonymous_availabilities = event.availabilities
                                     .where(user_id: nil).where.not(anonymous_session_id: nil)
                                     .includes(:time_slot).group_by(&:anonymous_session_id)
@@ -110,7 +122,11 @@ class AvailabilitiesController < ApplicationController
         slot_ids: slot_ids
       }
     end
+    participants
+  end
 
+  def build_invited_participants(event, responded_emails)
+    participants = []
     event.invitations.each do |invitation|
       next if responded_emails.include?(invitation.email_address)
 
