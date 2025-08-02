@@ -33,6 +33,7 @@ function EventShow({
     saveEditing,
     setTotalParticipants,
     setCurrentUserSlots,
+    setParticipants,
   } = useEventStore();
 
   const [availabilityData, setAvailabilityData] = useState<{
@@ -59,11 +60,13 @@ function EventShow({
         current_user_slots,
         availability_data,
         total_event_participants,
+        participants,
       } = response.data;
       setCurrentUserSlots(current_user_slots || []);
       setSelectedSlots(new Set(current_user_slots || []));
       setAvailabilityData(availability_data || {});
       setTotalParticipants(total_event_participants || 0);
+      setParticipants(participants || []);
     } catch (error) {
       console.error("Failed to fetch availability data", error);
       toast.error("Failed to fetch users availability for this event");

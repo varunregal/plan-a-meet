@@ -3,6 +3,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useEventStore } from "@/stores/eventStore";
 import { Check, Clock } from "lucide-react";
 import { ReactNode } from "react";
 
@@ -28,6 +29,7 @@ function ParticipantActionToolTip({
   );
 }
 export function ParticipantsList() {
+  const { participants, setHoveredParticipantId } = useEventStore();
   const mockParticipants: ParticipantProps[] = [
     { id: 1, name: "John Smith", responded: true },
     { id: 2, name: "Jane Doe", responded: true },
@@ -38,15 +40,17 @@ export function ParticipantsList() {
     <div className="space-y-3 rounded-lg border border-gray-200 p-4">
       <div className="flex items-center justify-center">
         <h4 className="text-sm font-medium text-gray-700 underline underline-offset-2">
-          {mockParticipants.filter((i) => i.responded).length} of{" "}
-          {mockParticipants.length} responded
+          {participants.filter((i) => i.responded).length} of{" "}
+          {participants.length} responded
         </h4>
       </div>
 
       <div className="space-y-1">
-        {mockParticipants.map((participant) => (
+        {participants.map((participant) => (
           <div
             key={participant.id}
+            onMouseEnter={() => setHoveredParticipantId(participant.id)}
+            onMouseLeave={() => setHoveredParticipantId(null)}
             className="flex items-center gap-2 py-1.5 px-2 rounded hover:bg-gray-50 transition-colors cursor-pointer group"
           >
             <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">

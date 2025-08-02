@@ -391,15 +391,16 @@ end
    - Shows response status with subtle indicators
 
 ### In Progress 🚧
-1. **Participants List Backend Integration** - Connect to real participant data from backend
-2. **Participant Hover Highlighting** - Highlight participant's slots on hover
+1. **Participants Backend API** (COMPLETED)
+   - Added participants array to availabilities index response
+   - Implemented TDD with 6 incremental tests
+   - Refactored into clean, single-responsibility methods
+   - Returns authenticated users, anonymous users, and invited users
+2. **Participants List Frontend Integration** - Connect to real participant data from backend
+3. **Participant Hover Highlighting** - Highlight participant's slots on hover
 
 ### Next Steps 📋
-1. **Backend Participants API**
-   - Update availabilities controller to return participant data
-   - Include slot IDs for each participant
-   
-2. **Interactive Participants List**
+1. **Interactive Participants List**
    - Connect to real data from backend
    - Implement hover to highlight participant's slots
    - Add loading states
@@ -493,6 +494,23 @@ The codebase follows Rails conventions with Tailwind CSS for styling. Email temp
 - Always use Test-Driven Development (TDD) approach for Rails
 - Explain the problem and approach before generating code
 - Proceed with problem-solving in a step-by-step approach
+
+### Test-Driven Development (TDD) Best Practices
+- **Incremental Testing**: Write one test at a time, make it pass, then move to the next test
+- **Red-Green-Refactor Cycle**: 
+  1. Red: Write a failing test
+  2. Green: Write minimal code to make it pass
+  3. Refactor: Clean up the code while keeping tests green
+- **Single Responsibility Tests**: Each test should verify one specific behavior
+- **Clear Test Names**: Test names should describe what behavior is being tested
+- **Refactor After Green**: Once tests pass, refactor for clarity and maintainability
+- **Example from Project**: Successfully implemented participants data feature using TDD:
+  1. Test for participants array presence → Add empty array
+  2. Test for authenticated users → Implement authenticated logic
+  3. Test for anonymous users → Add anonymous handling
+  4. Test for multiple participants → Verify it works
+  5. Test for invited users → Add invitation logic
+  6. Refactor into separate methods for clarity
 
 ### Testing Best Practices
 - Always check for existing factories before writing manual test setup

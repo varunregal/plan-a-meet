@@ -1,6 +1,14 @@
 import { create } from "zustand";
+interface Participant {
+  id: string;
+  name: string;
+  responded: boolean;
+  slot_ids: number[];
+}
 interface EventStore {
   totalParticipants: number;
+  participants: Participant[];
+  hoveredParticipantId: string | null;
   selectedSlots: Set<number>;
   hasUnsavedChanges: boolean;
   currentUserSlots: number[];
@@ -9,6 +17,9 @@ interface EventStore {
   incrementViewModeClick: () => void;
 
   setTotalParticipants: (count: number) => void;
+  setParticipants: (participants: Participant[]) => void;
+  setHoveredParticipantId: (id: string | null) => void;
+
   setCurrentUserSlots: (slots: number[]) => void;
   toggleSlot: (slotId: number) => void;
   setSelectedSlots: (slots: Set<number>) => void;
@@ -21,6 +32,8 @@ interface EventStore {
 
 export const useEventStore = create<EventStore>((set) => ({
   totalParticipants: 0,
+  participants: [],
+  hoveredParticipantId: null,
   selectedSlots: new Set(),
   hasUnsavedChanges: false,
   currentUserSlots: [],
@@ -34,6 +47,8 @@ export const useEventStore = create<EventStore>((set) => ({
     })),
 
   setTotalParticipants: (count) => set({ totalParticipants: count }),
+  setParticipants: (participants) => set({ participants }),
+  setHoveredParticipantId: (id) => set({ hoveredParticipantId: id }),
   setCurrentUserSlots: (slots: number[]) => set({ currentUserSlots: slots }),
   toggleSlot: (slotId: number) =>
     set((state) => {
