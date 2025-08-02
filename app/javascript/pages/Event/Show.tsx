@@ -10,6 +10,7 @@ import { usePage } from "@inertiajs/react";
 import { AvailabilityLegend } from "./components/AvailabilityLegend";
 import { useEventStore } from "@/stores/eventStore";
 import { NameInputDialog } from "./components/NameInputDialog";
+import { ParticipantsList } from "./components/ParticipantsList";
 
 function EventShow({
   event,
@@ -160,7 +161,8 @@ function EventShow({
               </div>
               <div className="lg:sticky lg:top-4 self-start">
                 <div className="space-y-4">
-                  <AvailabilityLegend />
+                  <ParticipantsList />
+                  {/*<AvailabilityLegend />*/}
                 </div>
               </div>
             </div>

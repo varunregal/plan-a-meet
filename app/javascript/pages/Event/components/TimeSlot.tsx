@@ -16,14 +16,30 @@ const BASE_CLASSES = "w-full h-full transition-all duration-150 relative";
 
 const AVAILABILITY_STYLES = [
   { min: 0, max: 0, classes: "text-gray-500 border-gray-200" },
-  { min: 1, max: 25, classes: "bg-primary/10 text-primary border-primary/20" },
-  { min: 26, max: 50, classes: "bg-primary/20 text-primary border-primary/30" },
-  { min: 51, max: 75, classes: "bg-primary/40 text-primary border-primary/50" },
-  { min: 76, max: 99, classes: "bg-primary/60 text-white border-primary/70" },
+  {
+    min: 1,
+    max: 25,
+    classes: "bg-[#6e56cf]/20 text-primary border-primary/20",
+  },
+  {
+    min: 26,
+    max: 50,
+    classes: "bg-[#6e56cf]/40 text-primary border-primary/30",
+  },
+  {
+    min: 51,
+    max: 75,
+    classes: "bg-[#6e56cf]/50 text-primary border-primary/50",
+  },
+  {
+    min: 76,
+    max: 99,
+    classes: "bg-[#6e56cf]/60 text-white border-primary/70",
+  },
   {
     min: 100,
     max: 100,
-    classes: "bg-primary/90 text-white border-primary font-semibold",
+    classes: "bg-[#6e56cf]/90 text-white border-primary font-semibold",
   },
 ];
 
@@ -78,7 +94,9 @@ export function TimeSlot({
   const buttonClasses = [
     BASE_CLASSES,
     availabilityStyle,
-    isSelected && isEditMode && "ring-[2px] ring-orange-300 ring-inset",
+    isSelected &&
+      isEditMode &&
+      "bg-primary/90 text-white border-primary font-semibold",
     isHovered && "z-10 shadow-lg border border-gray-400 border-dashed",
   ]
     .filter(Boolean)
