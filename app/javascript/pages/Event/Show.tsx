@@ -52,27 +52,27 @@ function EventShow({
       setNameError("");
     }
   };
-  useEffect(() => {
-    const fetchAvailability = async () => {
-      try {
-        const response = await api.get(`/events/${event.url}/availabilities`);
-        const {
-          current_user_slots,
-          availability_data,
-          total_event_participants,
-        } = response.data;
-        setCurrentUserSlots(current_user_slots || []);
-        setSelectedSlots(new Set(current_user_slots || []));
-        setAvailabilityData(availability_data || {});
-        setTotalParticipants(total_event_participants || 0);
-      } catch (error) {
-        console.error("Failed to fetch availability data", error);
-        toast.error("Failed to fetch users availability for this event");
-      } finally {
-        setIsLoadingAvailability(false);
-      }
-    };
+  const fetchAvailability = async () => {
+    try {
+      const response = await api.get(`/events/${event.url}/availabilities`);
+      const {
+        current_user_slots,
+        availability_data,
+        total_event_participants,
+      } = response.data;
+      setCurrentUserSlots(current_user_slots || []);
+      setSelectedSlots(new Set(current_user_slots || []));
+      setAvailabilityData(availability_data || {});
+      setTotalParticipants(total_event_participants || 0);
+    } catch (error) {
+      console.error("Failed to fetch availability data", error);
+      toast.error("Failed to fetch users availability for this event");
+    } finally {
+      setIsLoadingAvailability(false);
+    }
+  };
 
+  useEffect(() => {
     fetchAvailability();
   }, [event.url]);
 
@@ -105,6 +105,8 @@ function EventShow({
       await api.post(`/events/${event.url}/availabilities`, payload);
       saveEditing();
       toast.success("Availability saved successfully!");
+
+      await fetchAvailability();
       if (isAnonymous) {
         document.cookie = `participant_name=${encodeURIComponent(participantName.trim())}; max-age=${
           30 * 24 * 60 * 60

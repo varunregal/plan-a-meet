@@ -67,6 +67,7 @@ export function TimeSlot({
   onMouseLeave,
 }: TimeSlotProps) {
   const totalParticipants = useEventStore((state) => state.totalParticipants);
+  const isEditMode = useEventStore((state) => state.isEditMode);
 
   const percentage =
     totalParticipants > 0
@@ -77,7 +78,7 @@ export function TimeSlot({
   const buttonClasses = [
     BASE_CLASSES,
     availabilityStyle,
-    isSelected && "ring-[2px] ring-orange-300 ring-inset",
+    isSelected && isEditMode && "ring-[2px] ring-orange-300 ring-inset",
     isHovered && "z-10 shadow-lg border border-gray-400 border-dashed",
   ]
     .filter(Boolean)

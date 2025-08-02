@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useEventStore } from "@/stores/eventStore";
-import { Edit, Edit2, Save, X } from "lucide-react";
+import { Edit, Save, X } from "lucide-react";
 
 interface CalendarImportHeaderProps {
   title?: string;
@@ -32,7 +32,7 @@ export function CalendarImportHeader({
         </div>
         {!isEditMode ? (
           <Button onClick={startEditing} size={"sm"} className="gap-2">
-            <Edit /> Edit
+            <Edit /> Edit Availability
           </Button>
         ) : (
           <div className="flex gap-2">
@@ -55,7 +55,7 @@ export function CalendarImportHeader({
               ) : (
                 <>
                   <Save className="h-4 w-4" />
-                  Save
+                  Save Availability
                 </>
               )}
             </Button>

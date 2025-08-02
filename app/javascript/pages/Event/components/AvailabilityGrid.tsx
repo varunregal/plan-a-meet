@@ -20,6 +20,7 @@ function AvailabilityGridComponent({
   availabilityData = {},
 }: AvailabilityGridProps) {
   const selectedSlots = useEventStore((state) => state.selectedSlots);
+  const isEditMode = useEventStore((state) => state.isEditMode);
   const [hoveredSlot, setHoveredSlot] = useState<string | null>(null);
 
   const grid = useGridData(timeSlots);
@@ -31,7 +32,7 @@ function AvailabilityGridComponent({
   const contextValue = useMemo(
     () => ({
       hoveredSlot,
-      availabilityData,
+      availabilityData: isEditMode ? {} : availabilityData,
       getSlot: grid.getSlot,
       handleSlotInteraction: {
         onMouseDown: handleMouseDown,
