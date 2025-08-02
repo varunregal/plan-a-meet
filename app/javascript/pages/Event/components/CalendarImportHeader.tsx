@@ -42,8 +42,8 @@ export function CalendarImportHeader({
   }, [viewModeClickAttempt]);
 
   return (
-    <div className="space-y-1 mb-2">
-      <div className="flex justify-between">
+    <div className="space-y-1 mb-4 md:mb-2">
+      <div className="flex flex-col gap-4 md:gap-0 md:flex-row md:justify-between">
         <div className="flex flex-col gap-1">
           <h2 className={`text-xl font-semibold text-gray-900 ${className}`}>
             {title}
@@ -64,7 +64,7 @@ export function CalendarImportHeader({
             <Edit /> Edit Availability
           </Button>
         ) : (
-          <div className="flex gap-2">
+          <div className="flex gap-2 justify-center">
             <Button
               onClick={cancelEditing}
               size={"sm"}
