@@ -49,6 +49,7 @@ export function DayColumn({ dateStr, hours }: DayColumnProps) {
                   <TimeSlot
                     key={minute}
                     hour={hour}
+                    slotId={slot.id}
                     minute={minute}
                     isSelected={isSelected}
                     isHovered={isHovered}

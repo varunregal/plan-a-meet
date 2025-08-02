@@ -7,11 +7,6 @@ import { useEventStore } from "@/stores/eventStore";
 import { Check, Clock } from "lucide-react";
 import { ReactNode } from "react";
 
-interface ParticipantProps {
-  id: number;
-  name: string;
-  responded: boolean;
-}
 function ParticipantActionToolTip({
   icon,
   text,
@@ -30,11 +25,6 @@ function ParticipantActionToolTip({
 }
 export function ParticipantsList() {
   const { participants, setHoveredParticipantId } = useEventStore();
-  const mockParticipants: ParticipantProps[] = [
-    { id: 1, name: "John Smith", responded: true },
-    { id: 2, name: "Jane Doe", responded: true },
-    { id: 3, name: "Mike Johnson", responded: false },
-  ];
 
   return (
     <div className="space-y-3 rounded-lg border border-gray-200 p-4">
@@ -77,15 +67,6 @@ export function ParticipantsList() {
           </div>
         ))}
       </div>
-
-      {mockParticipants.length > 5 && (
-        <button
-          className="text-xs text-gray-500 hover:text-gray-700
-    transition-colors"
-        >
-          View all participants →
-        </button>
-      )}
     </div>
   );
 }

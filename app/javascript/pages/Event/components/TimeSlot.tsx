@@ -4,6 +4,7 @@ import React from "react";
 interface TimeSlotProps {
   hour: number;
   minute: number;
+  slotId: number;
   isSelected: boolean;
   isHovered: boolean;
   availabilityCount: number;
@@ -19,27 +20,27 @@ const AVAILABILITY_STYLES = [
   {
     min: 1,
     max: 25,
-    classes: "bg-[#6e56cf]/20 text-primary border-primary/20",
+    classes: "bg-[#6e56cf]/20 border-[#6e56cf]/20",
   },
   {
     min: 26,
     max: 50,
-    classes: "bg-[#6e56cf]/40 text-primary border-primary/30",
+    classes: "bg-[#6e56cf]/40 border-[#6e56cf]/30",
   },
   {
     min: 51,
     max: 75,
-    classes: "bg-[#6e56cf]/50 text-primary border-primary/50",
+    classes: "bg-[#6e56cf]/50 border-[#6e56cf]/50",
   },
   {
     min: 76,
     max: 99,
-    classes: "bg-[#6e56cf]/60 text-white border-primary/70",
+    classes: "bg-[#6e56cf]/60 border-[#6e56cf]/70",
   },
   {
     min: 100,
     max: 100,
-    classes: "bg-[#6e56cf]/90 text-white border-primary font-semibold",
+    classes: "bg-[#6e56cf]/90 border-[#6e56cf]",
   },
 ];
 
@@ -75,6 +76,7 @@ function Tooltip({ timeRange }: { timeRange: string }) {
 export function TimeSlot({
   hour,
   minute,
+  slotId,
   isSelected,
   isHovered,
   availabilityCount,
@@ -82,8 +84,18 @@ export function TimeSlot({
   onMouseEnter,
   onMouseLeave,
 }: TimeSlotProps) {
-  const { isEditMode, incrementViewModeClick, totalParticipants } =
-    useEventStore();
+  const {
+    isEditMode,
+    incrementViewModeClick,
+    totalParticipants,
+    hoveredParticipantId,
+    participants,
+  } = useEventStore();
+  const isHoveredParticipantSlot =
+    hoveredParticipantId &&
+    participants
+      .find((p) => p.id === hoveredParticipantId)
+      ?.slot_ids.includes(slotId);
 
   const percentage =
     totalParticipants > 0
@@ -98,6 +110,7 @@ export function TimeSlot({
       isEditMode &&
       "bg-primary/90 text-white border-primary font-semibold",
     isHovered && "z-10 shadow-lg border border-gray-400 border-dashed",
+    isHoveredParticipantSlot && "z-20 border-2 border-orange-300",
   ]
     .filter(Boolean)
     .join(" ");
