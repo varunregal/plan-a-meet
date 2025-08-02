@@ -5,6 +5,8 @@ interface EventStore {
   hasUnsavedChanges: boolean;
   currentUserSlots: number[];
   isEditMode: boolean;
+  viewModeClickAttempt: number;
+  incrementViewModeClick: () => void;
 
   setTotalParticipants: (count: number) => void;
   setCurrentUserSlots: (slots: number[]) => void;
@@ -23,6 +25,13 @@ export const useEventStore = create<EventStore>((set) => ({
   hasUnsavedChanges: false,
   currentUserSlots: [],
   isEditMode: false,
+  viewModeClickAttempt: 0,
+  incrementViewModeClick: () =>
+    set((state) => ({
+      viewModeClickAttempt: !state.isEditMode
+        ? state.viewModeClickAttempt + 1
+        : 0,
+    })),
 
   setTotalParticipants: (count) => set({ totalParticipants: count }),
   setCurrentUserSlots: (slots: number[]) => set({ currentUserSlots: slots }),

@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useEventStore } from "@/stores/eventStore";
 import { Edit, Save, X } from "lucide-react";
+import { useEffect, useRef } from "react";
 
 interface CalendarImportHeaderProps {
   title?: string;
@@ -15,8 +16,24 @@ export function CalendarImportHeader({
   onSave,
   isSaving,
 }: CalendarImportHeaderProps) {
-  const { isEditMode, startEditing, cancelEditing, hasUnsavedChanges } =
-    useEventStore();
+  const {
+    isEditMode,
+    startEditing,
+    cancelEditing,
+    hasUnsavedChanges,
+    viewModeClickAttempt,
+  } = useEventStore();
+  const editButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!isEditMode && viewModeClickAttempt > 0 && editButtonRef.current) {
+      editButtonRef.current.classList.add("animate-shake-once");
+    }
+    setTimeout(() => {
+      editButtonRef.current?.classList.remove("animate-shake-once");
+    }, 1000);
+  }, [viewModeClickAttempt]);
+
   return (
     <div className="space-y-1 mb-2">
       <div className="flex justify-between">
@@ -31,7 +48,12 @@ export function CalendarImportHeader({
           </p>
         </div>
         {!isEditMode ? (
-          <Button onClick={startEditing} size={"sm"} className="gap-2">
+          <Button
+            onClick={startEditing}
+            size={"sm"}
+            className="gap-2"
+            ref={editButtonRef}
+          >
             <Edit /> Edit Availability
           </Button>
         ) : (

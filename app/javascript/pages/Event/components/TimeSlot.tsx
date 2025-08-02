@@ -66,8 +66,8 @@ export function TimeSlot({
   onMouseEnter,
   onMouseLeave,
 }: TimeSlotProps) {
-  const totalParticipants = useEventStore((state) => state.totalParticipants);
-  const isEditMode = useEventStore((state) => state.isEditMode);
+  const { isEditMode, incrementViewModeClick, totalParticipants } =
+    useEventStore();
 
   const percentage =
     totalParticipants > 0
@@ -84,11 +84,19 @@ export function TimeSlot({
     .filter(Boolean)
     .join(" ");
 
+  const handleClick = (e: React.MouseEvent) => {
+    if (!isEditMode) {
+      e.preventDefault();
+      incrementViewModeClick();
+      return;
+    }
+    onMouseDown(e);
+  };
   return (
     <div className="relative group">
       <button
         className={buttonClasses}
-        onMouseDown={onMouseDown}
+        onMouseDown={handleClick}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
         aria-label={timeRange}
