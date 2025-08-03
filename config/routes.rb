@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
-  resource :session, only: %i[new create destroy]
-  resource :registration, only: %i[new create]
+  resource :session, only: %i[create destroy]
+  resource :registration, only: %i[create]
   resources :passwords, param: :token
   get 'inertia-example', to: 'inertia_example#index'
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
