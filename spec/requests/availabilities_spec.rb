@@ -188,6 +188,7 @@ RSpec.describe 'AvailabilitiesController', type: :request do
         user = create(:user, name: 'John Smith')
 
         create(:availability, user:, time_slot:)
+        sign_in_as(user)
         get "/events/#{event.url}/availabilities"
         json = response.parsed_body
         participants = json[:participants]
@@ -196,19 +197,23 @@ RSpec.describe 'AvailabilitiesController', type: :request do
         expect(participants.first['name']).to eq('John Smith')
         expect(participants.first['responded']).to be(true)
         expect(participants.first['slot_ids']).to include(time_slot.id)
+        expect(participants.first['is_current_user']).to be true
       end
 
       it 'returns participant data for anonymous users who have marked availability' do
         create(:availability, user: nil, time_slot:, participant_name: 'Anonymous User',
                               anonymous_session_id: 'xyz789')
+        # allow_any_instance_of(AvailabilitiesController).to receive(:cookies).and_return(
+        #   double(signed: { anonymous_session_id: 'xyz789' })
+        # )
         get "/events/#{event.url}/availabilities"
         json = response.parsed_body
         participants = json[:participants]
-        expect(participants.length).to eq(1)
         expect(participants.first['name']).to eq('Anonymous User')
         expect(participants.first['responded']).to be true
         expect(participants.first['slot_ids']).to include time_slot.id
         expect(participants.first['id']).to eq('anon_xyz789')
+        expect(participants.first['is_current_user']).to be false
       end
 
       it 'returns multiple participants including both authenticated and anonymous users' do

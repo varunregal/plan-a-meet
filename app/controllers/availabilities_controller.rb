@@ -84,7 +84,25 @@ class AvailabilitiesController < ApplicationController
     participants.concat(build_authenticated_participants(event, responded_emails))
     participants.concat(build_anonymous_participants(event))
     participants.concat(build_invited_participants(event, responded_emails))
-    participants
+    mark_current_user(participants)
+  end
+
+  def mark_current_user(participants)
+    current_anon_session = cookies.signed[:anonymous_session_id]
+    participants.map do |participant|
+      participant[:is_current_user] = check_current_user?(participant, current_anon_session)
+      participant
+    end
+  end
+
+  def check_current_user?(participant, current_anon_session)
+    if Current.user
+      participant[:id] == "user_#{Current.user.id}"
+    elsif current_anon_session
+      participant[:id] == "anon_#{current_anon_session}"
+    else
+      false
+    end
   end
 
   def build_authenticated_participants(event, responded_emails)

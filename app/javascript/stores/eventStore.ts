@@ -1,9 +1,10 @@
 import { create } from "zustand";
-interface Participant {
+export interface Participant {
   id: string;
   name: string;
   responded: boolean;
   slot_ids: number[];
+  is_current_user: boolean;
 }
 interface EventStore {
   totalParticipants: number;

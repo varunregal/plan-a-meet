@@ -51,6 +51,9 @@ export function ParticipantsList() {
 
             <span className="text-sm text-gray-700 flex-1">
               {participant.name}
+              {participant.is_current_user && (
+                <span className="text-xs text-gray-500 ml-1">(You)</span>
+              )}
             </span>
 
             {participant.responded ? (
