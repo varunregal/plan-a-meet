@@ -30,8 +30,9 @@ export function ParticipantsList() {
     <div className="space-y-3 rounded-lg border border-gray-200 p-4">
       <div className="flex items-center justify-center">
         <h4 className="text-sm font-medium text-gray-700 underline underline-offset-2">
-          {participants.filter((i) => i.responded).length} of{" "}
-          {participants.length} responded
+          {/*{participants.filter((i) => i.responded).length} of{" "}
+          {participants.length} responded*/}
+          Participants
         </h4>
       </div>
 

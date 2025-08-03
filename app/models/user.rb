@@ -13,6 +13,17 @@ class User < ApplicationRecord
   has_many :availabilities, dependent: :destroy
   has_many :time_slots, through: :availabilities
 
+  has_many :sent_invitations,
+           class_name: 'Invitation',
+           inverse_of: :inviter,
+           foreign_key: 'inviter_id',
+           dependent: :destroy
+  has_many :received_invitations,
+           class_name: 'Invitation',
+           inverse_of: :invitee,
+           foreign_key: 'invitee_id',
+           dependent: :destroy
+
   private
 
   def normalize_email

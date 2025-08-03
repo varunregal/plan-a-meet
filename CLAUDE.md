@@ -390,14 +390,27 @@ end
    - Clean, lightweight UI without heavy borders
    - Shows response status with subtle indicators
 
-### In Progress 🚧
-1. **Participants Backend API** (COMPLETED)
+### Completed ✅ (Recent - Phase 2)
+1. **Participants Backend API**
    - Added participants array to availabilities index response
    - Implemented TDD with 6 incremental tests
    - Refactored into clean, single-responsibility methods
    - Returns authenticated users, anonymous users, and invited users
-2. **Participants List Frontend Integration** - Connect to real participant data from backend
-3. **Participant Hover Highlighting** - Highlight participant's slots on hover
+2. **Participants List Frontend Integration**
+   - Connected ParticipantsList to real backend data via Zustand
+   - Added participants to eventStore for centralized state
+   - Displays real participant names and response status
+3. **Participant Hover Highlighting**
+   - Highlights time slots when hovering over participant names
+   - Uses orange border to show which slots a participant selected
+   - Added slotId prop to TimeSlot component
+4. **Current User Indicator**
+   - Shows "(You)" next to current user in participants list
+   - Works for both authenticated and anonymous users
+   - Backend sets is_current_user flag for security
+
+### In Progress 🚧
+1. **Security Enhancement** - Implement hashing for anonymous session IDs instead of exposing raw IDs
 
 ### Next Steps 📋
 1. **Interactive Participants List**
