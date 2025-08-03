@@ -1,10 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { loginFormSchema, loginFormSchemaType } from "@/lib/schema";
-import { router, usePage } from "@inertiajs/react";
+import { useForm } from "@inertiajs/react";
 
 export function LoginForm({
   isModal,
@@ -13,40 +10,25 @@ export function LoginForm({
   isModal?: boolean;
   onSuccess?: () => void;
 }) {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<loginFormSchemaType>({
-    resolver: zodResolver(loginFormSchema),
+  const { data, setData, post, processing, errors, reset } = useForm({
+    email_address: "",
+    password: "",
   });
-  const { errors: pageErrors } = usePage().props;
-  const token = document
-    .querySelector('meta[name="csrf-token"]')
-    ?.getAttribute("content");
-  const onSubmit = async (values: any) => {
-    router.post(
-      "/session",
-      {
-        email_address: values.email,
-        password: values.password,
-        authenticity_token: token,
-      },
-      {
-        preserveState: true,
-        preserveScroll: true,
-        onSuccess: () => {
-          if (onSuccess) onSuccess();
-        },
-        onError: (errors) => {
-          console.warn("Authentication failed: ", errors);
-        },
-      },
-    );
-  };
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    post("/session", {
+      preserveState: true,
+      preserveScroll: true,
+      onSuccess: () => {
+        reset();
+        if (onSuccess) onSuccess();
+      },
+    });
+  };
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-10">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-10">
       {!isModal && (
         <div className="flex flex-col gap-2 text-center">
           <h1 className="text-2xl font-bold">Login to your account</h1>
@@ -62,12 +44,13 @@ export function LoginForm({
           <Input
             id="email"
             type="email"
+            value={data.email_address}
             placeholder="john@planameet.com"
+            onChange={(e) => setData("email_address", e.target.value)}
             required
-            {...register("email")}
           />
-          {errors.email?.message && (
-            <p className="text-red-500">{errors.email?.message}</p>
+          {errors.email_address && (
+            <p className="text-red-500">{errors.email_address}</p>
           )}
         </div>
         <div className="grid gap-2">
@@ -83,22 +66,18 @@ export function LoginForm({
           <Input
             id="password"
             type="password"
+            value={data.password}
+            onChange={(e) => setData("password", e.target.value)}
             required
             placeholder="Enter your password"
-            {...register("password")}
           />
-          {errors.password?.message && (
-            <p className="text-red-500">{errors.password?.message}</p>
-          )}
+          {errors.password && <p className="text-red-500">{errors.password}</p>}
         </div>
         <Button type="submit" className="w-full">
-          Sign in
+          {processing ? "Signing in..." : "Sign in"}
         </Button>
-        {/* <div> */}
-        {Array.isArray(pageErrors?.base) && (
-          <p className="text-red-500">{pageErrors.base[0]}</p>
-        )}
-        {/* </div> */}
+
+        {errors.base && <p className="text-red-500">{errors.base}</p>}
       </div>
     </form>
   );

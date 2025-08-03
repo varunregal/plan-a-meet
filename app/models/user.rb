@@ -24,6 +24,16 @@ class User < ApplicationRecord
            foreign_key: 'invitee_id',
            dependent: :destroy
 
+  def pending_invitations_by_email
+    Invitation.pending.where(email_address:, invitee_id: nil)
+  end
+
+  def link_pending_invitations!
+    pending_invitations_by_email.find_each do |invitation|
+      invitation.update(invitee_id: id)
+    end
+  end
+
   private
 
   def normalize_email

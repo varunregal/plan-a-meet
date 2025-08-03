@@ -409,8 +409,28 @@ end
    - Works for both authenticated and anonymous users
    - Backend sets is_current_user flag for security
 
+### Completed ✅ (Recent - Phase 3)
+1. **Modal-Based Authentication System**
+   - Replaced page-based auth with consistent modal experience
+   - Added AuthModal to Navbar for global access
+   - Updated SessionsController to handle modal requests:
+     - Returns JSON errors with 422 status for failed auth
+     - Uses `redirect_back` to keep users on their current page
+     - Proper Inertia error handling without page refreshes
+   - Converted LoginForm to use Inertia's `useForm` hook
+   - Updated sessions_spec tests for new modal behavior
+   - Removed unused `/session/new` and `/registration/new` routes
+
+2. **User-Invitation Associations**
+   - Added `sent_invitations` and `received_invitations` to User model
+   - Implemented `pending_invitations_by_email` method
+   - Created `link_pending_invitations!` to connect invitations when users sign up
+   - Full TDD implementation with passing tests
+
 ### In Progress 🚧
 1. **Security Enhancement** - Implement hashing for anonymous session IDs instead of exposing raw IDs
+2. **Auto-link Invitations on Signup** - Call `link_pending_invitations!` in RegistrationsController
+3. **Fix request_authentication** - Update for modal-based auth (currently commented out)
 
 ### Next Steps 📋
 1. **Interactive Participants List**

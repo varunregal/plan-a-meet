@@ -2,14 +2,6 @@ require 'pry'
 require 'rails_helper'
 
 RSpec.describe 'SessionsController', :inertia, type: :request do
-  describe 'GET /session' do
-    it 'renders sign in page' do
-      get new_session_path
-      expect(response).to have_http_status(:ok)
-      expect(inertia.component).to eq 'Auth/Login'
-    end
-  end
-
   describe 'DELETE /session' do
     let(:valid_params) do
       { email_address: 'varun@example.com', password: 'password' }
@@ -36,55 +28,53 @@ RSpec.describe 'SessionsController', :inertia, type: :request do
 
     context 'with valid params' do
       it('creates a user with valid params') do
+        post session_path, params: valid_params, headers: { 'HTTP_REFERER' => root_path }
+
+        expect(response).to redirect_to root_path
+      end
+
+      it 'redirects to root when no referer' do
         post session_path, params: valid_params
-        expect(response).to redirect_to(profile_path)
-        follow_redirect!
-        expect(inertia.props[:flash]['notice']).to eq('Signed in successfully!')
-        expect(inertia.component).to eq('Profile/Show')
+        expect(response).to redirect_to(root_path)
       end
     end
 
     context 'with invalid params' do
       it('rejects a new email') do
         modified_params = valid_params.merge(email_address: 'john@example.com')
-        post session_path, params: modified_params
+        post session_path, params: modified_params, headers: { 'HTTP_REFERER' => root_path }
+        expect(response).to redirect_to(root_path)
         follow_redirect!
-        expect(inertia.component).to eq('Auth/Login')
-        inertia_props = inertia.props.deep_symbolize_keys
-        expect(inertia_props[:errors][:base][0]).to eq('Invalid email or password')
+        expect(inertia.props[:errors]['base']).to eq('Invalid email or password')
       end
 
-      it('rejects empty password') do
+      it 'rejects empty password' do
         modified_params = valid_params.merge(password: '')
-        post session_path, params: modified_params
+        post session_path, params: modified_params, headers: { 'HTTP_REFERER' => root_path }
+        expect(response).to redirect_to(root_path)
         follow_redirect!
-        expect(inertia.component).to eq('Auth/Login')
-        inertia_props = inertia.props.deep_symbolize_keys
-        expect(inertia_props[:errors][:base][0]).to eq('Invalid email or password')
-      end
-    end
-
-    context 'when redirect authenticated users from sign in page' do
-      it('redirect to profile path') do
-        post session_path, params: valid_params
-        follow_redirect!
-        get new_session_path
-        expect(response).to redirect_to(profile_path)
+        expect(inertia.props[:errors]['base']).to eq('Invalid email or password')
       end
     end
 
     context 'when rate limit registrations' do
       it 'rate-limit after 10 tries' do
         10.times do |i|
-          User.create!(valid_params.merge(email_address: "user#{i}@example.com", name: 'user'))
-          post session_path, params: valid_params.merge(email_address: "user#{i}@example.com")
-          delete session_path
+          User.create!(valid_params.merge(email_address: "user#{i}@example.com",
+                                          name: 'user'))
+          post session_path, params: valid_params.merge(email_address: "user#{i}@example.com"),
+                             headers: { 'HTTP_REFERER' => root_path }
+          delete session_path if response.redirect?
         end
-        User.create!(valid_params.merge(email_address: 'user11@example.com', name: 'user'))
-        post session_path, params: valid_params.merge(email_address: 'user11@example.com')
+
+        User.create!(valid_params.merge(email_address: 'user11@example.com',
+                                        name: 'user'))
+        post session_path, params: valid_params.merge(email_address: 'user11@example.com'),
+                           headers: { 'HTTP_REFERER' => root_path }
+
+        expect(response).to redirect_to(root_path)
         follow_redirect!
-        inertia_props = inertia.props.deep_symbolize_keys
-        expect(inertia_props[:flash][:alert]).to eq('Too many attempts. Please try again later.')
+        expect(inertia.props[:errors]['base']).to eq('Too many attempts. Please try again later.')
       end
     end
 
@@ -105,8 +95,8 @@ RSpec.describe 'SessionsController', :inertia, type: :request do
         post session_path, params: {
           email_address: 'john@example.com',
           password: 'password'
-        }
-        expect(response).to redirect_to(profile_path)
+        }, headers: { 'HTTP_REFERER' => root_path }
+        expect(response).to redirect_to(root_path)
         anonymous_event.reload
         expect(anonymous_event.event_creator).to eq(user)
         expect(anonymous_event.anonymous_session_id).to be_nil
