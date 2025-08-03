@@ -2,9 +2,9 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useForm } from "react-hook-form";
+// import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link, router, usePage } from "@inertiajs/react";
+import { Link, router, useForm, usePage } from "@inertiajs/react";
 import { signupFormSchema, signupFormSchemaType } from "@/lib/schema";
 
 export function SignupForm({
@@ -16,33 +16,50 @@ export function SignupForm({
   isModal?: boolean;
   onSuccess?: () => void;
 }) {
-  const { errors: pageErrors } = usePage().props;
+  // const { errors: pageErrors } = usePage().props;
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<signupFormSchemaType>({
-    resolver: zodResolver(signupFormSchema),
+  // const {
+  //   register,
+  //   handleSubmit,
+  //   formState: { errors },
+  // } = useForm<signupFormSchemaType>({
+  //   resolver: zodResolver(signupFormSchema),
+  // });
+  // const onSubmit = async (values: any) => {
+  //   router.post(
+  //     "/registration",
+  //     {
+  //       name: values.name,
+  //       email_address: values.email,
+  //       password: values.password,
+  //     },
+  //     {
+  //       onSuccess: () => {
+  //         if (onSuccess) onSuccess();
+  //       },
+  //     },
+  //   );
+  // };
+  const { data, setData, post, processing, errors, reset } = useForm({
+    name: "",
+    email_address: "",
+    password: "",
   });
-  const onSubmit = async (values: any) => {
-    router.post(
-      "/registration",
-      {
-        name: values.name,
-        email_address: values.email,
-        password: values.password,
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    post("/registration", {
+      preserveState: true,
+      preserveScroll: true,
+      onSuccess: () => {
+        reset();
+        if (onSuccess) onSuccess();
       },
-      {
-        onSuccess: () => {
-          if (onSuccess) onSuccess();
-        },
-      },
-    );
+    });
   };
   return (
     <form
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit}
       className={cn("flex flex-col gap-6", className)}
       {...props}
     >
@@ -61,29 +78,25 @@ export function SignupForm({
           <Input
             id="name"
             type="text"
+            value={data.name}
             placeholder="John Doe"
             required
-            {...register("name")}
+            onChange={(e) => setData("name", e.target.value)}
           />
-          {errors.name?.message && (
-            <p className="text-red-500">{errors.name?.message}</p>
-          )}
+          {errors.name && <p className="text-red-500">{errors.name}</p>}
         </div>
         <div className="grid gap-2">
           <Label htmlFor="email">Email</Label>
           <Input
             id="email"
             type="email"
+            value={data.email_address}
             placeholder="john@planameet.com"
             required
-            {...register("email")}
+            onChange={(e) => setData("email_address", e.target.value)}
           />
-
-          {errors.email?.message && (
-            <p className="text-red-500">{errors.email?.message}</p>
-          )}
-          {pageErrors?.email_address && (
-            <p className="text-red-500">{`Email address ${pageErrors.email_address[0]}`}</p>
+          {errors.email_address && (
+            <p className="text-red-500">{errors.email_address}</p>
           )}
         </div>
         <div className="grid gap-2">
@@ -92,23 +105,19 @@ export function SignupForm({
           <Input
             id="password"
             type="password"
+            value={data.password}
             required
             placeholder="Enter your password"
-            {...register("password")}
+            onChange={(e) => setData("password", e.target.value)}
           />
-          {errors.password?.message && (
-            <p className="text-red-500">{errors.password?.message}</p>
-          )}
-          {pageErrors?.password && (
-            <p className="text-red-500">{`Password ${pageErrors.password[0]}`}</p>
-          )}
+          {errors.password && <p className="text-red-500">{errors.password}</p>}
         </div>
         <Button type="submit" className="w-full">
-          Sign up
+          {processing ? "Signing up..." : "Sign up"}
         </Button>
       </div>
 
-      {pageErrors?.base && <p className="text-red-500">{pageErrors.base[0]}</p>}
+      {errors.base && <p className="text-red-500">{errors.base}</p>}
     </form>
   );
 }

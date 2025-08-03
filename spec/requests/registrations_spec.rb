@@ -16,9 +16,9 @@ RSpec.describe 'RegistrationsController', :inertia, type: :request do
 
       it 'creates a new user' do
         expect do
-          post registration_path, params: user_params
+          post registration_path, params: user_params, headers: { 'HTTP_REFERER' => root_path }
         end.to change(User, :count).by(1)
-        expect(response).to redirect_to(profile_path)
+        expect(response).to redirect_to(root_path)
       end
 
       it 'logs the user in after registration' do
@@ -33,25 +33,25 @@ RSpec.describe 'RegistrationsController', :inertia, type: :request do
     context 'with invalid parameters' do
       it 'does not create user with missing name' do
         expect do
-          post registration_path, params: user.merge(name: '')
+          post registration_path, params: user.merge(name: ''), headers: { 'HTTP_REFERER' => root_path }
         end.not_to change(User, :count)
-        expect(response).to redirect_to(new_registration_path)
+        expect(response).to redirect_to(root_path)
         follow_redirect!
         expect(inertia.props[:errors]['name']).to include("Name can't be blank")
       end
 
       it 'renders signup page with errors when email is missing' do
         new_invalid_params = user.merge(email_address: '')
-        post registration_path, params: new_invalid_params
-        expect(response).to redirect_to(new_registration_path)
+        post registration_path, params: new_invalid_params, headers: { 'HTTP_REFERER' => root_path }
+        expect(response).to redirect_to(root_path)
         follow_redirect!
         expect(inertia.props[:errors]['email_address']).to include("Email address can't be blank")
       end
 
       it 'renders signup page with errors when password is too short' do
         new_invalid_params = user.merge(password: '12345')
-        post registration_path, params: new_invalid_params
-        expect(response).to redirect_to(new_registration_path)
+        post registration_path, params: new_invalid_params, headers: { 'HTTP_REFERER' => root_path }
+        expect(response).to redirect_to(root_path)
         follow_redirect!
         expect(inertia.props[:errors]['password']).to include('Password is too short (minimum is 8 characters)')
       end
@@ -61,8 +61,8 @@ RSpec.describe 'RegistrationsController', :inertia, type: :request do
       it 'redirects with error message when email already exists' do
         create(:user, email_address: 'john@example.com')
         duplicate_params = user.merge(email_address: 'john@example.com')
-        post registration_path, params: duplicate_params
-        expect(response).to redirect_to(new_registration_path)
+        post registration_path, params: duplicate_params, headers: { 'HTTP_REFERER' => root_path }
+        expect(response).to redirect_to(root_path)
         follow_redirect!
         expect(inertia.props[:errors]['email_address']).to include('Email address has already been taken')
       end
@@ -72,10 +72,11 @@ RSpec.describe 'RegistrationsController', :inertia, type: :request do
       it 'handles too many registration attempts' do
         11.times do |i|
           user_params = user.merge(email_address: "test#{i}@example.com")
-          post registration_path, params: user_params
+          post registration_path, params: user_params, headers: { 'HTTP_REFERER' => root_path }
         end
-        expect(response).to redirect_to(new_registration_path)
-        expect(flash[:alert]).to eq('Too many registration attempts. Please try again later')
+        expect(response).to redirect_to(root_path)
+        follow_redirect!
+        expect(inertia.props[:errors]['base']).to eq('Too many attempts. Please try again later.')
       end
     end
 
@@ -147,7 +148,7 @@ RSpec.describe 'RegistrationsController', :inertia, type: :request do
         }
 
         post registration_path, params: user_params
-        expect(response).to redirect_to(profile_path)
+        expect(response).to redirect_to(root_path)
         expect(flash[:notice]).to eq 'Successfully signed up!'
       end
     end
@@ -163,7 +164,7 @@ RSpec.describe 'RegistrationsController', :inertia, type: :request do
 
       it 'completes registration normally' do
         expect { post registration_path, params: user_params }.to change(User, :count).by(1)
-        expect(response).to redirect_to(profile_path)
+        expect(response).to redirect_to(root_path)
       end
     end
   end
