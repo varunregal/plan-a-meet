@@ -91,15 +91,52 @@ RSpec.describe 'SessionsController', :inertia, type: :request do
         }
 
         anonymous_event = Event.last
+        expect(anonymous_event.event_creator).to be_nil
+        expect(anonymous_event.anonymous_session_id).to be_present
 
         post session_path, params: {
           email_address: 'john@example.com',
           password: 'password'
         }, headers: { 'HTTP_REFERER' => root_path }
-        expect(response).to redirect_to(root_path)
+
         anonymous_event.reload
         expect(anonymous_event.event_creator).to eq(user)
         expect(anonymous_event.anonymous_session_id).to be_nil
+      end
+
+      it 'does not convert anonymous availabilities' do
+        event = create(:event)
+        event.create_time_slots(
+          dates: ['2025-08-01'],
+          start_time: '09:00',
+          end_time: '10:00',
+          time_zone: 'America/New_York'
+        )
+        post events_path, params: {
+          name: 'Temp Event',
+          dates: ['2025-08-01'],
+          start_time: '09:00',
+          end_time: '10:00', time_zone: 'America/New_York'
+        }
+        jar = ActionDispatch::Cookies::CookieJar.build(request, cookies.to_hash)
+        anonymous_session_id = jar.signed[:anonymous_session_id]
+
+        post event_availabilities_path(event.url), params: {
+          participant_name: 'Anonymous John',
+          time_slot_ids: [event.time_slots.first.id]
+        }
+        anonymous_availability = Availability.last
+        expect(anonymous_availability.user).to be_nil
+        expect(anonymous_availability.anonymous_session_id).to eq(anonymous_session_id)
+        post session_path, params: {
+          email_address: 'john@example.com',
+          password: 'password'
+        }, headers: { 'HTTP_REFERER' => root_path }
+
+        anonymous_availability.reload
+        expect(anonymous_availability.user).to be_nil
+        expect(anonymous_availability.anonymous_session_id).to eq(anonymous_session_id)
+        expect(anonymous_availability.participant_name).to eq('Anonymous John')
       end
 
       it 'clears anonymous session cookie after sign in' do

@@ -81,7 +81,7 @@ function EventShow({
 
   useEffect(() => {
     fetchAvailability();
-  }, [event.url]);
+  }, [event.url, current_user?.id]);
 
   useEffect(() => {
     if (isAnonymous) {
