@@ -2,10 +2,8 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-// import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Link, router, useForm, usePage } from "@inertiajs/react";
-import { signupFormSchema, signupFormSchemaType } from "@/lib/schema";
+import { useForm } from "@inertiajs/react";
+import { AlertCircle } from "lucide-react";
 
 export function SignupForm({
   className,
@@ -16,30 +14,6 @@ export function SignupForm({
   isModal?: boolean;
   onSuccess?: () => void;
 }) {
-  // const { errors: pageErrors } = usePage().props;
-
-  // const {
-  //   register,
-  //   handleSubmit,
-  //   formState: { errors },
-  // } = useForm<signupFormSchemaType>({
-  //   resolver: zodResolver(signupFormSchema),
-  // });
-  // const onSubmit = async (values: any) => {
-  //   router.post(
-  //     "/registration",
-  //     {
-  //       name: values.name,
-  //       email_address: values.email,
-  //       password: values.password,
-  //     },
-  //     {
-  //       onSuccess: () => {
-  //         if (onSuccess) onSuccess();
-  //       },
-  //     },
-  //   );
-  // };
   const { data, setData, post, processing, errors, reset } = useForm({
     name: "",
     email_address: "",
@@ -117,7 +91,12 @@ export function SignupForm({
         </Button>
       </div>
 
-      {errors.base && <p className="text-red-500">{errors.base}</p>}
+      {(errors as any).base && (
+        <div className="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">
+          <AlertCircle className="h-4 w-4 flex-shrink-0" />
+          <span>{(errors as any).base}</span>
+        </div>
+      )}
     </form>
   );
 }

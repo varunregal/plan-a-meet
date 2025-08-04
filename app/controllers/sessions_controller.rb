@@ -16,7 +16,7 @@ class SessionsController < ApplicationController
       redirect_back fallback_location: root_path, notice: "Welcome back, #{user.name}"
     else
       redirect_back(
-        fallback_location: request.referer || root_path,
+        fallback_location: root_path,
         inertia: { errors: { base: 'Invalid email or password' } }
       )
     end
