@@ -12,8 +12,11 @@ class SessionsController < ApplicationController
     user = User.authenticate_by(params.permit(:email_address, :password))
     if user
       start_new_session_for user
-      convert_anonymous_to_authenticated(user)
+      conflict_data = convert_anonymous_to_authenticated(user)
+      session[:availability_conflict] = conflict_data if conflict_data &&
+                                                         conflict_data[:has_conflict]
       redirect_back fallback_location: root_path, notice: "Welcome back, #{user.name}"
+
     else
       redirect_back(
         fallback_location: root_path,

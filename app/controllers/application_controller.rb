@@ -5,7 +5,7 @@ class ApplicationController < ActionController::Base
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
   inertia_share flash: -> { flash.to_hash }, current_user: lambda {
     Current.user.as_json(only: %i[id name email_address]) if Current.user
-  }
+  }, availability_conflict: -> { session.delete(:availability_conflict) }
   # allow_browser versions: :modern
 
   private
@@ -18,10 +18,28 @@ class ApplicationController < ActionController::Base
     return if cookies.signed[:anonymous_session_id].blank?
 
     anonymous_session_id = cookies.signed[:anonymous_session_id]
-    # rubocop:disable Rails/SkipsModelValidations
+    anonymous_availabilities = Availability.where(anonymous_session_id:)
+    if anonymous_availabilities.exists?
+      user_time_slot_ids = user.availabilities.pluck(:time_slot_id)
+      anonymous_time_slot_ids = anonymous_availabilities.pluck(:time_slot_id)
+
+      if user_time_slot_ids.intersect?(anonymous_time_slot_ids)
+        event = anonymous_availabilities.first.time_slot.event
+        return {
+          has_conflict: true,
+          event_name: event.name,
+          event_url: event.url,
+          authenticated_slots: user_time_slot_ids.count,
+          anonymous_slots: anonymous_time_slot_ids.count,
+          conflicting_slots: (user_time_slot_ids & anonymous_time_slot_ids).count
+        }
+      end
+    end
+
     Event.where(anonymous_session_id:).update_all(event_creator_id: user.id, anonymous_session_id: nil)
     Availability.where(anonymous_session_id:).update_all(user_id: user.id, anonymous_session_id: nil)
     cookies.delete(:anonymous_session_id)
+    nil
   end
 
   def store_anonymous_session_cookie(value)

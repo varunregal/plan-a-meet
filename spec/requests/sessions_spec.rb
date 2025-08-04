@@ -118,5 +118,75 @@ RSpec.describe 'SessionsController', :inertia, type: :request do
         expect(jar.signed[:anonymous_session_id]).to be_nil
       end
     end
+
+    context 'when user has conflicting availabilities' do
+      let!(:user) { create(:user, :john) }
+      let!(:event) { create(:event) }
+
+      before do
+        event.create_time_slots(
+          dates: ['2025-08-01'],
+          start_time: '09:00',
+          end_time: '10:00',
+          time_zone: 'America/New_York'
+        )
+      end
+
+      it 'returns conflict data as a hash' do
+        sign_in_as(user)
+        post event_availabilities_path(event.url), params: {
+          time_slot_ids: [
+            event.time_slots.first.id,
+            event.time_slots.second.id
+          ]
+        }
+
+        sign_out
+        post event_availabilities_path(event.url), params: {
+          participant_name: 'John',
+          time_slot_ids: [
+            event.time_slots.first.id,
+            event.time_slots.third.id
+          ]
+        }
+
+        post session_path, params: {
+          email_address: 'john@example.com',
+          password: 'password'
+        }, headers: { 'HTTP_REFERER' => root_path }
+
+        follow_redirect!
+        expect(inertia.props[:availability_conflict]).to be_a(Hash)
+      end
+
+      it 'includes event name in conflict data' do
+        sign_in_as(user)
+        post event_availabilities_path(event.url), params: {
+          time_slot_ids: [
+            event.time_slots.first.id,
+            event.time_slots.second.id
+          ]
+        }
+        sign_out
+        post event_availabilities_path(event.url), params: {
+          participant_name: 'John',
+          time_slot_ids: [
+            event.time_slots.first.id,
+            event.time_slots.third.id
+          ]
+        }
+        post session_path, params: {
+          email_address: 'john@example.com',
+          password: 'password'
+        }, headers: { 'HTTP_REFERER' => root_path }
+        follow_redirect!
+        conflict = inertia.props[:availability_conflict]
+        expect(conflict['event_name']).to eq(event.name)
+        expect(conflict['event_url']).to eq(event.url)
+        expect(conflict['authenticated_slots']).to eq(2)
+        expect(conflict['anonymous_slots']).to eq(2)
+        expect(conflict['conflicting_slots']).to eq(1)
+      end
+    end
   end
 end
