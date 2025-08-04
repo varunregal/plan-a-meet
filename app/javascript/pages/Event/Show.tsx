@@ -148,6 +148,7 @@ function EventShow({
           <div className="flex flex-col gap-6">
             <EventHeader
               event={event}
+              isCreator={is_creator}
               creatorName={event_creator}
               invitations={invitations}
             />

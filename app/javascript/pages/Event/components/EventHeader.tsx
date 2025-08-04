@@ -9,10 +9,12 @@ function EventHeader({
   event,
   creatorName,
   invitations,
+  isCreator,
 }: {
   event: EventProps;
   creatorName?: string;
   invitations: InvitationProps[];
+  isCreator: boolean;
 }) {
   const [showInviteDialog, setShowInviteDialog] = useState(false);
 
@@ -33,23 +35,25 @@ function EventHeader({
 
           <div className="flex items-center gap-3">
             <CopyEventLink event={event} />
-            <div className="relative">
-              {" "}
-              <Button
-                variant={"outline"}
-                onClick={() => setShowInviteDialog(true)}
-              >
-                <UserPlus className="mr-1" /> Invite People
-              </Button>
-              {invitations.length > 0 && (
-                <span
-                  className="absolute -top-2 -right-2 bg-primary  text-white text-xs rounded-full px-1.5
-               py-0.5 min-w-[20px] text-center"
+            {isCreator && (
+              <div className="relative">
+                {" "}
+                <Button
+                  variant={"outline"}
+                  onClick={() => setShowInviteDialog(true)}
                 >
-                  {invitations.length}
-                </span>
-              )}
-            </div>
+                  <UserPlus className="mr-1" /> Invite People
+                </Button>
+                {invitations.length > 0 && (
+                  <span
+                    className="absolute -top-2 -right-2 bg-primary  text-white text-xs rounded-full px-1.5
+                 py-0.5 min-w-[20px] text-center"
+                  >
+                    {invitations.length}
+                  </span>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>
