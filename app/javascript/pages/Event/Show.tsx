@@ -11,6 +11,10 @@ import { AvailabilityLegend } from "./components/AvailabilityLegend";
 import { useEventStore } from "@/stores/eventStore";
 import { NameInputDialog } from "./components/NameInputDialog";
 import { ParticipantsList } from "./components/ParticipantsList";
+import {
+  AvailabilityConflictModal,
+  ConflictData,
+} from "./components/AvailabilityConflictModal";
 
 function EventShow({
   event,
@@ -25,8 +29,8 @@ function EventShow({
   is_creator: boolean;
   time_slots: TimeSlotProps[];
 }) {
-  const { current_user } = usePage().props;
-
+  const { current_user, availability_conflict } = usePage().props;
+  console.log(usePage().props);
   const {
     selectedSlots,
     setSelectedSlots,
@@ -180,6 +184,9 @@ function EventShow({
         onNameChange={handleNameChange}
         onConfirm={handleNameConfirm}
         nameError={nameError}
+      />
+      <AvailabilityConflictModal
+        conflict={availability_conflict as ConflictData | null}
       />
     </>
   );

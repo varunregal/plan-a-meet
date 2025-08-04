@@ -18,26 +18,45 @@ class ApplicationController < ActionController::Base
     return if cookies.signed[:anonymous_session_id].blank?
 
     anonymous_session_id = cookies.signed[:anonymous_session_id]
-    anonymous_availabilities = Availability.where(anonymous_session_id:)
-    if anonymous_availabilities.exists?
-      user_time_slot_ids = user.availabilities.pluck(:time_slot_id)
-      anonymous_time_slot_ids = anonymous_availabilities.pluck(:time_slot_id)
+    all_anonymous_availabilities = Availability.where(anonymous_session_id:)
+    if all_anonymous_availabilities.exists?
 
-      if user_time_slot_ids.intersect?(anonymous_time_slot_ids)
-        event = anonymous_availabilities.first.time_slot.event
+      events_with_anonymous_availability = all_anonymous_availabilities
+                                           .joins(:time_slot)
+                                           .select('DISTINCT time_slots.event_id')
+                                           .pluck('time_slots.event_id')
+      events_with_anonymous_availability.each do |event_id|
+        user_slots = user.availabilities
+                         .joins(:time_slot)
+                         .where(time_slots: { event_id: })
+                         .pluck(:time_slot_id)
+        anonymous_slots = all_anonymous_availabilities
+                          .joins(:time_slot)
+                          .where(time_slots: { event_id: })
+                          .pluck(:time_slot_id)
+        next unless user_slots.intersect?(anonymous_slots)
+
+        event = Event.find(event_id)
         return {
           has_conflict: true,
           event_name: event.name,
           event_url: event.url,
-          authenticated_slots: user_time_slot_ids.count,
-          anonymous_slots: anonymous_time_slot_ids.count,
-          conflicting_slots: (user_time_slot_ids & anonymous_time_slot_ids).count
+          authenticated_slots: user_slots.count,
+          anonymous_slots: anonymous_slots.count,
+          conflicting_slots: (user_slots & anonymous_slots).count,
+          anonymous_session_id:
         }
       end
     end
 
-    Event.where(anonymous_session_id:).update_all(event_creator_id: user.id, anonymous_session_id: nil)
-    Availability.where(anonymous_session_id:).update_all(user_id: user.id, anonymous_session_id: nil)
+    ActiveRecord::Base.transaction do
+      Event.where(anonymous_session_id:).find_each do |event|
+        event.update(event_creator_id: user.id, anonymous_session_id: nil)
+      end
+      Availability.where(anonymous_session_id:).find_each do |availability|
+        availability.update(user_id:, anonymous_session_id: nil)
+      end
+    end
     cookies.delete(:anonymous_session_id)
     nil
   end
