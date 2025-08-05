@@ -20,7 +20,6 @@ class ApplicationController < ActionController::Base
     anonymous_session_id = cookies.signed[:anonymous_session_id]
     # rubocop:disable Rails/SkipsModelValidations
     Event.where(anonymous_session_id:).update_all(event_creator_id: user.id, anonymous_session_id: nil)
-    # Availability.where(anonymous_session_id:).update_all(user_id: user.id, anonymous_session_id: nil)
     cookies.delete(:anonymous_session_id)
     nil
   end

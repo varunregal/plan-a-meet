@@ -2,7 +2,6 @@ import { createContext, useContext } from "react";
 import { TimeSlotProps } from "../event.types";
 
 export interface GridContextValue {
-  hoveredSlot: string | null;
   availabilityData: { [key: string]: string[] };
   getSlot: (date: string, hour: number, minute: number) => TimeSlotProps | null;
   handleSlotInteraction: {

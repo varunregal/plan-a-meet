@@ -8,9 +8,8 @@ interface DayColumnProps {
 }
 
 export function DayColumn({ dateStr, hours }: DayColumnProps) {
-  const { hoveredSlot, availabilityData, getSlot, handleSlotInteraction } =
-    useGridContext();
-  const selectedSlots = useEventStore((state) => state.selectedSlots);
+  const { availabilityData, getSlot, handleSlotInteraction } = useGridContext();
+  const { selectedSlots, hoveredSlotId } = useEventStore();
   const date = new Date(dateStr);
   const dayName = date.toLocaleDateString("en-US", { weekday: "short" });
   const dayNum = date.getDate();
@@ -43,7 +42,7 @@ export function DayColumn({ dateStr, hours }: DayColumnProps) {
                 const isSelected = selectedSlots.has(slot.id);
                 const availability = availabilityData[key] || [];
                 const count = availability.length;
-                const isHovered = hoveredSlot === key;
+                const isHovered = hoveredSlotId === slot.id;
 
                 return (
                   <TimeSlot
@@ -54,9 +53,9 @@ export function DayColumn({ dateStr, hours }: DayColumnProps) {
                     isSelected={isSelected}
                     isHovered={isHovered}
                     availabilityCount={count}
-                    onMouseDown={(e) =>
-                      handleSlotInteraction.onMouseDown(e, slot.id, isSelected)
-                    }
+                    onMouseDown={(e) => {
+                      handleSlotInteraction.onMouseDown(e, slot.id, isSelected);
+                    }}
                     onMouseEnter={() =>
                       handleSlotInteraction.onMouseEnter(slot.id, key)
                     }

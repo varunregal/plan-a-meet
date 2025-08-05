@@ -1,4 +1,4 @@
-import { useState, useMemo, memo } from "react";
+import { useMemo, memo } from "react";
 import { TimeSlotProps } from "../event.types";
 import { DayColumn } from "./DayColumn";
 import { TimeColumn } from "./TimeColumn";
@@ -19,9 +19,7 @@ function AvailabilityGridComponent({
   onSlotClick,
   availabilityData = {},
 }: AvailabilityGridProps) {
-  const selectedSlots = useEventStore((state) => state.selectedSlots);
-  const isEditMode = useEventStore((state) => state.isEditMode);
-  const [hoveredSlot, setHoveredSlot] = useState<string | null>(null);
+  const { selectedSlots, isEditMode, setHoveredSlotId } = useEventStore();
 
   const grid = useGridData(timeSlots);
   const { handleMouseDown, handleMouseEnter } = useDragSelection(
@@ -31,25 +29,20 @@ function AvailabilityGridComponent({
 
   const contextValue = useMemo(
     () => ({
-      hoveredSlot,
       availabilityData: isEditMode ? {} : availabilityData,
       getSlot: grid.getSlot,
       handleSlotInteraction: {
         onMouseDown: handleMouseDown,
         onMouseEnter: (slotId: number, key: string) => {
-          setHoveredSlot(key);
+          setHoveredSlotId(slotId);
           handleMouseEnter(slotId);
         },
-        onMouseLeave: () => setHoveredSlot(null),
+        onMouseLeave: () => {
+          setHoveredSlotId(null);
+        },
       },
     }),
-    [
-      hoveredSlot,
-      availabilityData,
-      grid.getSlot,
-      handleMouseDown,
-      handleMouseEnter,
-    ],
+    [availabilityData, grid.getSlot, handleMouseDown, handleMouseEnter],
   );
   return (
     <GridContext.Provider value={contextValue}>

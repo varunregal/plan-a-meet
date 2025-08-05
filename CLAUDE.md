@@ -177,6 +177,30 @@ Once the event creator schedules the final event time, all participants will rec
 ### Overview
 Plan A Meet allows users to create events and mark availability without creating an account. This "zero friction" approach maximizes participation while offering clear benefits for those who choose to sign up.
 
+### Current Implementation (Simplified Approach)
+The anonymous user feature has been simplified to avoid complexity and edge cases:
+
+1. **Anonymous users can**:
+   - Create events without an account
+   - Mark availability with a required name
+   - All tracked via signed cookies with 30-day expiration
+
+2. **When anonymous users sign up or log in**:
+   - Events created anonymously → Transferred to user ownership
+   - Availabilities marked anonymously → Remain anonymous (no conversion)
+   - Cookie is cleared after login/signup
+
+3. **Benefits of this approach**:
+   - No unique constraint violations
+   - No complex conflict resolution needed
+   - No modals or user choices required
+   - Simple, predictable behavior
+
+4. **Trade-offs**:
+   - Users may appear twice in participants list (once as authenticated, once as anonymous)
+   - Anonymous availabilities are not automatically claimed
+   - This is acceptable and matches behavior of many popular apps
+
 ### Implementation Strategy
 
 #### Cookie-Based Sessions
@@ -269,34 +293,32 @@ def store_anonymous_session_cookie(value)
 end
 ```
 
-### Conversion Flow
+### Conversion Flow (Simplified)
 
-When anonymous users sign up or sign in, we convert their data:
+When anonymous users sign up or sign in, we only convert their events:
 
 ```ruby
-# In RegistrationsController/SessionsController
+# In ApplicationController
 def convert_anonymous_to_authenticated(user)
+  return if cookies.signed[:anonymous_session_id].blank?
+
   anonymous_session_id = cookies.signed[:anonymous_session_id]
-  return unless anonymous_session_id
   
-  # Convert events
-  Event.where(anonymous_session_id: anonymous_session_id)
-       .update_all(
-         event_creator_id: user.id,
-         anonymous_session_id: nil
-       )
+  # Only convert events (ownership transfer)
+  Event.where(anonymous_session_id:).update_all(event_creator_id: user.id, anonymous_session_id: nil)
   
-  # Convert availabilities
-  Availability.where(anonymous_session_id: anonymous_session_id)
-              .update_all(
-                 user_id: user.id,
-                 anonymous_session_id: nil
-               )
+  # Availabilities remain anonymous to avoid conflicts
+  # This prevents unique constraint violations and complex merge logic
   
-  # Clear the anonymous session
   cookies.delete(:anonymous_session_id)
+  nil
 end
 ```
+
+**Important**: We intentionally do NOT convert availabilities to avoid:
+- Unique constraint violations when user has already marked availability
+- Complex conflict resolution logic
+- Confusing user experiences across multiple events
 
 ### Feature Access Levels
 
@@ -427,25 +449,45 @@ end
    - Created `link_pending_invitations!` to connect invitations when users sign up
    - Full TDD implementation with passing tests
 
+### Completed ✅ (Recent - Phase 4: Anonymous User Flow)
+1. **Simplified Anonymous User Conversion**
+   - Implemented `convert_anonymous_to_authenticated` in ApplicationController
+   - **Key Decision**: Only convert events, NOT availabilities to avoid conflicts
+   - When anonymous user signs up/logs in:
+     - Anonymous events → Transferred to user ownership
+     - Anonymous availabilities → Remain anonymous (no conflicts possible)
+   - Added to both RegistrationsController and SessionsController
+   - Cookie cleared after conversion
+
+2. **Conflict Avoidance Strategy**
+   - Identified issue: Converting availabilities causes unique constraint violations
+   - Solution: Keep anonymous availabilities separate from authenticated ones
+   - Benefits:
+     - No complex conflict resolution needed
+     - No modals or user decisions required
+     - Predictable, simple behavior
+   - Trade-off: User may appear twice in participants list (as themselves and anonymous)
+
+3. **Test Coverage**
+   - Updated sessions_spec to verify events are converted
+   - Added test to ensure availabilities are NOT converted
+   - All tests passing with new simplified approach
+
 ### In Progress 🚧
 1. **Security Enhancement** - Implement hashing for anonymous session IDs instead of exposing raw IDs
 2. **Auto-link Invitations on Signup** - Call `link_pending_invitations!` in RegistrationsController
 3. **Fix request_authentication** - Update for modal-based auth (currently commented out)
 
 ### Next Steps 📋
-1. **Interactive Participants List**
-   - Connect to real data from backend
-   - Implement hover to highlight participant's slots
-   - Add loading states
-   
-3. **Conversion Flow** - Converting anonymous data when users sign up/sign in
-   - Add `convert_anonymous_to_authenticated` to RegistrationsController
-   - Add same conversion to SessionsController
-   
-4. **Progressive Engagement UI**
+1. **Progressive Engagement UI**
    - Add prompts to sign up for notifications
    - Show benefits of creating an account
    - Implement smooth upgrade flow
+
+2. **Consider Future Enhancements**
+   - Option to claim anonymous availabilities manually
+   - Better visual distinction between anonymous and authenticated participants
+   - Analytics on anonymous → authenticated conversion rates
 
 ### Technical Debt to Address
 - Remove `Events::Create` service file (low priority)

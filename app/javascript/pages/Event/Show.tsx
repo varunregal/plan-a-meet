@@ -29,8 +29,7 @@ function EventShow({
   is_creator: boolean;
   time_slots: TimeSlotProps[];
 }) {
-  const { current_user, availability_conflict } = usePage().props;
-  console.log(usePage().props);
+  const { current_user } = usePage().props;
   const {
     selectedSlots,
     setSelectedSlots,
@@ -184,9 +183,6 @@ function EventShow({
         onNameChange={handleNameChange}
         onConfirm={handleNameConfirm}
         nameError={nameError}
-      />
-      <AvailabilityConflictModal
-        conflict={availability_conflict as ConflictData | null}
       />
     </>
   );

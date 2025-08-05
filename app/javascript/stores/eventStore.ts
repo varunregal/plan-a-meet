@@ -16,10 +16,12 @@ interface EventStore {
   isEditMode: boolean;
   viewModeClickAttempt: number;
   incrementViewModeClick: () => void;
+  hoveredSlotId: number | null;
 
   setTotalParticipants: (count: number) => void;
   setParticipants: (participants: Participant[]) => void;
   setHoveredParticipantId: (id: string | null) => void;
+  setHoveredSlotId: (id: number | null) => void;
 
   setCurrentUserSlots: (slots: number[]) => void;
   toggleSlot: (slotId: number) => void;
@@ -46,7 +48,8 @@ export const useEventStore = create<EventStore>((set) => ({
         ? state.viewModeClickAttempt + 1
         : 0,
     })),
-
+  hoveredSlotId: null,
+  setHoveredSlotId: (id) => set({ hoveredSlotId: id }),
   setTotalParticipants: (count) => set({ totalParticipants: count }),
   setParticipants: (participants) => set({ participants }),
   setHoveredParticipantId: (id) => set({ hoveredParticipantId: id }),
