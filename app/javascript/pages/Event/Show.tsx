@@ -1,20 +1,19 @@
 import EventHeader from "./components/EventHeader";
-import { EventProps, InvitationProps, TimeSlotProps } from "./event.types";
+import {
+  EventProps,
+  InvitationProps,
+  TimeSlotProps,
+  UserProps,
+} from "./event.types";
 import { AuthAlert } from "./components/AuthAlert";
 import CalendarImportSection from "./components/CalendarImportSection";
 import { useEffect, useState } from "react";
 import api from "@/lib/api";
 import { toast } from "sonner";
-import { AvailabilitySidebar } from "./components/AvailabilitySidebar";
 import { usePage } from "@inertiajs/react";
-import { AvailabilityLegend } from "./components/AvailabilityLegend";
 import { useEventStore } from "@/stores/eventStore";
 import { NameInputDialog } from "./components/NameInputDialog";
 import { ParticipantsList } from "./components/ParticipantsList";
-import {
-  AvailabilityConflictModal,
-  ConflictData,
-} from "./components/AvailabilityConflictModal";
 
 function EventShow({
   event,
@@ -80,7 +79,7 @@ function EventShow({
 
   useEffect(() => {
     fetchAvailability();
-  }, [event.url, current_user?.id]);
+  }, [event.url, (current_user as UserProps)?.id]);
 
   useEffect(() => {
     if (isAnonymous) {

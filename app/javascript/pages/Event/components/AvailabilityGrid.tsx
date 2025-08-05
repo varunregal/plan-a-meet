@@ -22,14 +22,14 @@ function AvailabilityGridComponent({
   availabilityData = {},
 }: AvailabilityGridProps) {
   const { selectedSlots, isEditMode, setHoveredSlotId } = useEventStore();
-  
+
   const grid = useGridData(timeSlots);
   const { handleMouseDown, handleMouseEnter } = useDragSelection(
     selectedSlots,
     onSlotClick,
   );
-  
-  const { scrollContainerRef, canScrollLeft, canScrollRight, scrollByAmount } = 
+
+  const { scrollContainerRef, canScrollLeft, canScrollRight, scrollByAmount } =
     useScrollControls(400, [grid.dates.length]);
 
   const contextValue = useMemo(
@@ -47,7 +47,14 @@ function AvailabilityGridComponent({
         },
       },
     }),
-    [availabilityData, grid.getSlot, handleMouseDown, handleMouseEnter, isEditMode, setHoveredSlotId],
+    [
+      availabilityData,
+      grid.getSlot,
+      handleMouseDown,
+      handleMouseEnter,
+      isEditMode,
+      setHoveredSlotId,
+    ],
   );
 
   return (

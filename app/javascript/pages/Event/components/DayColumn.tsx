@@ -16,7 +16,7 @@ export function DayColumn({ dateStr, hours }: DayColumnProps) {
   const monthName = date.toLocaleDateString("en-US", { month: "short" });
 
   return (
-    <div className="min-w-[200px] border-r border-gray-200 last:border-r-0">
+    <div className="min-w-[150px] border-r border-gray-200 last:border-r-0">
       <div className="h-16 font-semibold border-b border-gray-200 flex flex-col items-center justify-center">
         <div className="text-xs text-gray-500">{dayName}</div>
         <div className="text-sm text-gray-900">

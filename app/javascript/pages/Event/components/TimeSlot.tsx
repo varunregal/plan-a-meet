@@ -1,5 +1,10 @@
 import { useEventStore } from "@/stores/eventStore";
 import React from "react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface TimeSlotProps {
   hour: number;
@@ -60,19 +65,6 @@ function getAvailabilityStyle(percentage: number) {
   return style?.classes || AVAILABILITY_STYLES[0].classes;
 }
 
-function Tooltip({ timeRange }: { timeRange: string }) {
-  return (
-    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-20 pointer-events-none">
-      <div className="bg-gray-900 text-white px-3 py-1.5 rounded-md text-xs whitespace-pre-line shadow-lg">
-        {timeRange}
-      </div>
-      <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1">
-        <div className="w-2 h-2 bg-gray-900 rotate-45" />
-      </div>
-    </div>
-  );
-}
-
 export function TimeSlot({
   hour,
   minute,
@@ -124,16 +116,21 @@ export function TimeSlot({
     onMouseDown(e);
   };
   return (
-    <div className="relative group">
-      <button
-        className={buttonClasses}
-        onMouseDown={handleClick}
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
-        aria-label={timeRange}
-      ></button>
-
-      {isHovered && <Tooltip timeRange={timeRange} />}
-    </div>
+    <Tooltip open={isHovered}>
+      <TooltipTrigger asChild>
+        <div className="relative group">
+          <button
+            className={buttonClasses}
+            onMouseDown={handleClick}
+            onMouseEnter={onMouseEnter}
+            onMouseLeave={onMouseLeave}
+            aria-label={timeRange}
+          />
+        </div>
+      </TooltipTrigger>
+      <TooltipContent className="bg-gray-800 fill-gray-800 text-white">
+        <p>{timeRange}</p>
+      </TooltipContent>
+    </Tooltip>
   );
 }
