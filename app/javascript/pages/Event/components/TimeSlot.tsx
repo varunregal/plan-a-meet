@@ -1,5 +1,5 @@
 import { useEventStore } from "@/stores/eventStore";
-import React, { useCallback } from "react";
+import React, { useCallback, useRef } from "react";
 import {
   Tooltip,
   TooltipContent,
@@ -16,7 +16,6 @@ interface TimeSlotProps {
   onMouseDown: (e: React.MouseEvent) => void;
   onMouseEnter: (e: React.MouseEvent) => void;
   onMouseLeave: (e: React.MouseEvent) => void;
-  timeRange: string;
 }
 
 const BASE_CLASSES = "w-full h-full transition-all duration-150 relative";
@@ -66,7 +65,7 @@ function getAvailabilityStyle(percentage: number) {
   return style?.classes || AVAILABILITY_STYLES[0].classes;
 }
 
-export function TimeSlot({
+export const TimeSlot = React.memo(function TimeSlot({
   hour,
   minute,
   slotId,
@@ -76,27 +75,29 @@ export function TimeSlot({
   onMouseDown,
   onMouseEnter,
   onMouseLeave,
-  timeRange,
 }: TimeSlotProps) {
-  const {
-    isEditMode,
-    incrementViewModeClick,
-    totalParticipants,
-    hoveredParticipantId,
-    participants,
-  } = useEventStore();
+  const isEditMode = useEventStore((state) => state.isEditMode);
+  const incrementViewModeClick = useEventStore(
+    (state) => state.incrementViewModeClick,
+  );
+  const totalParticipants = useEventStore((state) => state.totalParticipants);
+  const hoveredParticipantId = useEventStore(
+    (state) => state.hoveredParticipantId,
+  );
+  const participants = useEventStore((state) => state.participants);
   const isHoveredParticipantSlot =
     hoveredParticipantId &&
     participants
       .find((p) => p.id === hoveredParticipantId)
       ?.slot_ids.includes(slotId);
-
+  // const hoveredSlotId = useEventStore((state) => state.hoveredSlotId);
   const percentage =
     totalParticipants > 0
       ? Math.round((availabilityCount / totalParticipants) * 100)
       : 0;
-  // const timeRange = formatTimeRange(hour, minute);
+  const timeRange = formatTimeRange(hour, minute);
   const availabilityStyle = getAvailabilityStyle(percentage);
+  // const isHovered = hoveredSlotId === slotId;
   const buttonClasses = [
     BASE_CLASSES,
     availabilityStyle,
@@ -120,25 +121,26 @@ export function TimeSlot({
     },
     [isEditMode, incrementViewModeClick, onMouseDown],
   );
+
   return (
     // <Tooltip open={isHovered}>
     //   <TooltipTrigger asChild>
-    <div className="relative group">
-      <button
-        data-slot-id={slotId}
-        data-time-range={timeRange}
-        data-is-selected={isSelected}
-        className={buttonClasses}
-        onMouseDown={handleClick}
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
-        // aria-label={}
-      />
-    </div>
+    //     <div className="relative group">
+    <button
+      data-slot-id={slotId}
+      data-time-range={timeRange}
+      data-is-selected={isSelected}
+      className={buttonClasses}
+      onMouseDown={handleClick}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      // aria-label={}
+    />
+    // </div>
     //   </TooltipTrigger>
     //   <TooltipContent className="bg-gray-800 fill-gray-800 text-white">
     //     <p>{timeRange}</p>
     //   </TooltipContent>
     // </Tooltip>
   );
-}
+});

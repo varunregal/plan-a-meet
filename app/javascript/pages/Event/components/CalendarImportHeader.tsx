@@ -16,13 +16,20 @@ export function CalendarImportHeader({
   onSave,
   isSaving,
 }: CalendarImportHeaderProps) {
-  const {
-    isEditMode,
-    startEditing,
-    cancelEditing,
-    hasUnsavedChanges,
-    viewModeClickAttempt,
-  } = useEventStore();
+  // const {
+  //   isEditMode,
+  //   startEditing,
+  //   cancelEditing,
+  //   hasUnsavedChanges,
+  //   viewModeClickAttempt,
+  // } = useEventStore();
+  const isEditMode = useEventStore((state) => state.isEditMode);
+  const startEditing = useEventStore((state) => state.startEditing);
+  const cancelEditing = useEventStore((state) => state.cancelEditing);
+  const hasUnsavedChanges = useEventStore((state) => state.hasUnsavedChanges);
+  const viewModeClickAttempt = useEventStore(
+    (state) => state.viewModeClickAttempt,
+  );
   const editButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {

@@ -1,7 +1,7 @@
 import { formatTimeRange, TimeSlot } from "./TimeSlot";
-import { useGridContext } from "../contexts/GridContext";
 import { useEventStore } from "@/stores/eventStore";
 import { TimeSlotProps } from "../event.types";
+import { useRef } from "react";
 
 interface DayColumnProps {
   dateStr: string;
@@ -26,7 +26,9 @@ export function DayColumn({
   getSlot,
   handleSlotInteraction,
 }: DayColumnProps) {
-  const { selectedSlots, hoveredSlotId } = useEventStore();
+  // const { selectedSlots, hoveredSlotId } = useEventStore();
+  const selectedSlots = useEventStore((state) => state.selectedSlots);
+  const hoveredSlotId = useEventStore((state) => state.hoveredSlotId);
   const date = new Date(dateStr);
   const dayName = date.toLocaleDateString("en-US", { weekday: "short" });
   const dayNum = date.getDate();
@@ -70,7 +72,6 @@ export function DayColumn({
                     isSelected={isSelected}
                     isHovered={isHovered}
                     availabilityCount={count}
-                    timeRange={formatTimeRange(hour, minute)}
                     onMouseDown={handleSlotInteraction.onMouseDown}
                     onMouseEnter={handleSlotInteraction.onMouseEnter}
                     onMouseLeave={handleSlotInteraction.onMouseLeave}

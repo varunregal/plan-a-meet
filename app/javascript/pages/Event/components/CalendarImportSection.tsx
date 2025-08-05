@@ -2,9 +2,8 @@ import { memo } from "react";
 import { TimeSlotProps } from "../event.types";
 import { CalendarImportButtons } from "./CalendarImportButtons";
 import { CalendarImportHeader } from "./CalendarImportHeader";
-import { AvailabilitySection } from "./AvailabilitySection";
 import { AVAILABILITY_CONSTANTS } from "../constants/availability";
-import { useEventStore } from "@/stores/eventStore";
+import AvailabilityGrid from "./AvailabilityGrid";
 
 interface CalendarImportSectionProps {
   timeSlots: TimeSlotProps[];
@@ -21,23 +20,20 @@ function CalendarImportSectionComponent({
   onSaveAvailability,
   isSaving,
 }: CalendarImportSectionProps) {
-  const toggleSlot = useEventStore((state) => state.toggleSlot);
-  const handleSlotClick = (slotId: number) => {
-    toggleSlot(slotId);
-  };
   return (
     <div className={AVAILABILITY_CONSTANTS.CONTAINER_CLASSES}>
       <CalendarImportHeader onSave={onSaveAvailability} isSaving={isSaving} />
       <CalendarImportButtons onImport={onImportCalendar} />
       <div className={AVAILABILITY_CONSTANTS.DIVIDER_CLASSES} />
 
-      <AvailabilitySection
-        timeSlots={timeSlots}
-        onSlotClick={handleSlotClick}
-        availabilityData={availabilityData}
-      />
+      <div className={AVAILABILITY_CONSTANTS.GRID_CONTAINER_CLASSES}>
+        <AvailabilityGrid
+          timeSlots={timeSlots}
+          availabilityData={availabilityData}
+        />
+      </div>
     </div>
   );
 }
 
-export default memo(CalendarImportSectionComponent);
+export default CalendarImportSectionComponent;

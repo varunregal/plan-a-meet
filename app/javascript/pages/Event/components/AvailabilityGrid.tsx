@@ -1,46 +1,31 @@
-import { useMemo, memo, useCallback } from "react";
+import { memo, useCallback } from "react";
 import { TimeSlotProps } from "../event.types";
 import { DayColumn } from "./DayColumn";
 import { TimeColumn } from "./TimeColumn";
-import { GridContext } from "../contexts/GridContext";
 import { useDragSelection } from "../hooks/useDragSelection";
 import { useGridData } from "../hooks/useGridData";
 import { useScrollControls } from "../hooks/useScrollControls";
 import { formatHour } from "../utils/dateFormatters";
 import { useEventStore } from "@/stores/eventStore";
 import { ScrollControls } from "./ScrollControls";
-import { Tooltip, TooltipContent } from "@/components/ui/tooltip";
 
 interface AvailabilityGridProps {
   timeSlots: TimeSlotProps[];
-  onSlotClick: (slotId: number) => void;
   availabilityData?: { [key: string]: string[] };
 }
 
-function ToolTipSlot() {
-  const { hoveredSlotData } = useEventStore();
-  console.log("triggered", hoveredSlotData);
-  if (!hoveredSlotData.id) return null;
-  return (
-    <Tooltip open={true}>
-      <TooltipContent>
-        <p>{hoveredSlotData?.timeRange}</p>
-      </TooltipContent>
-    </Tooltip>
-  );
-}
-
-function AvailabilityGridComponent({
+function AvailabilityGrid({
   timeSlots,
-  onSlotClick,
   availabilityData = {},
 }: AvailabilityGridProps) {
-  const { selectedSlots, isEditMode, setHoveredSlotData } = useEventStore();
-
+  const isEditMode = useEventStore((state) => state.isEditMode);
+  const setHoveredSlotData = useEventStore((state) => state.setHoveredSlotData);
+  const toggleSlot = useEventStore((state) => state.toggleSlot);
+  const selectedSlots = useEventStore((state) => state.selectedSlots);
   const grid = useGridData(timeSlots);
   const { handleMouseDown, handleMouseEnter } = useDragSelection(
     selectedSlots,
-    onSlotClick,
+    toggleSlot,
   );
 
   const { scrollContainerRef, canScrollLeft, canScrollRight, scrollByAmount } =
@@ -48,9 +33,8 @@ function AvailabilityGridComponent({
   const handleSlotMouseEnter = useCallback(
     (e: React.MouseEvent) => {
       const slotId = Number(e.currentTarget.getAttribute("data-slot-id"));
-      const timeRange = e.currentTarget.getAttribute("data-time-range") || "";
       if (!isNaN(slotId)) {
-        setHoveredSlotData({ id: slotId, timeRange });
+        setHoveredSlotData({ id: slotId });
         handleMouseEnter(slotId);
       }
     },
@@ -70,11 +54,10 @@ function AvailabilityGridComponent({
   );
 
   const handleSlotMouseLeave = useCallback(() => {
-    setHoveredSlotData({ id: null, timeRange: "" });
+    setHoveredSlotData({ id: null });
   }, [setHoveredSlotData]);
 
   return (
-    // <GridContext.Provider value={contextValue}>
     <div className="h-full flex flex-col">
       <ScrollControls
         canScrollLeft={canScrollLeft}
@@ -109,9 +92,7 @@ function AvailabilityGridComponent({
         </div>
       </div>
     </div>
-    // <ToolTipSlot />
-    // </GridContext.Provider>
   );
 }
 
-export const AvailabilityGrid = memo(AvailabilityGridComponent);
+export default AvailabilityGrid;
