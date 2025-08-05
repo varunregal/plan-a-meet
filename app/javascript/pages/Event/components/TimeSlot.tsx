@@ -95,7 +95,7 @@ export function TimeSlot({
     totalParticipants > 0
       ? Math.round((availabilityCount / totalParticipants) * 100)
       : 0;
-  const timeRange = formatTimeRange(hour, minute);
+  // const timeRange = formatTimeRange(hour, minute);
   const availabilityStyle = getAvailabilityStyle(percentage);
   const buttonClasses = [
     BASE_CLASSES,
