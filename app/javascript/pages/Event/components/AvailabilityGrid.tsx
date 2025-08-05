@@ -5,8 +5,10 @@ import { TimeColumn } from "./TimeColumn";
 import { GridContext } from "../contexts/GridContext";
 import { useDragSelection } from "../hooks/useDragSelection";
 import { useGridData } from "../hooks/useGridData";
+import { useScrollControls } from "../hooks/useScrollControls";
 import { formatHour } from "../utils/dateFormatters";
 import { useEventStore } from "@/stores/eventStore";
+import { ScrollControls } from "./ScrollControls";
 
 interface AvailabilityGridProps {
   timeSlots: TimeSlotProps[];
@@ -20,12 +22,15 @@ function AvailabilityGridComponent({
   availabilityData = {},
 }: AvailabilityGridProps) {
   const { selectedSlots, isEditMode, setHoveredSlotId } = useEventStore();
-
+  
   const grid = useGridData(timeSlots);
   const { handleMouseDown, handleMouseEnter } = useDragSelection(
     selectedSlots,
     onSlotClick,
   );
+  
+  const { scrollContainerRef, canScrollLeft, canScrollRight, scrollByAmount } = 
+    useScrollControls(400, [grid.dates.length]);
 
   const contextValue = useMemo(
     () => ({
@@ -42,16 +47,27 @@ function AvailabilityGridComponent({
         },
       },
     }),
-    [availabilityData, grid.getSlot, handleMouseDown, handleMouseEnter],
+    [availabilityData, grid.getSlot, handleMouseDown, handleMouseEnter, isEditMode, setHoveredSlotId],
   );
+
   return (
     <GridContext.Provider value={contextValue}>
       <div className="h-full flex flex-col">
-        <div className="border border-gray-200 rounded-lg overflow-hidden flex-1">
-          <div className="flex h-full">
-            <TimeColumn hours={grid.hours} formatHour={formatHour} />
+        <ScrollControls
+          canScrollLeft={canScrollLeft}
+          canScrollRight={canScrollRight}
+          onScrollLeft={() => scrollByAmount("left")}
+          onScrollRight={() => scrollByAmount("right")}
+        />
 
-            <div className="flex-1 flex">
+        <div className="border border-gray-200 rounded-lg flex flex-1 overflow-hidden">
+          <TimeColumn hours={grid.hours} formatHour={formatHour} />
+
+          <div
+            ref={scrollContainerRef}
+            className="overflow-x-auto overflow-y-hidden flex-1"
+          >
+            <div className="flex h-full min-w-fit">
               {grid.dates.map((dateStr) => (
                 <DayColumn key={dateStr} dateStr={dateStr} hours={grid.hours} />
               ))}
