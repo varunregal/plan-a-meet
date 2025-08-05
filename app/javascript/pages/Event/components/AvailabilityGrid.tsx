@@ -48,7 +48,7 @@ function AvailabilityGridComponent({
   const handleSlotMouseEnter = useCallback(
     (e: React.MouseEvent) => {
       const slotId = Number(e.currentTarget.getAttribute("data-slot-id"));
-      const timeRange = e.currentTarget.getAttribute("date-time-range") || "";
+      const timeRange = e.currentTarget.getAttribute("data-time-range") || "";
       if (!isNaN(slotId)) {
         setHoveredSlotData({ id: slotId, timeRange });
         handleMouseEnter(slotId);
@@ -57,57 +57,60 @@ function AvailabilityGridComponent({
     [setHoveredSlotData, handleMouseEnter],
   );
 
+  const handleSlotMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      const slotId = Number(e.currentTarget.getAttribute("data-slot-id"));
+      const isSelected =
+        e.currentTarget.getAttribute("data-is-selected") === "true";
+      if (!isNaN(slotId)) {
+        handleMouseDown(e, slotId, isSelected);
+      }
+    },
+    [handleMouseDown],
+  );
+
   const handleSlotMouseLeave = useCallback(() => {
     setHoveredSlotData({ id: null, timeRange: "" });
   }, [setHoveredSlotData]);
-  const contextValue = useMemo(
-    () => ({
-      availabilityData: isEditMode ? {} : availabilityData,
-      getSlot: grid.getSlot,
-      handleSlotInteraction: {
-        onMouseDown: handleMouseDown,
-        onMouseEnter: handleSlotMouseEnter,
-        onMouseLeave: handleSlotMouseLeave,
-      },
-    }),
-    [
-      availabilityData,
-      grid.getSlot,
-      handleMouseDown,
-      handleMouseEnter,
-      isEditMode,
-      setHoveredSlotData,
-      // setHoveredSlotId,
-    ],
-  );
 
   return (
-    <GridContext.Provider value={contextValue}>
-      <div className="h-full flex flex-col">
-        <ScrollControls
-          canScrollLeft={canScrollLeft}
-          canScrollRight={canScrollRight}
-          onScrollLeft={() => scrollByAmount("left")}
-          onScrollRight={() => scrollByAmount("right")}
-        />
+    // <GridContext.Provider value={contextValue}>
+    <div className="h-full flex flex-col">
+      <ScrollControls
+        canScrollLeft={canScrollLeft}
+        canScrollRight={canScrollRight}
+        onScrollLeft={() => scrollByAmount("left")}
+        onScrollRight={() => scrollByAmount("right")}
+      />
 
-        <div className="border border-gray-200 rounded-lg flex flex-1 overflow-hidden">
-          <TimeColumn hours={grid.hours} formatHour={formatHour} />
+      <div className="border border-gray-200 rounded-lg flex flex-1 overflow-hidden">
+        <TimeColumn hours={grid.hours} formatHour={formatHour} />
 
-          <div
-            ref={scrollContainerRef}
-            className="overflow-x-auto overflow-y-hidden flex-1"
-          >
-            <div className="flex h-full min-w-fit">
-              {grid.dates.map((dateStr) => (
-                <DayColumn key={dateStr} dateStr={dateStr} hours={grid.hours} />
-              ))}
-            </div>
+        <div
+          ref={scrollContainerRef}
+          className="overflow-x-auto overflow-y-hidden flex-1"
+        >
+          <div className="flex h-full min-w-fit">
+            {grid.dates.map((dateStr) => (
+              <DayColumn
+                key={dateStr}
+                dateStr={dateStr}
+                getSlot={grid.getSlot}
+                hours={grid.hours}
+                availabilityData={isEditMode ? {} : availabilityData}
+                handleSlotInteraction={{
+                  onMouseDown: handleSlotMouseDown,
+                  onMouseEnter: handleSlotMouseEnter,
+                  onMouseLeave: handleSlotMouseLeave,
+                }}
+              />
+            ))}
           </div>
         </div>
       </div>
-      <ToolTipSlot />
-    </GridContext.Provider>
+    </div>
+    // <ToolTipSlot />
+    // </GridContext.Provider>
   );
 }
 

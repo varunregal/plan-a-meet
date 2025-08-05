@@ -1,5 +1,5 @@
 import { useEventStore } from "@/stores/eventStore";
-import React from "react";
+import React, { useCallback } from "react";
 import {
   Tooltip,
   TooltipContent,
@@ -109,14 +109,17 @@ export function TimeSlot({
     .filter(Boolean)
     .join(" ");
 
-  const handleClick = (e: React.MouseEvent) => {
-    if (!isEditMode) {
-      e.preventDefault();
-      incrementViewModeClick();
-      return;
-    }
-    onMouseDown(e);
-  };
+  const handleClick = useCallback(
+    (e: React.MouseEvent) => {
+      if (!isEditMode) {
+        e.preventDefault();
+        incrementViewModeClick();
+        return;
+      }
+      onMouseDown(e);
+    },
+    [isEditMode, incrementViewModeClick, onMouseDown],
+  );
   return (
     // <Tooltip open={isHovered}>
     //   <TooltipTrigger asChild>
@@ -124,6 +127,7 @@ export function TimeSlot({
       <button
         data-slot-id={slotId}
         data-time-range={timeRange}
+        data-is-selected={isSelected}
         className={buttonClasses}
         onMouseDown={handleClick}
         onMouseEnter={onMouseEnter}

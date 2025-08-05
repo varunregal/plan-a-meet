@@ -1,14 +1,31 @@
 import { formatTimeRange, TimeSlot } from "./TimeSlot";
 import { useGridContext } from "../contexts/GridContext";
 import { useEventStore } from "@/stores/eventStore";
+import { TimeSlotProps } from "../event.types";
 
 interface DayColumnProps {
   dateStr: string;
   hours: number[];
+  availabilityData: { [key: string]: string[] };
+  getSlot: (date: string, hour: number, minute: number) => TimeSlotProps | null;
+  handleSlotInteraction: {
+    onMouseDown: (
+      e: React.MouseEvent,
+      slotId: number,
+      isSelected: boolean,
+    ) => void;
+    onMouseEnter: (e: React.MouseEvent) => void;
+    onMouseLeave: (e: React.MouseEvent) => void;
+  };
 }
 
-export function DayColumn({ dateStr, hours }: DayColumnProps) {
-  const { availabilityData, getSlot, handleSlotInteraction } = useGridContext();
+export function DayColumn({
+  dateStr,
+  hours,
+  availabilityData,
+  getSlot,
+  handleSlotInteraction,
+}: DayColumnProps) {
   const { selectedSlots, hoveredSlotId } = useEventStore();
   const date = new Date(dateStr);
   const dayName = date.toLocaleDateString("en-US", { weekday: "short" });
@@ -54,9 +71,7 @@ export function DayColumn({ dateStr, hours }: DayColumnProps) {
                     isHovered={isHovered}
                     availabilityCount={count}
                     timeRange={formatTimeRange(hour, minute)}
-                    onMouseDown={(e) => {
-                      handleSlotInteraction.onMouseDown(e, slot.id, isSelected);
-                    }}
+                    onMouseDown={handleSlotInteraction.onMouseDown}
                     onMouseEnter={handleSlotInteraction.onMouseEnter}
                     onMouseLeave={handleSlotInteraction.onMouseLeave}
                   />
