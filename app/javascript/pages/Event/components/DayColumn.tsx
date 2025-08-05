@@ -1,4 +1,4 @@
-import { TimeSlot } from "./TimeSlot";
+import { formatTimeRange, TimeSlot } from "./TimeSlot";
 import { useGridContext } from "../contexts/GridContext";
 import { useEventStore } from "@/stores/eventStore";
 
@@ -53,12 +53,11 @@ export function DayColumn({ dateStr, hours }: DayColumnProps) {
                     isSelected={isSelected}
                     isHovered={isHovered}
                     availabilityCount={count}
+                    timeRange={formatTimeRange(hour, minute)}
                     onMouseDown={(e) => {
                       handleSlotInteraction.onMouseDown(e, slot.id, isSelected);
                     }}
-                    onMouseEnter={() =>
-                      handleSlotInteraction.onMouseEnter(slot.id, key)
-                    }
+                    onMouseEnter={handleSlotInteraction.onMouseEnter}
                     onMouseLeave={handleSlotInteraction.onMouseLeave}
                   />
                 );

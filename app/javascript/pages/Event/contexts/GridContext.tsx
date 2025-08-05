@@ -10,8 +10,8 @@ export interface GridContextValue {
       slotId: number,
       isSelected: boolean,
     ) => void;
-    onMouseEnter: (slotId: number, key: string) => void;
-    onMouseLeave: () => void;
+    onMouseEnter: (e: React.MouseEvent) => void;
+    onMouseLeave: (e: React.MouseEvent) => void;
   };
 }
 

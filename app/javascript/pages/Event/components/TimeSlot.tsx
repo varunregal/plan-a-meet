@@ -14,8 +14,9 @@ interface TimeSlotProps {
   isHovered: boolean;
   availabilityCount: number;
   onMouseDown: (e: React.MouseEvent) => void;
-  onMouseEnter: () => void;
-  onMouseLeave: () => void;
+  onMouseEnter: (e: React.MouseEvent) => void;
+  onMouseLeave: (e: React.MouseEvent) => void;
+  timeRange: string;
 }
 
 const BASE_CLASSES = "w-full h-full transition-all duration-150 relative";
@@ -49,7 +50,7 @@ const AVAILABILITY_STYLES = [
   },
 ];
 
-function formatTimeRange(hour: number, minute: number) {
+export function formatTimeRange(hour: number, minute: number) {
   const pad = (n: number) => n.toString().padStart(2, "0");
   const startTime = `${hour}:${pad(minute)}`;
   const endHour = minute === 45 ? hour + 1 : hour;
@@ -75,6 +76,7 @@ export function TimeSlot({
   onMouseDown,
   onMouseEnter,
   onMouseLeave,
+  timeRange,
 }: TimeSlotProps) {
   const {
     isEditMode,
@@ -116,21 +118,23 @@ export function TimeSlot({
     onMouseDown(e);
   };
   return (
-    <Tooltip open={isHovered}>
-      <TooltipTrigger asChild>
-        <div className="relative group">
-          <button
-            className={buttonClasses}
-            onMouseDown={handleClick}
-            onMouseEnter={onMouseEnter}
-            onMouseLeave={onMouseLeave}
-            aria-label={timeRange}
-          />
-        </div>
-      </TooltipTrigger>
-      <TooltipContent className="bg-gray-800 fill-gray-800 text-white">
-        <p>{timeRange}</p>
-      </TooltipContent>
-    </Tooltip>
+    // <Tooltip open={isHovered}>
+    //   <TooltipTrigger asChild>
+    <div className="relative group">
+      <button
+        data-slot-id={slotId}
+        data-time-range={timeRange}
+        className={buttonClasses}
+        onMouseDown={handleClick}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+        // aria-label={}
+      />
+    </div>
+    //   </TooltipTrigger>
+    //   <TooltipContent className="bg-gray-800 fill-gray-800 text-white">
+    //     <p>{timeRange}</p>
+    //   </TooltipContent>
+    // </Tooltip>
   );
 }
