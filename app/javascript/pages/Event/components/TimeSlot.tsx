@@ -116,21 +116,21 @@ export function TimeSlot({
     onMouseDown(e);
   };
   return (
-    <Tooltip open={isHovered}>
-      <TooltipTrigger asChild>
-        <div className="relative group">
-          <button
-            className={buttonClasses}
-            onMouseDown={handleClick}
-            onMouseEnter={onMouseEnter}
-            onMouseLeave={onMouseLeave}
-            aria-label={timeRange}
-          />
-        </div>
-      </TooltipTrigger>
-      <TooltipContent className="bg-gray-800 fill-gray-800 text-white">
-        <p>{timeRange}</p>
-      </TooltipContent>
-    </Tooltip>
+    // <Tooltip open={isHovered}>
+    //   <TooltipTrigger asChild>
+    <div className="relative group">
+      <button
+        className={buttonClasses}
+        onMouseDown={handleClick}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+        aria-label={timeRange}
+      />
+    </div>
+    //   </TooltipTrigger>
+    //   <TooltipContent className="bg-gray-800 fill-gray-800 text-white">
+    //     <p>{timeRange}</p>
+    //   </TooltipContent>
+    // </Tooltip>
   );
 }
