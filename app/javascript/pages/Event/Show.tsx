@@ -7,7 +7,7 @@ import {
 } from "./event.types";
 import { AuthAlert } from "./components/AuthAlert";
 import CalendarImportSection from "./components/CalendarImportSection";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import api from "@/lib/api";
 import { toast } from "sonner";
 import { usePage } from "@inertiajs/react";
@@ -29,15 +29,24 @@ function EventShow({
   time_slots: TimeSlotProps[];
 }) {
   const { current_user } = usePage().props;
-  const {
-    selectedSlots,
-    setSelectedSlots,
-    saveEditing,
-    setTotalParticipants,
-    setCurrentUserSlots,
-    setParticipants,
-  } = useEventStore();
-
+  // const {
+  //   selectedSlots,
+  //   setSelectedSlots,
+  //   saveEditing,
+  //   setTotalParticipants,
+  //   setCurrentUserSlots,
+  //   setParticipants,
+  // } = useEventStore();
+  const setSelectedSlots = useEventStore((state) => state.setSelectedSlots);
+  const saveEditing = useEventStore((state) => state.saveEditing);
+  const setTotalParticipants = useEventStore(
+    (state) => state.setTotalParticipants,
+  );
+  const setCurrentUserSlots = useEventStore(
+    (state) => state.setCurrentUserSlots,
+  );
+  const setParticipants = useEventStore((state) => state.setParticipants);
+  const renderingCount = useRef(0);
   const [availabilityData, setAvailabilityData] = useState<{
     [key: string]: string[];
   }>({});
@@ -55,6 +64,8 @@ function EventShow({
       setNameError("");
     }
   };
+  renderingCount.current += 1;
+  console.log({ renderingCount: renderingCount.current });
   const fetchAvailability = async () => {
     try {
       const response = await api.get(`/events/${event.url}/availabilities`);
@@ -103,6 +114,7 @@ function EventShow({
   };
 
   const handleSaveAvailability = async () => {
+    const selectedSlots = useEventStore.getState().selectedSlots;
     if (isAnonymous && !participantName.trim()) {
       setNameError("Please enter your name to save");
       return;
@@ -168,7 +180,6 @@ function EventShow({
               <div className="lg:sticky lg:top-4 self-start">
                 <div className="space-y-4">
                   <ParticipantsList />
-                  {/*<AvailabilityLegend />*/}
                 </div>
               </div>
             </div>
