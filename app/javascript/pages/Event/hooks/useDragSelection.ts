@@ -54,7 +54,7 @@ export function useDragSelection({
 
       startDragOperation(slotId);
     },
-    [toggleSlot, startDragOperation],
+    [startDragOperation],
   );
 
   const handlePointerMove = useCallback(
