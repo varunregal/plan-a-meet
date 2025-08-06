@@ -1,62 +1,88 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useCallback, useState } from "react";
+interface UseDragSelectionProps {
+  selectedRef: React.RefObject<Set<number>>;
+  toggleSlot: (slotId: number) => void;
+}
 
-export type DragMode = "select" | "deselect";
+type DragMode = "select" | "deselect";
 
-export function useDragSelection(
-  selectedSlots: Set<number>,
-  toggleSlot: (slotId: number) => void,
-) {
+const getSlotFromElement = (element: Element | null): number | null => {
+  if (!element) return null;
+  const slot = element.closest("[data-slot-id]");
+  if (!slot) return null;
+
+  const slotId = Number(slot.getAttribute("data-slot-id"));
+  return isNaN(slotId) ? null : slotId;
+};
+
+export function useDragSelection({
+  selectedRef,
+  toggleSlot,
+}: UseDragSelectionProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [dragMode, setDragMode] = useState<DragMode>("select");
-  const dragStartRef = useRef<number | null>(null);
 
-  const handleMouseDown = useCallback(
-    (e: React.MouseEvent, slotId: number, isSelected: boolean) => {
-      e.preventDefault();
+  const startDragOperation = useCallback(
+    (slotId: number) => {
+      const isSelected = selectedRef.current.has(slotId);
+      const mode = isSelected ? "deselect" : "select";
       setIsDragging(true);
-      dragStartRef.current = slotId;
-      setDragMode(isSelected ? "deselect" : "select");
+      setDragMode(mode);
       toggleSlot(slotId);
     },
     [toggleSlot],
   );
 
-  const handleMouseEnter = useCallback(
+  const moveOperation = useCallback(
     (slotId: number) => {
-      if (isDragging && dragStartRef.current !== null) {
-        const isSelected = selectedSlots.has(slotId);
-        if (
-          (dragMode === "select" && !isSelected) ||
-          (dragMode === "deselect" && isSelected)
-        ) {
-          toggleSlot(slotId);
-        }
-      }
+      const isSelected = selectedRef.current.has(slotId);
+
+      if (dragMode === "select" && isSelected) return;
+      if (dragMode === "deselect" && !isSelected) return;
+      toggleSlot(slotId);
     },
-    [isDragging, dragMode, selectedSlots, toggleSlot],
+    [dragMode, toggleSlot],
   );
 
-  const handleMouseUp = useCallback(() => {
+  const handlePointerDown = useCallback(
+    (e: React.PointerEvent) => {
+      const slotId = getSlotFromElement(e.target as HTMLElement);
+      if (slotId === null) return;
+
+      e.preventDefault();
+      e.currentTarget.setPointerCapture(e.pointerId);
+
+      startDragOperation(slotId);
+    },
+    [toggleSlot, startDragOperation],
+  );
+
+  const handlePointerMove = useCallback(
+    (e: React.PointerEvent) => {
+      if (!isDragging) return;
+
+      const elementUnderPointer = document.elementFromPoint(
+        e.clientX,
+        e.clientY,
+      );
+      const slotId = getSlotFromElement(elementUnderPointer);
+      if (slotId === null) return;
+
+      e.preventDefault();
+
+      moveOperation(slotId);
+    },
+    [isDragging, moveOperation],
+  );
+
+  const handlePointerUp = useCallback((e: React.PointerEvent) => {
+    e.currentTarget.releasePointerCapture(e.pointerId);
     setIsDragging(false);
-    dragStartRef.current = null;
   }, []);
 
-  useEffect(() => {
-    const handleGlobalMouseUp = () => handleMouseUp();
-    document.addEventListener("mouseup", handleGlobalMouseUp);
-    document.addEventListener("mouseleave", handleGlobalMouseUp);
-
-    return () => {
-      document.removeEventListener("mouseup", handleGlobalMouseUp);
-      document.removeEventListener("mouseleave", handleGlobalMouseUp);
-    };
-  }, [handleMouseUp]);
-
   return {
-    isDragging,
-    dragMode,
-    handleMouseDown,
-    handleMouseEnter,
-    handleMouseUp,
+    handlePointerDown,
+    handlePointerUp,
+    handlePointerMove,
   };
 }

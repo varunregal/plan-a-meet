@@ -1,9 +1,10 @@
+import { useCallback } from "react";
 import { TimeSlotProps } from "../event.types";
 
 export function useGridData({ timeSlots }: { timeSlots: TimeSlotProps[] }) {
-  const hours = new Set<number>();
-  const dates = new Set<string>();
-  const map = new Map();
+  const hours = new Set<number>(),
+    dates = new Set<string>(),
+    map = new Map();
   timeSlots.forEach((slot) => {
     const date = new Date(slot.start_time);
     const dateString = date.toDateString(),

@@ -1,146 +1,42 @@
-import { useEventStore } from "@/stores/eventStore";
-import React, { useCallback, useRef } from "react";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { memo } from "react";
 
-interface TimeSlotProps {
-  hour: number;
-  minute: number;
-  slotId: number;
-  isSelected: boolean;
-  isHovered: boolean;
-  availabilityCount: number;
-  onMouseDown: (e: React.MouseEvent) => void;
-  onMouseEnter: (e: React.MouseEvent) => void;
-  onMouseLeave: (e: React.MouseEvent) => void;
-}
-
-const BASE_CLASSES = "w-full h-full transition-all duration-150 relative";
-
-const AVAILABILITY_STYLES = [
-  { min: 0, max: 0, classes: "text-gray-500 border-gray-200" },
-  {
-    min: 1,
-    max: 25,
-    classes: "bg-[#6e56cf]/20 border-[#6e56cf]/20",
-  },
-  {
-    min: 26,
-    max: 50,
-    classes: "bg-[#6e56cf]/40 border-[#6e56cf]/30",
-  },
-  {
-    min: 51,
-    max: 75,
-    classes: "bg-[#6e56cf]/50 border-[#6e56cf]/50",
-  },
-  {
-    min: 76,
-    max: 99,
-    classes: "bg-[#6e56cf]/60 border-[#6e56cf]/70",
-  },
-  {
-    min: 100,
-    max: 100,
-    classes: "bg-[#6e56cf]/90 border-[#6e56cf]",
-  },
-];
-
-export function formatTimeRange(hour: number, minute: number) {
-  const pad = (n: number) => n.toString().padStart(2, "0");
-  const startTime = `${hour}:${pad(minute)}`;
-  const endHour = minute === 45 ? hour + 1 : hour;
-  const endMinute = minute === 45 ? 0 : minute + 15;
-  const endTime = `${endHour}:${pad(endMinute)}`;
-  return `${startTime} - ${endTime}`;
-}
-
-function getAvailabilityStyle(percentage: number) {
-  const style = AVAILABILITY_STYLES.find(
-    ({ min, max }) => percentage >= min && percentage <= max,
-  );
-  return style?.classes || AVAILABILITY_STYLES[0].classes;
-}
-
-export const TimeSlot = React.memo(function TimeSlot({
-  hour,
-  minute,
+function TimeSlot({
   slotId,
+  minute,
   isSelected,
-  isHovered,
-  availabilityCount,
-  onMouseDown,
-  onMouseEnter,
-  onMouseLeave,
-}: TimeSlotProps) {
-  const isEditMode = useEventStore((state) => state.isEditMode);
-  const incrementViewModeClick = useEventStore(
-    (state) => state.incrementViewModeClick,
-  );
-  const totalParticipants = useEventStore((state) => state.totalParticipants);
-  const hoveredParticipantId = useEventStore(
-    (state) => state.hoveredParticipantId,
-  );
-  const participants = useEventStore((state) => state.participants);
-  const isHoveredParticipantSlot =
-    hoveredParticipantId &&
-    participants
-      .find((p) => p.id === hoveredParticipantId)
-      ?.slot_ids.includes(slotId);
-  // const hoveredSlotId = useEventStore((state) => state.hoveredSlotId);
-  const percentage =
-    totalParticipants > 0
-      ? Math.round((availabilityCount / totalParticipants) * 100)
-      : 0;
-  const timeRange = formatTimeRange(hour, minute);
-  const availabilityStyle = getAvailabilityStyle(percentage);
-  // const isHovered = hoveredSlotId === slotId;
-  const buttonClasses = [
-    BASE_CLASSES,
-    availabilityStyle,
-    isSelected &&
-      isEditMode &&
-      "bg-primary/90 text-white border-primary font-semibold",
-    isHovered && "z-10 shadow-lg border border-gray-400 border-dashed",
-    isHoveredParticipantSlot && "z-20 border-2 border-orange-300",
-  ]
-    .filter(Boolean)
-    .join(" ");
-
-  const handleClick = useCallback(
-    (e: React.MouseEvent) => {
-      if (!isEditMode) {
-        e.preventDefault();
-        incrementViewModeClick();
-        return;
-      }
-      onMouseDown(e);
-    },
-    [isEditMode, incrementViewModeClick, onMouseDown],
-  );
-
+  // onPointerMove,
+  // onPointerDown,
+}: {
+  slotId: number;
+  minute: number;
+  isSelected: boolean;
+  // onPointerMove: (e: React.MouseEvent, slotId: number) => void;
+  // onPointerDown: (e: React.MouseEvent, slotId: number) => void;
+}) {
   return (
-    // <Tooltip open={isHovered}>
-    //   <TooltipTrigger asChild>
-    //     <div className="relative group">
-    <button
-      data-slot-id={slotId}
-      data-time-range={timeRange}
-      data-is-selected={isSelected}
-      className={buttonClasses}
-      onMouseDown={handleClick}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-      // aria-label={}
-    />
-    // </div>
-    //   </TooltipTrigger>
-    //   <TooltipContent className="bg-gray-800 fill-gray-800 text-white">
-    //     <p>{timeRange}</p>
-    //   </TooltipContent>
-    // </Tooltip>
+    <div className="">
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div
+            data-slot-id={slotId}
+            // onMouseDown={(e) => onPointerDown(e, slotId)}
+            // onMouseEnter={(e) => onPointerMove(e, slotId)}
+            className={`w-[150px] h-5 border-1  ${isSelected ? "border-orange-400" : "border-gray-300"}`}
+          >
+            {minute}
+          </div>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>{slotId}</p>
+        </TooltipContent>
+      </Tooltip>
+    </div>
   );
-});
+}
+
+export default memo(TimeSlot);
