@@ -27,6 +27,7 @@ function AvailabilityGrid({
   currentUserId,
 }: AvailabilityGridProps) {
   const setSelectedSlots = useEventStore((state) => state.setSelectedSlots);
+  const isEditMode = useEventStore((state) => state.isEditMode);
   const { data, isLoading } = useFetchAvailability({
     event,
     currentUserId,
@@ -51,7 +52,7 @@ function AvailabilityGrid({
   useEffect(() => {
     selectedRef.current = selected;
     setSelectedSlots(selected);
-  }, [selected]);
+  }, [selected, setSelectedSlots]);
 
   return (
     <div className="h-full flex flex-col">
@@ -126,7 +127,7 @@ function AvailabilityGrid({
                               slotId={slotId}
                               hour={hour}
                               minute={minute}
-                              percentage={percentage}
+                              percentage={!isEditMode ? percentage : 0}
                               isSelected={selected.has(slotId)}
                             />
                           );

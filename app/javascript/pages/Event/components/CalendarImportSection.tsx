@@ -20,7 +20,7 @@ function CalendarImportSectionComponent({
 }: CalendarImportSectionProps) {
   return (
     <div className={AVAILABILITY_CONSTANTS.CONTAINER_CLASSES}>
-      <CalendarImportHeader />
+      <CalendarImportHeader event={event} currentUserId={currentUserId} />
       <CalendarImportButtons onImport={onImportCalendar} />
       <div className={AVAILABILITY_CONSTANTS.DIVIDER_CLASSES} />
 

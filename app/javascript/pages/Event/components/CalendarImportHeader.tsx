@@ -2,10 +2,13 @@ import { Button } from "@/components/ui/button";
 import { useEventStore } from "@/stores/eventStore";
 import { Edit, Save, X } from "lucide-react";
 import { useSaveAvailability } from "../hooks/useSaveAvailability";
+import { EventProps } from "../event.types";
 
 interface CalendarImportHeaderProps {
   title?: string;
   className?: string;
+  event: EventProps;
+  currentUserId: string;
   // onSave: () => void;
   // isSaving: boolean;
 }
@@ -13,16 +16,17 @@ interface CalendarImportHeaderProps {
 export function CalendarImportHeader({
   title = "Add Your Availability",
   className = "",
+  event,
+  currentUserId,
   // onSave,
   // isSaving,
 }: CalendarImportHeaderProps) {
   const isEditMode = useEventStore((state) => state.isEditMode);
   const startEditing = useEventStore((state) => state.startEditing);
   const cancelEditing = useEventStore((state) => state.cancelEditing);
-  const eventData = useEventStore((state) => state.eventData);
   const mutation = useSaveAvailability({
-    event: eventData.event,
-    currentUserId: eventData.currentUserId,
+    event,
+    currentUserId,
   });
 
   // const {

@@ -2,6 +2,7 @@ import { QueryClient, useMutation } from "@tanstack/react-query";
 import { EventProps } from "../event.types";
 import { useEventStore } from "@/stores/eventStore";
 import api from "@/lib/api";
+import { toast } from "sonner";
 export function useSaveAvailability({
   event,
   currentUserId,
@@ -12,7 +13,8 @@ export function useSaveAvailability({
   const queryClient = new QueryClient();
   const participantName = "John";
   const selectedSlots = useEventStore((state) => state.selectedSlots);
-  console.log({ selectedSlots });
+  const cancelEditing = useEventStore((state) => state.cancelEditing);
+
   return useMutation({
     mutationFn: async () => {
       const payload = participantName
@@ -27,6 +29,11 @@ export function useSaveAvailability({
       queryClient.invalidateQueries({
         queryKey: ["availabilities", event.url, currentUserId],
       });
+      cancelEditing(); // Exit edit mode on success
+      toast.success("Saved successfully!");
+    },
+    onError: () => {
+      toast.error("Failed to save your availability.Please try again.");
     },
   });
 }

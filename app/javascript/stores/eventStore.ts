@@ -8,29 +8,21 @@ export interface Participant {
   is_current_user: boolean;
 }
 interface EventStore {
-  totalParticipants: number;
-  participants: Participant[];
-  hoveredParticipantId: string | null;
-  selectedSlots: Set<number>;
-  hasUnsavedChanges: boolean;
-  currentUserSlots: number[];
   isEditMode: boolean;
-  viewModeClickAttempt: number;
-  incrementViewModeClick: () => void;
-  hoveredSlotId: number | null;
-
-  setTotalParticipants: (count: number) => void;
-  setParticipants: (participants: Participant[]) => void;
-  setHoveredParticipantId: (id: string | null) => void;
-  setHoveredSlotId: (id: number | null) => void;
-
-  setCurrentUserSlots: (slots: number[]) => void;
-  setSelectedSlots: (slots: Set<number>) => void;
-  clearUnsavedChanges: () => void;
-
   startEditing: () => void;
   cancelEditing: () => void;
-  saveEditing: () => void;
+
+  viewModeClickAttempt: number;
+  incrementViewModeClick: () => void;
+
+  hoveredSlotId: number | null;
+  setHoveredSlotId: (id: number | null) => void;
+
+  hoveredParticipantId: string | null;
+  setHoveredParticipantId: (id: string | null) => void;
+
+  selectedSlots: Set<number>;
+  setSelectedSlots: (slots: Set<number>) => void;
 
   eventData: { event: EventProps | null; currentUserId: string };
   setEventData: ({
@@ -43,13 +35,13 @@ interface EventStore {
 }
 
 export const useEventStore = create<EventStore>((set) => ({
-  totalParticipants: 0,
-  participants: [],
-  hoveredParticipantId: null,
-  selectedSlots: new Set(),
-  hasUnsavedChanges: false,
-  currentUserSlots: [],
   isEditMode: false,
+  startEditing: () =>
+    set({
+      isEditMode: true,
+    }),
+  cancelEditing: () => set({ isEditMode: false }),
+
   viewModeClickAttempt: 0,
   incrementViewModeClick: () =>
     set((state) => ({
@@ -58,40 +50,13 @@ export const useEventStore = create<EventStore>((set) => ({
         : 0,
     })),
   hoveredSlotId: null,
-
   setHoveredSlotId: (id) => set({ hoveredSlotId: id }),
-  setTotalParticipants: (count) => set({ totalParticipants: count }),
-  setParticipants: (participants) => set({ participants }),
+
+  hoveredParticipantId: null,
   setHoveredParticipantId: (id) => set({ hoveredParticipantId: id }),
-  setCurrentUserSlots: (slots: number[]) => set({ currentUserSlots: slots }),
 
-  setSelectedSlots: (slots: Set<number>) =>
-    set((state) => ({
-      selectedSlots: slots,
-      hasUnsavedChanges: !areSetsEqual(slots, new Set(state.currentUserSlots)),
-    })),
-  clearUnsavedChanges: () => set({ hasUnsavedChanges: false }),
-
-  startEditing: () =>
-    set((state) => ({
-      isEditMode: true,
-      selectedSlots: new Set(state.currentUserSlots),
-      hasUnsavedChanges: false,
-    })),
-
-  cancelEditing: () =>
-    set((state) => ({
-      isEditMode: false,
-      selectedSlots: new Set(state.currentUserSlots),
-      hasUnsavedChanges: false,
-    })),
-
-  saveEditing: () =>
-    set((state) => ({
-      isEditMode: false,
-      currentUserSlots: Array.from(state.selectedSlots),
-      hasUnsavedChanges: false,
-    })),
+  selectedSlots: new Set(),
+  setSelectedSlots: (slots: Set<number>) => set({ selectedSlots: slots }),
 
   eventData: {
     event: null,
