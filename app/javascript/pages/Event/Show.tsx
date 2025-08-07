@@ -9,7 +9,7 @@ import { AuthAlert } from "./components/AuthAlert";
 import CalendarImportSection from "./components/CalendarImportSection";
 import { useEffect } from "react";
 import { useEventStore } from "@/stores/eventStore";
-import { ParticipantsList } from "./components/ParticipantsList";
+import ParticipantsList from "./components/ParticipantsList";
 
 function EventShow({
   event,
@@ -53,7 +53,10 @@ function EventShow({
               </div>
               <div className="lg:sticky lg:top-4 self-start">
                 <div className="space-y-4">
-                  <ParticipantsList />
+                  <ParticipantsList
+                    event={event}
+                    currentUserId={current_user_id}
+                  />
                 </div>
               </div>
             </div>

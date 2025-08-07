@@ -63,13 +63,13 @@ export function useDragSelection({
 
       startDragOperation(slotId);
     },
-    [startDragOperation],
+    [startDragOperation, isEditMode, incrementViewModeClick],
   );
 
   const handlePointerMove = useCallback(
     (e: React.PointerEvent) => {
-      if (!isDragging) return;
       e.preventDefault();
+      if (!isDragging) return;
 
       const elementUnderPointer = document.elementFromPoint(
         e.clientX,
