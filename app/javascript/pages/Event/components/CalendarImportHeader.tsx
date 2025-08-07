@@ -3,14 +3,13 @@ import { useEventStore } from "@/stores/eventStore";
 import { Edit, Save, X } from "lucide-react";
 import { useSaveAvailability } from "../hooks/useSaveAvailability";
 import { EventProps } from "../event.types";
+import { useEffect, useRef } from "react";
 
 interface CalendarImportHeaderProps {
   title?: string;
   className?: string;
   event: EventProps;
   currentUserId: string;
-  // onSave: () => void;
-  // isSaving: boolean;
 }
 
 export function CalendarImportHeader({
@@ -18,48 +17,34 @@ export function CalendarImportHeader({
   className = "",
   event,
   currentUserId,
-  // onSave,
-  // isSaving,
 }: CalendarImportHeaderProps) {
   const isEditMode = useEventStore((state) => state.isEditMode);
   const startEditing = useEventStore((state) => state.startEditing);
   const cancelEditing = useEventStore((state) => state.cancelEditing);
+  const viewModeClickAttempt = useEventStore(
+    (state) => state.viewModeClickAttempt,
+  );
   const mutation = useSaveAvailability({
     event,
     currentUserId,
   });
 
-  // const {
-  //   isEditMode,
-  //   startEditing,
-  //   cancelEditing,
-  //   hasUnsavedChanges,
-  //   viewModeClickAttempt,
-  // } = useEventStore();
-  // const isEditMode = useEventStore((state) => state.isEditMode);
-  // const startEditing = useEventStore((state) => state.startEditing);
-  // const cancelEditing = useEventStore((state) => state.cancelEditing);
-  // const hasUnsavedChanges = useEventStore((state) => state.hasUnsavedChanges);
-  // const viewModeClickAttempt = useEventStore(
-  //   (state) => state.viewModeClickAttempt,
-  // );
-  // const editButtonRef = useRef<HTMLButtonElement>(null);
-
-  // useEffect(() => {
-  //   if (!isEditMode && viewModeClickAttempt > 0 && editButtonRef.current) {
-  //     editButtonRef.current.scrollIntoView({
-  //       behavior: "smooth",
-  //       block: "center",
-  //       inline: "nearest",
-  //     });
-  //     setTimeout(() => {
-  //       editButtonRef.current?.classList.add("animate-shake-once");
-  //     }, 300);
-  //     setTimeout(() => {
-  //       editButtonRef.current?.classList.remove("animate-shake-once");
-  //     }, 1000);
-  //   }
-  // }, [viewModeClickAttempt]);
+  const editButtonRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (!isEditMode && viewModeClickAttempt > 0) {
+      editButtonRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+        inline: "nearest",
+      });
+    }
+    setTimeout(() => {
+      editButtonRef.current?.classList.add("animate-shake-once");
+    }, 300);
+    setTimeout(() => {
+      editButtonRef.current?.classList.remove("animate-shake-once");
+    }, 1000);
+  }, [viewModeClickAttempt]);
 
   return (
     <div className="space-y-1 mb-4 md:mb-2">
@@ -79,7 +64,7 @@ export function CalendarImportHeader({
             onClick={startEditing}
             size={"sm"}
             className="gap-2"
-            // ref={editButtonRef}
+            ref={editButtonRef}
           >
             <Edit /> Edit Availability
           </Button>

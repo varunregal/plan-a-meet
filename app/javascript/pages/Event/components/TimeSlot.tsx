@@ -33,9 +33,10 @@ function TimeSlot({
       data-is-selected={isSelected}
       className={cn(
         BASE_CLASSES,
-        "hover:bg-gray-100",
-        isSelected && "bg-[#6e56cf]/90 hover:bg-[#6e56cf] text-white",
+        "hover:[border:1px_dashed_theme(colors.gray.600)] hover:z-10 hover:shadow-lg",
+        isSelected && "bg-[#6e56cf]/90",
         getAvailabilityStyle(percentage),
+        percentage > 60 && "hover:[border:1px_dashed_theme(colors.gray.100)]",
       )}
       aria-label={`${hour}:${minute.toString().padStart(2, "0")}`}
     />

@@ -1,3 +1,4 @@
+import { useEventStore } from "@/stores/eventStore";
 import { useCallback, useState } from "react";
 interface UseDragSelectionProps {
   selectedRef: React.RefObject<Set<number>>;
@@ -19,6 +20,10 @@ export function useDragSelection({
   selectedRef,
   toggleSlot,
 }: UseDragSelectionProps) {
+  const isEditMode = useEventStore((state) => state.isEditMode);
+  const incrementViewModeClick = useEventStore(
+    (state) => state.incrementViewModeClick,
+  );
   const [isDragging, setIsDragging] = useState(false);
   const [dragMode, setDragMode] = useState<DragMode>("select");
 
@@ -46,10 +51,14 @@ export function useDragSelection({
 
   const handlePointerDown = useCallback(
     (e: React.PointerEvent) => {
+      e.preventDefault();
+      if (!isEditMode) {
+        incrementViewModeClick();
+        return;
+      }
       const slotId = getSlotFromElement(e.target as HTMLElement);
       if (slotId === null) return;
 
-      e.preventDefault();
       e.currentTarget.setPointerCapture(e.pointerId);
 
       startDragOperation(slotId);
@@ -60,6 +69,7 @@ export function useDragSelection({
   const handlePointerMove = useCallback(
     (e: React.PointerEvent) => {
       if (!isDragging) return;
+      e.preventDefault();
 
       const elementUnderPointer = document.elementFromPoint(
         e.clientX,
@@ -67,8 +77,6 @@ export function useDragSelection({
       );
       const slotId = getSlotFromElement(elementUnderPointer);
       if (slotId === null) return;
-
-      e.preventDefault();
 
       moveOperation(slotId);
     },
