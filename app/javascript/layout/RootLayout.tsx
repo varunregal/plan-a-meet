@@ -4,10 +4,11 @@ import { ReactNode, useEffect } from "react";
 import { usePage } from "@inertiajs/react";
 import { toast, Toaster } from "sonner";
 
+const queryClient = new QueryClient();
+
 function RootLayout({ children }: { children: ReactNode }) {
   const { flash } = usePage<{ flash: { alert?: string; notice?: string } }>()
     .props;
-  const queryClient = new QueryClient();
   useEffect(() => {
     if (flash?.notice) toast.success(flash.notice);
     if (flash?.alert) toast.error(flash.alert);

@@ -32,6 +32,9 @@ function ParticipantsList({
   event: EventProps;
   currentUserId: string;
 }) {
+  const setHoveredParticipantId = useEventStore(
+    (state) => state.setHoveredParticipantId,
+  );
   const { data, isLoading } = useFetchAvailability({ event, currentUserId });
   if (isLoading) return "isLoading...";
   return (
@@ -46,6 +49,8 @@ function ParticipantsList({
           return (
             <div
               key={participant.id}
+              onMouseEnter={() => setHoveredParticipantId(participant.id)}
+              onMouseLeave={() => setHoveredParticipantId(null)}
               className="flex items-center gap-2 py-1.5 px-2 rounded hover:bg-gray-50 transition-colors cursor-pointer group"
             >
               <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
@@ -73,6 +78,11 @@ function ParticipantsList({
             </div>
           );
         })}
+        {data.participants.length === 0 && (
+          <p className="text-muted-foreground text-xs text-center">
+            No active participants currently.
+          </p>
+        )}
       </div>
     </div>
   );

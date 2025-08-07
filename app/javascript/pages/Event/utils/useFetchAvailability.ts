@@ -14,6 +14,7 @@ export function useFetchAvailability({
   event: EventProps;
   currentUserId: string;
 }) {
+  console.log("fetch", "availabilities", event.id, currentUserId);
   return useQuery({
     queryKey: ["availabilities", event.id, currentUserId],
     queryFn: () => fetchAvailability(event.url),

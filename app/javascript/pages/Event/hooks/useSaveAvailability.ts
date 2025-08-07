@@ -1,4 +1,8 @@
-import { QueryClient, useMutation } from "@tanstack/react-query";
+import {
+  QueryClient,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { EventProps } from "../event.types";
 import { useEventStore } from "@/stores/eventStore";
 import api from "@/lib/api";
@@ -10,7 +14,7 @@ export function useSaveAvailability({
   event: EventProps;
   currentUserId: string;
 }) {
-  const queryClient = new QueryClient();
+  const queryClient = useQueryClient();
   const participantName = "John";
   const selectedSlots = useEventStore((state) => state.selectedSlots);
   const cancelEditing = useEventStore((state) => state.cancelEditing);
@@ -26,8 +30,13 @@ export function useSaveAvailability({
       return await api.post(`/events/${event.url}/availabilities`, payload);
     },
     onSuccess: () => {
+      const queries = queryClient.getQueryCache().getAll();
+      console.log(
+        "All cached queries:",
+        queries.map((q) => q.queryKey),
+      );
       queryClient.invalidateQueries({
-        queryKey: ["availabilities", event.url, currentUserId],
+        queryKey: ["availabilities", event.id, currentUserId],
       });
       cancelEditing(); // Exit edit mode on success
       toast.success("Saved successfully!");

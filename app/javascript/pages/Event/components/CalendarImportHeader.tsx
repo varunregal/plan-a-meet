@@ -37,13 +37,13 @@ export function CalendarImportHeader({
         block: "center",
         inline: "nearest",
       });
+      setTimeout(() => {
+        editButtonRef.current?.classList.add("animate-shake-once");
+      }, 300);
+      setTimeout(() => {
+        editButtonRef.current?.classList.remove("animate-shake-once");
+      }, 1000);
     }
-    setTimeout(() => {
-      editButtonRef.current?.classList.add("animate-shake-once");
-    }, 300);
-    setTimeout(() => {
-      editButtonRef.current?.classList.remove("animate-shake-once");
-    }, 1000);
   }, [viewModeClickAttempt]);
 
   return (

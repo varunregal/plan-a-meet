@@ -1,6 +1,7 @@
-import { memo } from "react";
+import { memo, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { AVAILABILITY_STYLES } from "../constants/grid.constants";
+import { Participant, useEventStore } from "@/stores/eventStore";
 
 interface TimeSlotProps {
   slotId: number;
@@ -8,6 +9,7 @@ interface TimeSlotProps {
   minute: number;
   isSelected: boolean;
   percentage: number;
+  participants: Participant[];
 }
 
 const BASE_CLASSES =
@@ -26,7 +28,18 @@ function TimeSlot({
   minute,
   isSelected,
   percentage,
+  participants,
 }: TimeSlotProps) {
+  const hoveredParticipantId = useEventStore(
+    (state) => state.hoveredParticipantId,
+  );
+  const isHoveredParticipantSlot = useMemo(() => {
+    if (!hoveredParticipantId) return false;
+    return participants
+      .find((p) => p.id === hoveredParticipantId)
+      ?.slot_ids.includes(slotId);
+  }, [hoveredParticipantId, participants, slotId]);
+
   return (
     <button
       data-slot-id={slotId}
@@ -37,6 +50,7 @@ function TimeSlot({
         isSelected && "bg-[#6e56cf]/90",
         getAvailabilityStyle(percentage),
         percentage > 60 && "hover:[border:1px_dashed_theme(colors.gray.100)]",
+        isHoveredParticipantSlot && "z-20 border-2 border-orange-300",
       )}
       aria-label={`${hour}:${minute.toString().padStart(2, "0")}`}
     />

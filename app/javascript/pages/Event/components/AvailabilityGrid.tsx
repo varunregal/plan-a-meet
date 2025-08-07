@@ -37,6 +37,7 @@ function AvailabilityGrid({
     availability_data = [],
     current_user_slots = [],
     total_event_participants = 0,
+    participants = [],
   } = data || {};
   const { hours, dates, getSlot } = useGridData({ timeSlots });
   const { selected, selectedRef, toggleSlot } = useSlotSelection({
@@ -54,6 +55,7 @@ function AvailabilityGrid({
     setSelectedSlots(selected);
   }, [selected, setSelectedSlots]);
 
+  console.log({ selected, availability_data });
   return (
     <div className="h-full flex flex-col">
       <div className="border border-gray-200 rounded-lg flex flex-1 overflow-hidden">
@@ -108,6 +110,7 @@ function AvailabilityGrid({
                         {MINUTE_INTERVALS.map((minute) => {
                           const key = `${dateStr}-${hour}-${minute}`;
                           const slotId = getSlot(key);
+
                           const availabilityCount = (
                             availability_data[key] || []
                           ).length;
@@ -129,6 +132,7 @@ function AvailabilityGrid({
                               minute={minute}
                               percentage={!isEditMode ? percentage : 0}
                               isSelected={selected.has(slotId)}
+                              participants={participants}
                             />
                           );
                         })}
