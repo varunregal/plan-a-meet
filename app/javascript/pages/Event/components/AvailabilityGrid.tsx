@@ -1,12 +1,17 @@
-import { TimeSlotProps } from "../event.types";
+import { useEventStore } from "@/stores/eventStore";
+import { EventProps, TimeSlotProps } from "../event.types";
 import { useDragSelection } from "../hooks/useDragSelection";
 import { useGridData } from "../hooks/useGridData";
+import { useSlotSelection } from "../hooks/useSlotSelection";
+import { useFetchAvailability } from "../utils/useFetchAvailability";
 import TimeSlot from "./TimeSlot";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
 
 const MINUTE_INTERVALS: number[] = [0, 15, 30, 45];
 interface AvailabilityGridProps {
   timeSlots: TimeSlotProps[];
+  event: EventProps;
+  currentUserId: string;
 }
 
 const formatHour = (hour: number) => {
@@ -16,21 +21,26 @@ const formatHour = (hour: number) => {
   return `${hour - 12} PM`;
 };
 
-function AvailabilityGrid({ timeSlots }: AvailabilityGridProps) {
+function AvailabilityGrid({
+  timeSlots,
+  event,
+  currentUserId,
+}: AvailabilityGridProps) {
+  const setSelectedSlots = useEventStore((state) => state.setSelectedSlots);
+  const { data, isLoading } = useFetchAvailability({
+    event,
+    currentUserId,
+  });
+
+  const {
+    availability_data = [],
+    current_user_slots = [],
+    total_event_participants = 0,
+  } = data || {};
   const { hours, dates, getSlot } = useGridData({ timeSlots });
-  const [selected, setSelected] = useState<Set<number>>(new Set());
-  const selectedRef = useRef(selected);
-  const toggleSlot = useCallback((slotId: number) => {
-    setSelected((prev) => {
-      const newSet = new Set<number>(prev);
-      if (newSet.has(slotId)) {
-        newSet.delete(slotId);
-      } else {
-        newSet.add(slotId);
-      }
-      return newSet;
-    });
-  }, []);
+  const { selected, selectedRef, toggleSlot } = useSlotSelection({
+    currentUserSlots: current_user_slots,
+  });
 
   const { handlePointerDown, handlePointerMove, handlePointerUp } =
     useDragSelection({
@@ -40,6 +50,7 @@ function AvailabilityGrid({ timeSlots }: AvailabilityGridProps) {
 
   useEffect(() => {
     selectedRef.current = selected;
+    setSelectedSlots(selected);
   }, [selected]);
 
   return (
@@ -94,9 +105,19 @@ function AvailabilityGrid({ timeSlots }: AvailabilityGridProps) {
                         <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[1px] border-t border-dashed border-gray-300 pointer-events-none z-10" />
 
                         {MINUTE_INTERVALS.map((minute) => {
-                          const slotId = getSlot(
-                            `${dateStr}-${hour}-${minute}`,
-                          );
+                          const key = `${dateStr}-${hour}-${minute}`;
+                          const slotId = getSlot(key);
+                          const availabilityCount = (
+                            availability_data[key] || []
+                          ).length;
+                          const percentage =
+                            total_event_participants > 0
+                              ? Math.round(
+                                  (availabilityCount /
+                                    total_event_participants) *
+                                    100,
+                                )
+                              : 0;
                           if (!slotId) return <div key={minute} />;
 
                           return (
@@ -105,6 +126,7 @@ function AvailabilityGrid({ timeSlots }: AvailabilityGridProps) {
                               slotId={slotId}
                               hour={hour}
                               minute={minute}
+                              percentage={percentage}
                               isSelected={selected.has(slotId)}
                             />
                           );

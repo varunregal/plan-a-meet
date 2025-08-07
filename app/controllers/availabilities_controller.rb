@@ -7,7 +7,6 @@ class AvailabilitiesController < ApplicationController
       current_user_slots: current_user_time_slots(event),
       total_event_participants: unique_participant_count(event),
       participants: build_participants_data(event)
-
     }
   end
 

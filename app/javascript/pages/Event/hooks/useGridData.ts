@@ -1,4 +1,3 @@
-import { useCallback } from "react";
 import { TimeSlotProps } from "../event.types";
 
 export function useGridData({ timeSlots }: { timeSlots: TimeSlotProps[] }) {

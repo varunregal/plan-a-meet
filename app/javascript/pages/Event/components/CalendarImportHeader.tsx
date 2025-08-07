@@ -1,21 +1,30 @@
 import { Button } from "@/components/ui/button";
 import { useEventStore } from "@/stores/eventStore";
 import { Edit, Save, X } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { useSaveAvailability } from "../hooks/useSaveAvailability";
 
 interface CalendarImportHeaderProps {
   title?: string;
   className?: string;
-  onSave: () => void;
-  isSaving: boolean;
+  // onSave: () => void;
+  // isSaving: boolean;
 }
 
 export function CalendarImportHeader({
   title = "Add Your Availability",
   className = "",
-  onSave,
-  isSaving,
+  // onSave,
+  // isSaving,
 }: CalendarImportHeaderProps) {
+  const isEditMode = useEventStore((state) => state.isEditMode);
+  const startEditing = useEventStore((state) => state.startEditing);
+  const cancelEditing = useEventStore((state) => state.cancelEditing);
+  const eventData = useEventStore((state) => state.eventData);
+  const mutation = useSaveAvailability({
+    event: eventData.event,
+    currentUserId: eventData.currentUserId,
+  });
+
   // const {
   //   isEditMode,
   //   startEditing,
@@ -23,30 +32,30 @@ export function CalendarImportHeader({
   //   hasUnsavedChanges,
   //   viewModeClickAttempt,
   // } = useEventStore();
-  const isEditMode = useEventStore((state) => state.isEditMode);
-  const startEditing = useEventStore((state) => state.startEditing);
-  const cancelEditing = useEventStore((state) => state.cancelEditing);
-  const hasUnsavedChanges = useEventStore((state) => state.hasUnsavedChanges);
-  const viewModeClickAttempt = useEventStore(
-    (state) => state.viewModeClickAttempt,
-  );
-  const editButtonRef = useRef<HTMLButtonElement>(null);
+  // const isEditMode = useEventStore((state) => state.isEditMode);
+  // const startEditing = useEventStore((state) => state.startEditing);
+  // const cancelEditing = useEventStore((state) => state.cancelEditing);
+  // const hasUnsavedChanges = useEventStore((state) => state.hasUnsavedChanges);
+  // const viewModeClickAttempt = useEventStore(
+  //   (state) => state.viewModeClickAttempt,
+  // );
+  // const editButtonRef = useRef<HTMLButtonElement>(null);
 
-  useEffect(() => {
-    if (!isEditMode && viewModeClickAttempt > 0 && editButtonRef.current) {
-      editButtonRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-        inline: "nearest",
-      });
-      setTimeout(() => {
-        editButtonRef.current?.classList.add("animate-shake-once");
-      }, 300);
-      setTimeout(() => {
-        editButtonRef.current?.classList.remove("animate-shake-once");
-      }, 1000);
-    }
-  }, [viewModeClickAttempt]);
+  // useEffect(() => {
+  //   if (!isEditMode && viewModeClickAttempt > 0 && editButtonRef.current) {
+  //     editButtonRef.current.scrollIntoView({
+  //       behavior: "smooth",
+  //       block: "center",
+  //       inline: "nearest",
+  //     });
+  //     setTimeout(() => {
+  //       editButtonRef.current?.classList.add("animate-shake-once");
+  //     }, 300);
+  //     setTimeout(() => {
+  //       editButtonRef.current?.classList.remove("animate-shake-once");
+  //     }, 1000);
+  //   }
+  // }, [viewModeClickAttempt]);
 
   return (
     <div className="space-y-1 mb-4 md:mb-2">
@@ -66,7 +75,7 @@ export function CalendarImportHeader({
             onClick={startEditing}
             size={"sm"}
             className="gap-2"
-            ref={editButtonRef}
+            // ref={editButtonRef}
           >
             <Edit /> Edit Availability
           </Button>
@@ -81,12 +90,12 @@ export function CalendarImportHeader({
               <X /> Cancel
             </Button>
             <Button
-              onClick={onSave}
+              onClick={() => mutation.mutate()}
               size={"sm"}
-              disabled={isSaving || !hasUnsavedChanges}
+              disabled={mutation.isPending}
               className="gap-2"
             >
-              {isSaving ? (
+              {mutation.isPending ? (
                 "Saving..."
               ) : (
                 <>

@@ -50,7 +50,12 @@ class EventsController < ApplicationController
       is_creator:,
       event_creator: event.event_creator&.name,
       invitations: event.invitations.as_json(only: %i[id email_address status created_at]),
-      time_slots: event.time_slots.as_json(only: %i[id start_time end_time])
+      time_slots: event.time_slots.as_json(only: %i[id start_time end_time]),
+      current_user_id: if Current.user
+                         "user_#{Current.user.id}"
+                       else
+                         "anon_#{cookies.signed[:anonymous_session_id] || 'viewer'}"
+                       end
     }
   end
 

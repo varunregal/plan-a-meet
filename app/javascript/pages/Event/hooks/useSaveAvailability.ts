@@ -1,0 +1,32 @@
+import { QueryClient, useMutation } from "@tanstack/react-query";
+import { EventProps } from "../event.types";
+import { useEventStore } from "@/stores/eventStore";
+import api from "@/lib/api";
+export function useSaveAvailability({
+  event,
+  currentUserId,
+}: {
+  event: EventProps;
+  currentUserId: string;
+}) {
+  const queryClient = new QueryClient();
+  const participantName = "John";
+  const selectedSlots = useEventStore((state) => state.selectedSlots);
+  console.log({ selectedSlots });
+  return useMutation({
+    mutationFn: async () => {
+      const payload = participantName
+        ? {
+            time_slot_ids: Array.from(selectedSlots),
+            participant_name: participantName,
+          }
+        : { time_slot_ids: Array.from(selectedSlots) };
+      return await api.post(`/events/${event.url}/availabilities`, payload);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["availabilities", event.url, currentUserId],
+      });
+    },
+  });
+}
