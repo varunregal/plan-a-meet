@@ -3,10 +3,12 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useEventStore } from "@/stores/eventStore";
+import { Participant, useEventStore } from "@/stores/eventStore";
 import { Check, Clock } from "lucide-react";
 import { ReactNode } from "react";
-
+import { EventProps } from "../event.types";
+import { useFetchAvailability } from "../utils/useFetchAvailability";
+import { Skeleton } from "@/components/ui/skeleton";
 function ParticipantActionToolTip({
   icon,
   text,
@@ -23,10 +25,18 @@ function ParticipantActionToolTip({
     </Tooltip>
   );
 }
-export function ParticipantsList() {
-  const { participants, setHoveredParticipantId, hoveredSlotId } =
-    useEventStore();
-
+function ParticipantsList({
+  event,
+  currentUserId,
+}: {
+  event: EventProps;
+  currentUserId: string;
+}) {
+  const setHoveredParticipantId = useEventStore(
+    (state) => state.setHoveredParticipantId,
+  );
+  const { data, isLoading } = useFetchAvailability({ event, currentUserId });
+  if (isLoading) return "isLoading...";
   return (
     <div className="space-y-3 rounded-lg border border-gray-200 p-4">
       <div className="flex items-center justify-center">
@@ -34,12 +44,8 @@ export function ParticipantsList() {
           Participants
         </h4>
       </div>
-
       <div className="space-y-1">
-        {participants.map((participant) => {
-          const isParticipantAvailable =
-            hoveredSlotId && participant.slot_ids.includes(hoveredSlotId);
-          const shouldStrikethrough = hoveredSlotId && !isParticipantAvailable;
+        {data.participants.map((participant: Participant) => {
           return (
             <div
               key={participant.id}
@@ -52,18 +58,12 @@ export function ParticipantsList() {
                   {participant.name.charAt(0)}
                 </span>
               </div>
-
               <span className="text-sm text-gray-700 flex-1">
-                <span
-                  className={`${shouldStrikethrough ? "line-through" : ""}`}
-                >
-                  {participant.name}
-                </span>
+                <span className={``}>{participant.name}</span>
                 {participant.is_current_user && (
                   <span className="text-xs text-gray-500 ml-1">(You)</span>
                 )}
               </span>
-
               {participant.responded ? (
                 <ParticipantActionToolTip
                   icon={<Check className="h-4 w-4 text-green-500" />}
@@ -78,7 +78,13 @@ export function ParticipantsList() {
             </div>
           );
         })}
+        {data.participants.length === 0 && (
+          <p className="text-muted-foreground text-xs text-center">
+            No active participants currently.
+          </p>
+        )}
       </div>
     </div>
   );
 }
+export default ParticipantsList;

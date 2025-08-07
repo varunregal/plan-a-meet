@@ -10,26 +10,33 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { UserIcon } from "lucide-react";
+import { useState } from "react";
 
 export function NameInputDialog({
   open,
   onOpenChange,
-  participantName,
-  onNameChange,
   onConfirm,
-  nameError,
+  handleSaveAvailability,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  participantName: string;
-  onNameChange: (name: string) => void;
   onConfirm: () => void;
-  nameError?: string;
+  handleSaveAvailability: any;
 }) {
+  const [participantName, setParticipantName] = useState("");
+  const [nameError, setNameError] = useState("");
+
+  const handleNameChange = (name: string) => {
+    setParticipantName(name);
+    if (name.trim()) {
+      setNameError("");
+    }
+  };
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onConfirm();
   };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
@@ -48,7 +55,7 @@ export function NameInputDialog({
               <Input
                 type="text"
                 value={participantName}
-                onChange={(e) => onNameChange(e.target.value)}
+                onChange={(e) => handleNameChange(e.target.value)}
                 placeholder="Enter your name"
                 className={`pl-9 ${nameError ? "border-red-500" : ""}`}
                 autoFocus

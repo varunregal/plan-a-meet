@@ -1,40 +1,38 @@
 import { Button } from "@/components/ui/button";
 import { useEventStore } from "@/stores/eventStore";
 import { Edit, Save, X } from "lucide-react";
+import { useSaveAvailability } from "../hooks/useSaveAvailability";
+import { EventProps } from "../event.types";
 import { useEffect, useRef } from "react";
 
 interface CalendarImportHeaderProps {
   title?: string;
   className?: string;
-  onSave: () => void;
-  isSaving: boolean;
+  event: EventProps;
+  currentUserId: string;
 }
 
 export function CalendarImportHeader({
   title = "Add Your Availability",
   className = "",
-  onSave,
-  isSaving,
+  event,
+  currentUserId,
 }: CalendarImportHeaderProps) {
-  // const {
-  //   isEditMode,
-  //   startEditing,
-  //   cancelEditing,
-  //   hasUnsavedChanges,
-  //   viewModeClickAttempt,
-  // } = useEventStore();
   const isEditMode = useEventStore((state) => state.isEditMode);
   const startEditing = useEventStore((state) => state.startEditing);
   const cancelEditing = useEventStore((state) => state.cancelEditing);
-  const hasUnsavedChanges = useEventStore((state) => state.hasUnsavedChanges);
   const viewModeClickAttempt = useEventStore(
     (state) => state.viewModeClickAttempt,
   );
-  const editButtonRef = useRef<HTMLButtonElement>(null);
+  const mutation = useSaveAvailability({
+    event,
+    currentUserId,
+  });
 
+  const editButtonRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
-    if (!isEditMode && viewModeClickAttempt > 0 && editButtonRef.current) {
-      editButtonRef.current.scrollIntoView({
+    if (!isEditMode && viewModeClickAttempt > 0) {
+      editButtonRef.current?.scrollIntoView({
         behavior: "smooth",
         block: "center",
         inline: "nearest",
@@ -81,12 +79,12 @@ export function CalendarImportHeader({
               <X /> Cancel
             </Button>
             <Button
-              onClick={onSave}
+              onClick={() => mutation.mutate()}
               size={"sm"}
-              disabled={isSaving || !hasUnsavedChanges}
+              disabled={mutation.isPending}
               className="gap-2"
             >
-              {isSaving ? (
+              {mutation.isPending ? (
                 "Saving..."
               ) : (
                 <>

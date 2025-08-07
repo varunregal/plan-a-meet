@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { TimeSlotProps } from "../event.types";
+import { EventProps, TimeSlotProps } from "../event.types";
 import { CalendarImportButtons } from "./CalendarImportButtons";
 import { CalendarImportHeader } from "./CalendarImportHeader";
 import { AVAILABILITY_CONSTANTS } from "../constants/availability";
@@ -7,29 +7,28 @@ import AvailabilityGrid from "./AvailabilityGrid";
 
 interface CalendarImportSectionProps {
   timeSlots: TimeSlotProps[];
-  availabilityData: { [key: string]: string[] };
   onImportCalendar?: (provider: "google" | "outlook") => void;
-  onSaveAvailability: () => void;
-  isSaving: boolean;
+  event: EventProps;
+  currentUserId: string;
 }
 
 function CalendarImportSectionComponent({
   timeSlots,
-  availabilityData,
   onImportCalendar,
-  onSaveAvailability,
-  isSaving,
+  event,
+  currentUserId,
 }: CalendarImportSectionProps) {
   return (
     <div className={AVAILABILITY_CONSTANTS.CONTAINER_CLASSES}>
-      <CalendarImportHeader onSave={onSaveAvailability} isSaving={isSaving} />
+      <CalendarImportHeader event={event} currentUserId={currentUserId} />
       <CalendarImportButtons onImport={onImportCalendar} />
       <div className={AVAILABILITY_CONSTANTS.DIVIDER_CLASSES} />
 
       <div className={AVAILABILITY_CONSTANTS.GRID_CONTAINER_CLASSES}>
         <AvailabilityGrid
           timeSlots={timeSlots}
-          availabilityData={availabilityData}
+          event={event}
+          currentUserId={currentUserId}
         />
       </div>
     </div>
