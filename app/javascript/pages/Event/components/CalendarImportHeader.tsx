@@ -73,6 +73,7 @@ export function CalendarImportHeader({
             <Button
               onClick={cancelEditing}
               size={"sm"}
+              disabled={mutation.isPending}
               variant={"outline"}
               className="px-2"
             >

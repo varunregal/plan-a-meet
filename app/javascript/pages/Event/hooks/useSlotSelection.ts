@@ -9,11 +9,13 @@ export function useSlotSelection({
     new Set(currentUserSlots),
   );
   const selectedRef = useRef(selected);
+
   useEffect(() => {
     if (currentUserSlots.length > 0) {
       setSelected(new Set(currentUserSlots));
     }
   }, [currentUserSlots]);
+
   const toggleSlot = useCallback((slotId: number) => {
     setSelected((prev) => {
       const newSet = new Set<number>(prev);

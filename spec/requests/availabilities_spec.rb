@@ -251,6 +251,7 @@ RSpec.describe 'AvailabilitiesController', type: :request do
         expect(jane['responded']).to be false
         expect(jane['slot_ids']).to eq([])
         expect(jane['id']).to eq("user_#{invited_user.id}")
+        expect(jane['invitation_status']).to eq('pending')
       end
 
       it "includes invited users who haven't signed up yet" do

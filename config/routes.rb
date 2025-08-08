@@ -24,7 +24,11 @@ Rails.application.routes.draw do
       patch :reschedule
       get :confirmation
     end
-    resources :invitations
+    resources :invitations, param: :token do
+      member do
+        get :verify
+      end
+    end
   end
   resource :profile, only: [:show]
 

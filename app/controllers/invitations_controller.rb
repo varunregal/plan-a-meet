@@ -26,6 +26,21 @@ class InvitationsController < ApplicationController
     end
   end
 
+  def verify
+    invitation = @event.invitations.find_by!(invitation_token: params[:token])
+    return unless invitation
+
+    if params[:response] == 'accept'
+      invitation.accept!
+      redirect_to event_path(@event.url), notice: 'Please add your availability'
+    elsif params[:response] == 'reject'
+      invitation.decline!
+      render inertia: 'Invitation/Decline'
+    else
+      redirect_to root_path, alert: 'Something went wrong. Please try again.'
+    end
+  end
+
   private
 
   def find_event

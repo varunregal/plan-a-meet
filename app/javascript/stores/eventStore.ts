@@ -6,6 +6,7 @@ export interface Participant {
   responded: boolean;
   slot_ids: number[];
   is_current_user: boolean;
+  invitation_status: "pending" | "accepted" | "declined";
 }
 interface EventStore {
   isEditMode: boolean;

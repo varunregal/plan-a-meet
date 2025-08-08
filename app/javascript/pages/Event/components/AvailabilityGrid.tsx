@@ -55,7 +55,6 @@ function AvailabilityGrid({
     setSelectedSlots(selected);
   }, [selected, setSelectedSlots]);
 
-  console.log({ selected, availability_data });
   return (
     <div className="h-full flex flex-col">
       <div className="border border-gray-200 rounded-lg flex flex-1 overflow-hidden">
@@ -93,7 +92,7 @@ function AvailabilityGrid({
               return (
                 <div
                   key={dateStr}
-                  className="min-w-[150px] border-r border-gray-200 last:border-r-0"
+                  className="flex-1 min-w-[150px] border-r border-gray-200 last:border-r-0"
                 >
                   <div className="h-16 font-semibold border-b border-gray-200 flex flex-col items-center justify-center">
                     <div className="text-xs text-gray-500">{dayName}</div>

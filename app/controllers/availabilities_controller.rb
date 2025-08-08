@@ -153,6 +153,7 @@ class AvailabilitiesController < ApplicationController
         id: user ? "user_#{user.id}" : "invite_#{invitation.id}",
         name: user ? user.name : invitation.email_address,
         responded: false,
+        invitation_status: invitation.status,
         slot_ids: []
       }
     end
